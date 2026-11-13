@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rush Hour Live 3D</title>
+<style>
+:root{--bg:#f3f1f8;--panel:#fff;--line:#d9d6e6;--fg:#1c1b26;--mut:#666577;--inset:#f7f6fb;--btn:#ebe8f5;--acc:#9146ff;--ok:#12805a;--err:#c0303c;--usr:#7a3fd6;color-scheme:light;font-family:Inter,system-ui,Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0e13;--panel:#1b1b24;--line:#343440;--fg:#f5f5fa;--mut:#a7a6b5;--inset:#111118;--btn:#30303d;--ok:#7de4ad;--err:#ff9292;--usr:#b78aff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e0e13;--panel:#1b1b24;--line:#343440;--fg:#f5f5fa;--mut:#a7a6b5;--inset:#111118;--btn:#30303d;--ok:#7de4ad;--err:#ff9292;--usr:#b78aff;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;padding:24px;background:var(--bg);color:var(--fg)}
+header{max-width:1150px;margin:0 auto 18px}h1{margin:0;font-size:26px}header p{margin:6px 0 0;color:var(--mut);font-size:14px}
+.layout{max-width:1150px;margin:auto;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);gap:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+select,button{background:var(--btn);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font:inherit;font-size:13px;cursor:pointer}
+button.pri,button.send{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#stage{width:100%;height:min(62vh,470px);border-radius:12px;background:var(--inset);overflow:hidden;cursor:grab;touch-action:none;position:relative}
+#stage:active{cursor:grabbing}#stage canvas{display:block}
+.stats{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--mut)}.stats strong{color:var(--fg)}
+.win{display:none;margin-top:12px;padding:12px;border-radius:10px;text-align:center;font-weight:800;background:#d8f5e8;color:#0d6a4a}.win.show{display:block}
+.chat{height:300px;overflow:auto;background:var(--inset);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.chat-line{line-height:1.5;overflow-wrap:anywhere}.user{font-weight:800;color:var(--usr)}.system{color:var(--mut)}.success{color:var(--ok)}.error{color:var(--err)}
+.chat-input{display:flex;gap:8px;margin-top:10px}input{min-width:0;flex:1;background:var(--inset);border:1px solid var(--line);border-radius:9px;color:var(--fg);padding:11px;font:inherit}
+.ex{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.ex button{font-size:12px}
+.help{color:var(--mut);font-size:12px;line-height:1.7;margin:14px 0 0}
+@media(max-width:820px){body{padding:14px}.layout{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><h1>🚗 Rush Hour Live 3D</h1><p>Chat-controlled sliding puzzle. Drag the board to rotate the camera.</p></header>
+<main class="layout">
+<section class="panel">
+ <div class="bar">
+  <select id="level" aria-label="Difficulty"><option value="easy">Easy · 6×6 · 4–10 moves</option><option value="normal" selected>Normal · 6×6 · 11–25</option><option value="hard">Hard · 8×8 · 26–45</option><option value="expert">Expert · 8×8 · 46+</option></select>
+  <button class="pri" id="new">🎲 New puzzle</button><button id="hint">💡 Hint</button><button id="reset">↻ Reset</button>
+ </div>
+ <div id="stage"></div>
+ <div class="stats"><span>Moves <strong id="moves">0</strong> · <span id="status">Ready</span></span><span id="info">–</span></div>
+ <div class="win" id="win">🎉 Cleared! The red car escaped.</div>
+</section>
+<section class="panel">
+ <div class="chat" id="chat" aria-live="polite"></div>
+ <form class="chat-input" id="form"><input id="command" placeholder="Type: blue right" autocomplete="off" aria-label="Chat command"><button class="send">Send</button></form>
+ <div class="ex"><button type="button" data-cmd="red right">red right</button><button type="button" data-cmd="hint">hint</button></div>
+ <p class="help">Command: <code>color direction</code> (left, right, up, down) moves one cell along the car’s axis. When the red car reaches the right edge, <code>red right</code> once more sends it out the exit (counts as one move). Difficulty is the BFS minimum number of one-cell moves, computed exactly over every reachable state.</p>
+</section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),rnd=n=>Math.floor(Math.random()*n);
+const NAMES=[['blue','#2f6fe0'],['yellow','#f2d12e'],['green','#2e9e4f'],['purple','#7c3fc8'],['orange','#f08a24'],['pink','#ff8fc0'],['cyan','#35d0e0'],['brown','#7a4a2b'],['white','#ecebf0'],['gray','#8c909c'],['lime','#b8e03a'],['black','#25252b']];
+const LV={easy:{N:6,min:4,max:10,cars:7,len:[2,3]},normal:{N:6,min:11,max:25,cars:10,len:[2,3]},hard:{N:8,min:26,max:45,cars:11,len:[2,4]},expert:{N:8,min:46,max:99,cars:12,len:[2,4]}};
+let N=6,exitRow=2,meta=[],start=[],pos=[],moves=0,won=false,viewer=0,meshes=[],info=null,parts=[],busy=false;
+const chat=$('chat');
+function log(name,msg,kind=''){const l=document.createElement('div');l.className='chat-line';const u=document.createElement('span');u.className=kind||'user';u.textContent=name+': ';l.append(u,document.createTextNode(msg));chat.append(l);chat.scrollTop=chat.scrollHeight}
+
+/* ---------- puzzle engine (positions along each car axis) ---------- */
+function grid(p){const g=new Int8Array(N*N).fill(-1);meta.forEach((m,i)=>{for(let k=0;k<m.len;k++){const x=m.axis=='h'?p[i]+k:m.lane,y=m.axis=='h'?m.lane:p[i]+k;g[y*N+x]=i}});return g}
+function free(g,m,at){if(at<0||at>=N)return false;const x=m.axis=='h'?at:m.lane,y=m.axis=='h'?m.lane:at;return g[y*N+x]<0}
+function nbrs(p){const g=grid(p),o=[];meta.forEach((m,i)=>{if(free(g,m,p[i]-1))o.push([i,-1]);if(free(g,m,p[i]+m.len))o.push([i,1])});return o}
+function clear(p){const g=grid(p);for(let x=p[0]+2;x<N;x++)if(g[exitRow*N+x]>=0)return false;return true}
+// Explore the whole reachable component, then multi-source BFS from every winning state: exact minimum moves for all states.
+function analyze(p0,limit){const S=[p0],idx=new Map([[p0.join(),0]]);
+ for(let h=0;h<S.length;h++){if(S.length>=limit)return null;for(const[i,d]of nbrs(S[h])){const q=S[h].slice();q[i]+=d;const k=q.join();if(!idx.has(k)){idx.set(k,S.length);S.push(q)}}}
+ const D=new Int16Array(S.length).fill(-1),par=new Int32Array(S.length).fill(-1),Q=[];
+ S.forEach((p,i)=>{if(p[0]==N-2){D[i]=0;Q.push(i)}});
+ for(let h=0;h<Q.length;h++){const u=Q[h];for(const[i,d]of nbrs(S[u])){const q=S[u].slice();q[i]+=d;const v=idx.get(q.join());if(D[v]<0){D[v]=D[u]+1;par[v]=u;Q.push(v)}}}
+ return{S,D,par}}
+function pathFrom(a,v){const path=[];for(let u=v;a.par[u]>=0;u=a.par[u]){const w=a.par[u],i=a.S[u].findIndex((x,k)=>x!==a.S[w][k]);path.push([i,a.S[w][i]-a.S[u][i]])}return path}
+function slides(path){let n=0,pi=-9,pd=0;for(const[i,d]of path){if(i!==pi||d!==pd)n++;pi=i;pd=d}return n}
+function generate(key){const c=LV[key];N=c.N;exitRow=N==6?2:3;const t0=performance.now();let best=null,gap=1e9;
+ while(performance.now()-t0<4000&&gap>0){
+  meta=[{id:'red',len:2,axis:'h',lane:exitRow,color:'#e54857'}];const p=[N-2],occ=new Set([(N-2)+','+exitRow,(N-1)+','+exitRow]);
+  for(const[id,color]of NAMES.slice().sort(()=>Math.random()-.5)){if(meta.length>c.cars)break;
+   for(let t=0;t<40;t++){const axis=Math.random()<.5?'v':'h',len=c.len[0]+rnd(c.len[1]-c.len[0]+1),lane=rnd(N),at=rnd(N-len+1);
+    const cells=[...Array(len)].map((_,k)=>axis=='h'?[at+k,lane]:[lane,at+k]);
+    if(cells.some(([x,y])=>occ.has(x+','+y)))continue;
+    cells.forEach(([x,y])=>occ.add(x+','+y));meta.push({id,len,axis,lane,color});p.push(at);break}}
+  if(meta.length<c.cars)continue;
+  const a=analyze(p,150000);if(!a)continue;
+  const cand=[];a.D.forEach((d,i)=>{if(d+1>=c.min&&d+1<=c.max)cand.push(i)});
+  let pick=-1;if(cand.length)pick=cand[rnd(cand.length)];else{let m=-1;a.D.forEach((d,i)=>{if(d>m){m=d;pick=i}})}
+  const d=a.D[pick]+1,g=d<c.min?c.min-d:d>c.max?d-c.max:0;
+  if(g<gap){gap=g;best={meta,p:a.S[pick],path:pathFrom(a,pick),states:a.S.length,inRange:g==0}}}
+ if(!best){meta=[{id:'red',len:2,axis:'h',lane:exitRow,color:'#e54857'}];best={meta,p:[0],path:[],states:1,inRange:false}}
+ meta=best.meta;start=best.p.slice();info=best}
+
+/* ---------- 3D scene ---------- */
+const stage=$('stage'),R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.shadowMap.enabled=true;stage.append(R.domElement);
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,1,.1,100),grp=new THREE.Group();scene.add(grp);
+scene.add(new THREE.HemisphereLight(0xffffff,0x666677,.95));
+const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(5,12,6);sun.castShadow=true;Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8});sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+let th=0,ph=.52,rad=11;
+function setCam(){cam.position.set(rad*Math.sin(ph)*Math.sin(th),rad*Math.cos(ph),rad*Math.sin(ph)*Math.cos(th));cam.lookAt(0,0,0)}
+let drag=null;R.domElement.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];R.domElement.setPointerCapture(e.pointerId)});
+R.domElement.addEventListener('pointermove',e=>{if(!drag)return;th-=(e.clientX-drag[0])*.008;ph=Math.max(.02,Math.min(1.35,ph-(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY];setCam()});
+['pointerup','pointercancel'].forEach(t=>R.domElement.addEventListener(t,()=>drag=null));
+R.domElement.addEventListener('wheel',e=>{e.preventDefault();rad=Math.max(6,Math.min(30,rad+e.deltaY*.01));setCam()},{passive:false});
+R.domElement.addEventListener('dblclick',()=>{th=0;ph=.52;setCam()});
+new ResizeObserver(()=>{const w=stage.clientWidth,h=stage.clientHeight;R.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix()}).observe(stage);
+
+function label(text){const c=document.createElement('canvas');c.width=128;c.height=64;const x=c.getContext('2d');x.font='bold 24px Arial';x.textAlign='center';x.textBaseline='middle';x.lineWidth=5;x.strokeStyle='#0008';x.fillStyle='#fff';x.strokeText(text.toUpperCase(),64,32);x.fillText(text.toUpperCase(),64,32);
+ const m=new THREE.Mesh(new THREE.PlaneGeometry(.7,.35),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));m.rotation.x=-Math.PI/2;m.position.y=.58;return m}
+function vehicle(m,i){const L=m.len-.14,W=.74,col=new THREE.Color(m.color),g=new THREE.Group(),v=new THREE.Group();g.add(v);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.5},o));
+ const bodyMat=M(col,{roughness:.35,emissive:0xffffff,emissiveIntensity:0}),glass=M(0x1d2733,{roughness:.1,metalness:.5}),dark=M(0x202028);
+ const add=(w,h,d,x,y,z,mat)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);b.position.set(x,y,z);v.add(b);return b};
+ const wheel=(x,z)=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.1,14),dark);c.rotation.x=Math.PI/2;c.position.set(x,.13,z);v.add(c)};
+ const lamp=(x,c)=>[-1,1].forEach(s=>add(.04,.07,.16,x,.22,s*.25,M(c,{emissive:c,emissiveIntensity:.8})));
+ let top;
+ if(m.len<=2){const k=i%3,cl=[.8,.9,.6][k],co=[-.08,-.14,-.02][k],ch=[.2,.22,.16][k];
+  add(L,.24,W,0,.2,0,bodyMat);add(cl,ch,.62,co,.32+ch/2,0,glass);add(cl-.06,.04,.6,co,.32+ch+.02,0,bodyMat);top=.32+ch+.04;
+  [L/2-.38,-L/2+.38].forEach(x=>{wheel(x,W/2);wheel(x,-W/2)});
+ }else{const cabL=.78,k=i%2,cl=L-cabL-.06,cx=-L/2+cl/2;
+  add(L,.14,W-.06,0,.2,0,dark);add(cabL,.46,W,L/2-cabL/2,.4,0,bodyMat);add(.05,.2,.6,L/2-.01,.5,0,glass);add(.3,.05,W-.1,L/2-cabL/2-.1,.66,0,bodyMat);
+  const shade=M(col.clone().multiplyScalar(.72),{roughness:.5});if(k==0){add(cl,.58,W,cx,.5,0,bodyMat);add(cl+.01,.08,W+.02,cx,.3,0,shade);top=.8}
+  else{const t=new THREE.Mesh(new THREE.CylinderGeometry(.33,.33,cl,18),bodyMat);t.rotation.z=Math.PI/2;t.position.set(cx,.52,0);v.add(t);
+   const b=new THREE.Mesh(new THREE.CylinderGeometry(.335,.335,.14,18),shade);b.rotation.z=Math.PI/2;b.position.set(cx,.52,0);v.add(b);top=.86}
+  const xs=[L/2-.3,-L/2+.3,-L/2+.75];if(m.len>=4)xs.push(-L/2+1.2);xs.forEach(x=>{wheel(x,W/2-.03);wheel(x,-W/2+.03)});
+ }
+ lamp(L/2,0xfff2b0);lamp(-L/2,0xff3030);
+ v.rotation.y=m.axis=='h'?0:-Math.PI/2;v.traverse(o=>{if(o.isMesh)o.castShadow=true});
+ const lab=label(m.id);lab.position.y=top+.01;g.add(lab);return{g,bodyMat}}
+function buildMeshes(){while(grp.children.length)grp.remove(grp.children[0]);rad=N*2.3;setCam();
+ const base=new THREE.Mesh(new THREE.BoxGeometry(N+.5,.3,N+.5),new THREE.MeshStandardMaterial({color:0x3a3a4a}));base.position.y=-.16;base.receiveShadow=true;grp.add(base);
+ const gh=new THREE.GridHelper(N,N,0x7a7a92,0x7a7a92);gh.position.y=.01;grp.add(gh);
+ const wm=new THREE.MeshStandardMaterial({color:0x55556a}),h=N/2;
+ const wall=(x,z,w,d)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,.5,d),wm);m.position.set(x,.1,z);m.castShadow=true;grp.add(m)};
+ wall(0,-h-.125,N+.5,.25);wall(0,h+.125,N+.5,.25);wall(-h-.125,0,.25,N);
+ const top=exitRow,bot=N-exitRow-1;if(top>0)wall(h+.125,-h+top/2,.25,top);if(bot>0)wall(h+.125,h-bot/2,.25,bot);
+ const ex=new THREE.Mesh(new THREE.PlaneGeometry(1.8,.9),new THREE.MeshBasicMaterial({color:0xff5566,transparent:true,opacity:.4}));ex.rotation.x=-Math.PI/2;ex.position.set(h+1,.02,exitRow+.5-h);grp.add(ex);
+ meshes=meta.map((m,i)=>{const{g,bodyMat}=vehicle(m,i);g.userData={body:{material:bodyMat},bump:0,bd:[0,0],hint:0,cx:0,cz:0,tx:0,tz:0};grp.add(g);return g});
+ meta.forEach((_,i)=>place(i,true))}
+function place(i,snap){const m=meta[i],u=meshes[i].userData;u.tx=(m.axis=='h'?pos[i]+m.len/2:m.lane+.5)-N/2;u.tz=(m.axis=='h'?m.lane+.5:pos[i]+m.len/2)-N/2;if(snap){u.cx=u.tx;u.cz=u.tz}}
+function confetti(){const h=N/2;for(let k=0;k<60;k++){const m=new THREE.Mesh(new THREE.BoxGeometry(.1,.1,.1),new THREE.MeshBasicMaterial({color:new THREE.Color().setHSL(Math.random(),.8,.6)}));m.position.set(h+.5,.5,exitRow+.5-h);scene.add(m);parts.push({m,v:[Math.random()*.05,.06+Math.random()*.08,(Math.random()-.5)*.1],life:90})}}
+const clock=new THREE.Clock();
+(function loop(){requestAnimationFrame(loop);const t=clock.getElapsedTime();
+ meshes.forEach(g=>{const u=g.userData,k=won&&g===meshes[0]?.06:.2;u.cx+=(u.tx-u.cx)*k;u.cz+=(u.tz-u.cz)*k;const s=Math.sin(t*45)*.09*u.bump;g.position.set(u.cx+u.bd[0]*s,0,u.cz+u.bd[1]*s);u.bump=Math.max(0,u.bump-.06);
+  u.hint=Math.max(0,u.hint-.012);u.body.material.emissiveIntensity=u.hint*(.25+.25*Math.sin(t*14))});
+ parts=parts.filter(p=>{p.m.position.x+=p.v[0];p.m.position.y+=p.v[1];p.m.position.z+=p.v[2];p.v[1]-=.003;if(--p.life<=0){scene.remove(p.m);return false}return true});
+ R.render(scene,cam)})();
+
+/* ---------- game flow ---------- */
+function render(){$('moves').textContent=moves;$('status').textContent=won?'Cleared!':'In progress';$('win').classList.toggle('show',won)}
+function dirName(i,d){return meta[i].axis=='h'?(d>0?'right':'left'):(d>0?'down':'up')}
+function command(raw){raw=raw.trim().toLowerCase().replace(/\s+/g,' ');if(!raw||busy)return;
+ if(won){log('SYSTEM','Already cleared. Reset or start a new puzzle.','system');return}
+ log('viewer'+(++viewer),raw);
+ if(raw==='hint'){const a=analyze(pos,150000);if(!a){log('SYSTEM','Hint unavailable.','error');return}const v=0,p=pathFrom(a,0);if(!p.length){meshes[0].userData.hint=1;log('SYSTEM','Hint: red right (exit!)','system');return}
+  const[i,d]=p[0];meshes[i].userData.hint=1;log('SYSTEM','Hint: '+meta[i].id+' '+dirName(i,d),'system');return}
+
+ const[id,dir,...ex]=raw.split(' '),i=meta.findIndex(m=>m.id===id);
+ if(i<0||ex.length||!['left','right','up','down'].includes(dir)){log('SYSTEM','Invalid command. Try: blue right','error');return}
+ const m=meta[i],horiz=dir=='left'||dir=='right';
+ if(horiz!==(m.axis=='h')){log('SYSTEM',id+' cannot move '+dir+'.','error');return}
+ const d=dir=='right'||dir=='down'?1:-1,at=d>0?pos[i]+m.len:pos[i]-1;
+ if(i===0&&d>0&&pos[0]+m.len===N){won=true;moves++;meshes[0].userData.tx=N/2+4;confetti();log('SYSTEM','Success! RED escaped through the exit!','success');render();return}
+ if(!free(grid(pos),m,at)){const u=meshes[i].userData;u.bump=1;u.bd=m.axis=='h'?[d,0]:[0,d];log('SYSTEM','Move blocked!','error');return}
+ pos[i]+=d;place(i);moves++;log('SYSTEM',id+' moved '+dir+'.','success');render()}
+function reset(){pos=start.slice();moves=0;won=false;chat.replaceChildren();log('SYSTEM','Welcome! Help the red car escape.','system');buildMeshes();render()}
+function newPuzzle(){if(busy)return;busy=true;$('status').textContent='Generating…';setTimeout(()=>{const key=$('level').value;generate(key);const c=LV[key],n=info.path.length+1;
+  $('info').textContent='Min '+n+' moves ('+(slides(info.path)+1)+' slides) · '+info.states.toLocaleString()+' reachable states'+(info.inRange?'':' · closest to '+c.min+'–'+c.max);
+  busy=false;reset()},30)}
+$('form').addEventListener('submit',e=>{e.preventDefault();command($('command').value);$('command').value='';$('command').focus()});
+document.querySelectorAll('[data-cmd]').forEach(b=>b.addEventListener('click',()=>command(b.dataset.cmd)));
+$('hint').addEventListener('click',()=>command('hint'));$('reset').addEventListener('click',()=>{if(!busy)reset()});$('new').addEventListener('click',newPuzzle);$('level').addEventListener('change',newPuzzle);
+newPuzzle();
+</script>
+</body>
+</html>
