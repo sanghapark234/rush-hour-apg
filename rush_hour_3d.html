@@ -3,31 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rush Hour Live 3D</title>
-<style>
-:root{--bg:#f3f1f8;--panel:#fff;--line:#d9d6e6;--fg:#1c1b26;--mut:#666577;--inset:#f7f6fb;--btn:#ebe8f5;--acc:#9146ff;--ok:#12805a;--err:#c0303c;--usr:#7a3fd6;color-scheme:light;font-family:Inter,system-ui,Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0e13;--panel:#1b1b24;--line:#343440;--fg:#f5f5fa;--mut:#a7a6b5;--inset:#111118;--btn:#30303d;--ok:#7de4ad;--err:#ff9292;--usr:#b78aff;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0e0e13;--panel:#1b1b24;--line:#343440;--fg:#f5f5fa;--mut:#a7a6b5;--inset:#111118;--btn:#30303d;--ok:#7de4ad;--err:#ff9292;--usr:#b78aff;color-scheme:dark}
-*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;padding:24px;background:var(--bg);color:var(--fg)}
-header{max-width:1150px;margin:0 auto 18px}h1{margin:0;font-size:26px}header p{margin:6px 0 0;color:var(--mut);font-size:14px}
-.layout{max-width:1150px;margin:auto;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);gap:18px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-select,button{background:var(--btn);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font:inherit;font-size:13px;cursor:pointer}
-button.pri,button.send{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
-button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-#stage{width:100%;height:min(62vh,470px);border-radius:12px;background:var(--inset);overflow:hidden;cursor:grab;touch-action:none;position:relative}
-#stage:active{cursor:grabbing}#stage canvas{display:block}
-.stats{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--mut)}.stats strong{color:var(--fg)}
-.win{display:none;margin-top:12px;padding:12px;border-radius:10px;text-align:center;font-weight:800;background:#d8f5e8;color:#0d6a4a}.win.show{display:block}
-.chat{height:300px;overflow:auto;background:var(--inset);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13px}
-.chat-line{line-height:1.5;overflow-wrap:anywhere}.user{font-weight:800;color:var(--usr)}.system{color:var(--mut)}.success{color:var(--ok)}.error{color:var(--err)}
-.chat-input{display:flex;gap:8px;margin-top:10px}input{min-width:0;flex:1;background:var(--inset);border:1px solid var(--line);border-radius:9px;color:var(--fg);padding:11px;font:inherit}
-.ex{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.ex button{font-size:12px}
-.help{color:var(--mut);font-size:12px;line-height:1.7;margin:14px 0 0}
-@media(max-width:820px){body{padding:14px}.layout{grid-template-columns:1fr}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
-</style>
+<link rel="stylesheet" href="css/rush_hour_3d.css">
 </head>
 <body>
 <header><h1>🚗 Rush Hour Live 3D</h1><p>Chat-controlled sliding puzzle. Drag the board to rotate the camera.</p></header>
