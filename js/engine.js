@@ -1,6 +1,7 @@
-/* Rush Hour Live 3D — puzzle engine
+/* Rush Hour Live — puzzle engine
  * Board state, move legality, exact BFS analysis, and puzzle generation.
- * Pure logic: no DOM or three.js dependencies. Loaded before scene.js and game.js.
+ * Pure logic: no DOM or three.js dependencies. Shared by index.html and
+ * rush_hour_3d.html (both keep their own view/game-flow code).
  */
 
 const rnd = n => Math.floor(Math.random() * n);
@@ -61,8 +62,11 @@ function clear(p) {
 /* ---------- exact analysis ----------
  * Explore the whole reachable component, then multi-source BFS from every
  * winning state: exact minimum moves for all states.
+ * `done(p)` optionally overrides which states count as winning
+ * (default: red car flush with the right edge).
  */
-function analyze(p0, limit) {
+function analyze(p0, limit, done) {
+  const win = done || (p => p[0] == N - 2);
   const S = [p0], idx = new Map([[p0.join(), 0]]);
   for (let h = 0; h < S.length; h++) {
     if (S.length >= limit) return null;
@@ -74,7 +78,7 @@ function analyze(p0, limit) {
     }
   }
   const D = new Int16Array(S.length).fill(-1), par = new Int32Array(S.length).fill(-1), Q = [];
-  S.forEach((p, i) => { if (p[0] == N - 2) { D[i] = 0; Q.push(i); } });
+  S.forEach((p, i) => { if (win(p)) { D[i] = 0; Q.push(i); } });
   for (let h = 0; h < Q.length; h++) {
     const u = Q[h];
     for (const [i, d] of nbrs(S[u])) {
@@ -84,7 +88,7 @@ function analyze(p0, limit) {
       if (D[v] < 0) { D[v] = D[u] + 1; par[v] = u; Q.push(v); }
     }
   }
-  return { S, D, par };
+  return { S, D, par, idx };
 }
 
 function pathFrom(a, v) {
@@ -151,13 +155,13 @@ function generate(key) {
     const d = a.D[pick] + 1, g = d < c.min ? c.min - d : d > c.max ? d - c.max : 0;
     if (g < gap) {
       gap = g;
-      best = { meta, p: a.S[pick], path: pathFrom(a, pick), states: a.S.length, inRange: g == 0 };
+      best = { meta, p: a.S[pick], path: pathFrom(a, pick), states: a.S.length, inRange: g == 0, analysis: a, par: a.D[pick] + 1 };
     }
   }
 
   if (!best) {
     meta = [{ id: 'red', len: 2, axis: 'h', lane: exitRow, color: '#e54857' }];
-    best = { meta, p: [0], path: [], states: 1, inRange: false };
+    best = { meta, p: [0], path: [], states: 1, inRange: false, analysis: null, par: 1 };
   }
   meta = best.meta;
   start = best.p.slice();

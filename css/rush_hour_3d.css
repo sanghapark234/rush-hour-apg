@@ -178,6 +178,22 @@ input:focus-visible {
 .success { color: var(--ok); }
 .error { color: var(--err); }
 
+/* state-effect badge shown next to a chat command */
+.effect {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--btn);
+  border: 1px solid var(--line);
+}
+.effect.good { color: var(--ok); }
+.effect.bad { color: var(--err); }
+.effect.same { color: var(--mut); }
+
 .chat-input { display: flex; gap: 8px; margin-top: 10px; }
 
 input {
