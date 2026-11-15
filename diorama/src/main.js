@@ -264,7 +264,7 @@ async function newPuzzle() {
   } finally { busy = false; }
   boardInfo = stage.buildBoard(puzzle.N, puzzle.exitRow, puzzle.walls);
   stage.board.add(carGroup);
-  $('info').textContent = `${puzzle.N}×${puzzle.N} lot · shortest solution: ${puzzle.moves} moves in ${puzzle.slides} slides · ${puzzle.states.toLocaleString()} reachable positions`;
+  $('info').textContent = `${puzzle.N}×${puzzle.N} lot · shortest solution: ${puzzle.moves} moves`;
   chat.replaceChildren(); sys('Help the red car reach the exit. Type a colour and a direction.');
   legend(); reset(true);
   if (phase === 'play') flyTo(camName, 1.2, () => { controls.enabled = true; });
@@ -330,4 +330,4 @@ Promise.all([stage.ready, newPuzzle()]).then(() => {
     for (const g of cars) Object.assign(g.userData, { wait: 0, y: 0, landed: true });
     setCam(camName); tween = null; controls.enabled = true; render();
   }
-}, (err) => { failed = true; $('start').textContent = 'Could not load'; sys('Loading failed: ' + err.message, 'error'); throw err; });
+}, (err) => { failed = true; $('start').textContent = 'Could not load'; $('start').style.setProperty('--loaded', '0%'); sys('Loading failed: ' + err.message, 'error'); throw err; });

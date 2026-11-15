@@ -101,6 +101,10 @@ Before this work it was 27.9 MB in 70 requests. A repeat visit transfers almost 
 
 - **Images** are WebP. The backdrop loads in two steps: a 2k photo for the first frame, then
   the 6k photo, which replaces it without a pause.
+- **Loading screen**: a 40-pixel WebP of the welcome view is inline in `index.html` (`#preview`)
+  and shown blurred until the first frame. To renew it after a change to the welcome view, take
+  a screenshot with `#welcome` hidden, run `magick shot.png -resize 40x -quality 60 lq.webp`,
+  and put the Base64 text of the file in the `#preview` rule.
 - **Models** are one `.glb` file each, with Meshopt-compressed geometry and WebP textures.
 - **Lighting** uses a 512 × 256 HDR map. A close-up of the cars lit by the 1024 × 512 map
   showed no visible difference.

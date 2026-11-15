@@ -47,7 +47,7 @@ body { background: #14110e; color: var(--ink); font: 15px/1.45 var(--text); over
 #stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .9s ease; touch-action: none; }
 .ready #stage { opacity: 1; }
 /* Shown until the first frame: a 40-pixel picture of the scene, blurred, inline so it needs no request. */
-#preview { position: fixed; inset: -40px; background: center / cover url("data:image/webp;base64,UklGRkABAABXRUJQVlA4IDQBAAAQBwCdASooABgAPrVMnUsnJCKhqqwA4BaJQBbfbE8Ur/4kradAU5IJoLiWTFqIVPxni7iChx5CCxddH1F5xCegzgD+wqN7T7lFILbX77EyCgrdVJYP7ESnHX/W2E6cfa57ijE+cz8QVs+f1qsFcRhkQcD+ENb4Hfm2dJzchG0BVElZ7BmuhqXTo/NugzvVSHqkG5dbifVAt8IgZY2oNnn5jSIdU+UpVQ+UnNH8n0Ivpd9eJoD12o4lMK7XDeO5Js5kJ7zmnDKamoS3A9pz/3uPGYdOupsgysTTi+hIajfvCZH0bLw0TdROtHbHV0Hu79/fX0H3TiEWgsrr7v61WeJlGiuRZLmWmpSwxWwQxlwMiUnEjDZYgDDOuZpJXXloe728px8BZqVR7x9221merXxUQAAAAA=="); filter: blur(28px) brightness(.8); }
+#preview { position: fixed; inset: -90px; /* wider than the blur reaches, so the edges stay full */ background: center / cover url("data:image/webp;base64,UklGRkABAABXRUJQVlA4IDQBAAAQBwCdASooABgAPrVMnUsnJCKhqqwA4BaJQBbfbE8Ur/4kradAU5IJoLiWTFqIVPxni7iChx5CCxddH1F5xCegzgD+wqN7T7lFILbX77EyCgrdVJYP7ESnHX/W2E6cfa57ijE+cz8QVs+f1qsFcRhkQcD+ENb4Hfm2dJzchG0BVElZ7BmuhqXTo/NugzvVSHqkG5dbifVAt8IgZY2oNnn5jSIdU+UpVQ+UnNH8n0Ivpd9eJoD12o4lMK7XDeO5Js5kJ7zmnDKamoS3A9pz/3uPGYdOupsgysTTi+hIajfvCZH0bLw0TdROtHbHV0Hu79/fX0H3TiEWgsrr7v61WeJlGiuRZLmWmpSwxWwQxlwMiUnEjDZYgDDOuZpJXXloe728px8BZqVR7x9221merXxUQAAAAA=="); filter: blur(28px) brightness(.8); }
 .ready #preview { visibility: hidden; transition: visibility 0s 1s; }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -73,7 +73,7 @@ h1 span { display: block; }
 #start { border: 0; border-radius: 12px; background: var(--red); color: #fff; font: 800 22px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; padding: 17px 34px 15px; box-shadow: 0 10px 30px rgba(0,0,0,.4), inset 0 -3px 0 rgba(0,0,0,.22); transition: transform .12s ease, background .12s ease; }
 #start:hover:not(:disabled) { background: #db2a35; }
 #start:active:not(:disabled) { transform: translateY(2px) scale(.98); }
-#start:disabled { background: linear-gradient(90deg, var(--red) var(--loaded, 0%), #6f6a62 0); cursor: progress; transition: none; }
+#start:disabled { background-image: linear-gradient(90deg, transparent var(--loaded, 0%), #6f6a62 0); cursor: progress; } /* grey covers the part not loaded yet */
 .go small { color: #fbf6ea; opacity: .8; font-size: 13px; text-shadow: 0 1px 10px rgba(0,0,0,.6); }
 
 /* ---- side panel: a model-kit instruction card ---- */
