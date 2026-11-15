@@ -4,36 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tiny Gridlock — a chat-controlled parking puzzle</title>
-<script type="importmap">
-{ "imports": {
-  "three": "./vendor/three/build/three.module.js",
-  "three/addons/": "./vendor/three/examples/jsm/",
-  "three/examples/jsm/": "./vendor/three/examples/jsm/",
-  "postprocessing": "./vendor/postprocessing/index.js",
-  "n8ao": "./vendor/n8ao/N8AO.js"
-} }
-</script>
-<!-- Fetch the whole module graph and the puzzle bank at once, not one import level at a time. -->
-<link rel="modulepreload" href="./vendor/three/build/three.core.js">
-<link rel="modulepreload" href="./vendor/three/build/three.module.js">
-<link rel="modulepreload" href="./vendor/postprocessing/index.js">
-<link rel="modulepreload" href="./vendor/n8ao/N8AO.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/postprocessing/Pass.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/controls/OrbitControls.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/loaders/HDRLoader.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/loaders/GLTFLoader.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/libs/meshopt_decoder.module.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/objects/GroundedSkybox.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/geometries/RoundedBoxGeometry.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/utils/BufferGeometryUtils.js">
-<link rel="modulepreload" href="./vendor/three/examples/jsm/utils/SkeletonUtils.js">
-<link rel="modulepreload" href="./src/main.js">
-<link rel="modulepreload" href="./src/scene.js">
-<link rel="modulepreload" href="./src/vehicles.js">
-<link rel="modulepreload" href="./src/engine.js">
-<link rel="modulepreload" href="./src/adapt.js">
-<link rel="modulepreload" href="./src/audio.js">
-<link rel="preload" href="./src/puzzles.json" as="fetch" type="application/json" crossorigin>
 <style>
 :root {
   --paper: #f4eddc; --paper-2: #e9dfc8; --ink: #26221d; --ink-2: #6a6257; --rule: #cfc3a8;

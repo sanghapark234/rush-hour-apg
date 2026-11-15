@@ -11,17 +11,35 @@ hobby workbench. Chat commands slide die-cast cars until the red car reaches the
 The page loads ES modules, images and models, so it needs an HTTP server.
 Opening `index.html` from the file system does not work.
 
+You need [Bun](https://bun.sh). The libraries (three.js 0.187.0, postprocessing 6.39.6 and
+n8ao 2.0.2) are npm packages in `package.json`; `bun.lock` fixes their versions.
+
 ```sh
 cd diorama
-bun serve.js                 # http://127.0.0.1:8000/
+bun install                  # once: the libraries and the tools
+bun run dev                  # development server that reloads the page after an edit
+```
+
+To show the game to other people, build it and serve the build:
+
+```sh
+bun run build                # writes dist/
+bun run serve                # http://127.0.0.1:8000/
 bun serve.js 0.0.0.0 8000    # reachable from other machines
 ```
 
-Open the printed address in a desktop browser. No build step and no network access are needed:
-three.js 0.187.0, postprocessing 6.39.6 and n8ao 2.0.2 are in `vendor/`, minified.
+Open the printed address in a desktop browser. The built game needs no network access.
+Any static server can serve `dist/`, but `serve.js` compresses the text files and lets the
+browser reuse its cached copies (see Load time).
 
-Any static server works, but use `serve.js` to show the game to other people: it compresses
-the text files and lets the browser reuse its cached copies (see Load time).
+The tools come from [Vite+](https://viteplus.dev) (`vite.config.ts`): Vite builds the game,
+Oxlint checks the code and Oxfmt formats it.
+
+```sh
+bun run check                # format check and lint
+bun run fix                  # apply the format and the lint fixes
+bun test                     # solver, bank, Auto level and server tests
+```
 
 ## Play
 
@@ -181,14 +199,17 @@ client only needs to call it for each message.
 | `tools/solver.test.js` | Tests: the solver against a plain search, the walk model, and every bank entry. |
 | `tools/adapt.test.js` | Tests: the Auto level. |
 | `tools/serve.test.js` | Tests: the server's path check, cache validation and compression. |
-| `tools/assets.sh` | Converts the original images and models into `assets/`. |
-| `serve.js` | Static server with compression and cache validation. |
+| `tools/assets.sh` | Converts the original images and models into `public/assets/`. |
+| `public/assets/` | Images and models. The build copies them to `dist/assets/` unchanged. |
+| `package.json`, `bun.lock` | The libraries, the tools and the commands. |
+| `vite.config.ts` | Build, lint and format settings (Vite+). |
+| `serve.js` | Static server for `dist/` with compression and cache validation. |
 | `garage.html` | Developer page that shows every vehicle model. |
 
 ## Load time
 
-A first visit transfers about 6.3 MB in 37 requests; the first frame needs 4.7 MB of it.
-Before this work it was 27.9 MB in 70 requests. A repeat visit transfers almost nothing: the browser checks each file and the server answers "304 Not Modified".
+A first visit to the built game transfers about 6.2 MB in 20 requests.
+Before the load-time work it was 27.9 MB in 70 requests. A repeat visit transfers almost nothing: the browser checks each file and the server answers "304 Not Modified".
 
 - **Images** are WebP. The backdrop loads in two steps: a 2k photo for the first frame, then
   the 6k photo, which replaces it without a pause.
@@ -199,15 +220,15 @@ Before this work it was 27.9 MB in 70 requests. A repeat visit transfers almost 
 - **Models** are one `.glb` file each, with Meshopt-compressed geometry and WebP textures.
 - **Lighting** uses a 512 × 256 HDR map. A close-up of the cars lit by the 1024 × 512 map
   showed no visible difference.
-- **Code** in `vendor/` is minified, the three.js add-ons included. `index.html` lists every module in a `modulepreload` link,
-  so the browser fetches all of them at once and not one import level at a time.
+- **Code**: the build puts the game and its libraries into three minified files (page, engine,
+  solver worker) and leaves out library code that the game does not use. The page preloads
+  the engine file, so the browser fetches the code at once and not one import level at a time.
 - **Server**: `serve.js` sends text and the HDR map as Brotli or gzip, and gives every file an
-  `ETag` with `Cache-Control: no-cache`. File names carry no version, so the browser must
-  check each file, but it never downloads an unchanged file twice.
+  `ETag` with `Cache-Control: no-cache`. The browser checks each file, but it never downloads
+  an unchanged file twice.
 
-`tools/assets.sh` rebuilds `assets/` from the original Poly Haven downloads.
-To update a library, copy its ES module build and run
-`bun build <file> --no-bundle --minify --target browser --outfile <file>`.
+`tools/assets.sh` rebuilds `public/assets/` from the original Poly Haven downloads.
+To update a library, change its version in `package.json` and run `bun install`.
 
 ## Credits
 
@@ -216,4 +237,5 @@ HDRI and its backdrop photo; the `asphalt_02` and `plywood` textures; and the mo
 `wooden_table_02`, `desk_lamp_arm_01`, `spray_paint_bottles`, `pliers`, `screwdrivers_02`,
 `measuring_tape_01`, `potted_plant_04` and `street_lamp_01`.
 
-Libraries: three.js (MIT), postprocessing (Zlib), n8ao (ISC). Their licence files are in `vendor/`.
+Libraries: three.js (MIT), postprocessing (Zlib), n8ao (ISC). Their licence files are in their packages under `node_modules/`.
+The build keeps the licence notices of three.js and postprocessing in the engine file.

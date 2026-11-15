@@ -68,7 +68,7 @@ sizes.forEach((N, col) => {
   for (let m = 0; m <= xMax; m += 40) text(x(m), TOP2 + PH + 16, m, { anchor: 'middle', fill: MUTED });
   text(x0 + PW / 2, TOP2 + PH + 36, 'shortest solution (moves)', { anchor: 'middle' });
 
-  const filled = [...cells].length, held = new Set(picks.map((e) => Math.floor(e.moves / BUCKET) + ',' + e.v.length)).size;
+  const filled = cells.size, held = new Set(picks.map((e) => Math.floor(e.moves / BUCKET) + ',' + e.v.length)).size;
   console.log(`${N}×${N}: ${found.length} layouts in ${filled} cells, up to ${Math.max(...found.map((e) => e.moves))} moves, ${Math.min(...found.map((e) => e.cars.length))}-${Math.max(...found.map((e) => e.cars.length))} vehicles; bank ${picks.length} puzzles in ${held} cells, ${Math.min(...picks.map((e) => e.v.length))}-${Math.max(...picks.map((e) => e.v.length))} vehicles`);
   for (const [key] of levels) console.log(`  ${key}: walk model ${Math.min(...bank[key].map((e) => e.effort))}-${Math.max(...bank[key].map((e) => e.effort))}, rank correlation with shortest solution ${spearman(bank[key].map((e) => e.moves), bank[key].map((e) => e.effort)).toFixed(2)}`);
 });

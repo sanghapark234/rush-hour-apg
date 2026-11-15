@@ -1,4 +1,5 @@
-// Static server for Tiny Gridlock: bun serve.js [host] [port]
+// Static server for Tiny Gridlock: bun serve.js [host] [port] [folder]
+// It serves the build in dist/ (bun run build), or another folder of this project.
 // Text files and the HDR go out as Brotli or gzip; images and models are already compressed.
 // Every response has an ETag and "Cache-Control: no-cache", so a repeat visit sends only
 // conditional requests and gets "304 Not Modified" for each file that did not change.
@@ -7,7 +8,8 @@ import { stat } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import { brotliCompress, gzip, constants as zlib } from 'node:zlib';
 
-const root = import.meta.dir;
+const root = resolve(import.meta.dir, process.argv[4] ?? 'dist');
+if (!(await stat(root + sep + 'index.html').catch(() => null))?.isFile()) { console.error(`${root} has no index.html. Run "bun run build" first.`); process.exit(1); }
 const hostname = process.argv[2] ?? '127.0.0.1';
 const port = Number(process.argv[3] ?? 8000);
 

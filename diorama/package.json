@@ -1,0 +1,22 @@
+{
+  "name": "tiny-gridlock",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview",
+    "serve": "bun serve.js",
+    "check": "vp check",
+    "fix": "vp check --fix",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "n8ao": "2.0.2",
+    "postprocessing": "6.39.6",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "vite-plus": "1.6.0"
+  }
+}

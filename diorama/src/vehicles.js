@@ -86,7 +86,7 @@ function loft(stations, crease = 0.7, bounds) {
     pos.push(s.x, (s.y0 + s.y1) / 2, 0);
     for (let k = 0; k < SEG; k++) {
       const a = r * SEG + k, b = r * SEG + (k + 1) % SEG;
-      flip ? idx.push(ci, b, a) : idx.push(ci, a, b);
+      if (flip) idx.push(ci, b, a); else idx.push(ci, a, b);
     }
   }
   const g = new THREE.BufferGeometry();

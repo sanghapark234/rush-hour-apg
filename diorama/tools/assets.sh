@@ -1,5 +1,5 @@
 #!/bin/sh
-# Rebuilds diorama/assets from the original Poly Haven downloads (CC0, polyhaven.com).
+# Rebuilds diorama/public/assets from the original Poly Haven downloads (CC0, polyhaven.com).
 # Usage: tools/assets.sh <source-dir> [<assets-dir>]
 # The source directory holds, with the Poly Haven file names:
 #   artist_workshop_8k.jpg, artist_workshop_1k.hdr,
@@ -8,7 +8,7 @@
 # Needs cwebp (libwebp), magick (ImageMagick, HDRI build) and bun.
 set -eu
 src=$1
-out=${2:-"$(dirname "$0")/../assets"}
+out=${2:-"$(dirname "$0")/../public/assets"}
 mkdir -p "$out/models"
 
 # Backdrop photo: a 2k version for the first frame and a 6k version that replaces it.
