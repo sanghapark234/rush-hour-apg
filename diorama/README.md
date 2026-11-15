@@ -213,6 +213,7 @@ The choices for play through Twitch chat, with the decisions taken so far, are i
 | `tools/solver.test.js`     | Tests: the solver against a plain search, the walk model, and every bank entry.             |
 | `tools/adapt.test.js`      | Tests: the Auto level.                                                                      |
 | `tools/serve.test.js`      | Tests: the server's path check, cache validation and compression.                           |
+| `tools/flow.js`            | Tests: the game flow in a headless browser (`bun run test:flow`).                           |
 | `tools/assets.sh`          | Converts the original images and models into `public/assets/`.                              |
 | `public/assets/`           | Images and models. The build copies them to `dist/assets/` unchanged.                       |
 | `package.json`, `bun.lock` | The libraries, the tools and the commands.                                                  |

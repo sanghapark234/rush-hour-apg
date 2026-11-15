@@ -4,15 +4,19 @@
 import { chromium } from 'playwright';
 import { existsSync } from 'node:fs';
 
-const root = new URL('..', import.meta.url).pathname;
+const root = import.meta.dir + '/../';
 if (!existsSync(root + 'dist/index.html')) {
   console.error('dist/ is missing. Run: vp build');
   process.exit(1);
 }
 const port = 20000 + Math.floor(Math.random() * 20000);
 const server = Bun.spawn(['bun', root + 'serve.js', '127.0.0.1', String(port), 'dist'], { cwd: root, stdout: 'pipe', stderr: 'inherit' });
-await server.stdout.getReader().read(); // the address line: the server listens
-const browser = await chromium.launch();
+// The server prints its address when it listens. A closed stream means that it did not start.
+if ((await server.stdout.getReader().read()).done) {
+  console.error(`The server did not start on port ${port}. Run the tests again.`);
+  process.exit(1);
+}
+let browser;
 
 // The helpers that run inside the page.
 const inPage = () => {
@@ -82,7 +86,10 @@ const tests = {
       const before = JSON.stringify(window.apg.state());
       for (const text of ['hello', 'blue sideways', 'red right 0', 'red right 8', 'nocolour left', '<b>x</b>', 'blue right 2 3', ' ', 'stop'])
         await t.send(text);
-      return { same: before === JSON.stringify(window.apg.state()), html: document.querySelector('#chat b b') !== null };
+      return {
+        same: before === JSON.stringify(window.apg.state()),
+        html: document.querySelectorAll('#chat *').length !== 2 * document.querySelectorAll('#chat > .line').length,
+      };
     });
     check(r.same, 'an invalid message changed the game');
     check(!r.html, 'a message was rendered as HTML');
@@ -174,18 +181,21 @@ const tests = {
 };
 
 let failed = 0;
-for (const [name, run] of Object.entries(tests)) {
-  const context = browser.contexts();
-  try {
-    await run();
-    console.log('pass  ' + name);
-  } catch (err) {
-    failed++;
-    console.log('FAIL  ' + name + '\n      ' + err.message.split('\n')[0]);
+try {
+  browser = await chromium.launch();
+  for (const [name, run] of Object.entries(tests)) {
+    try {
+      await run();
+      console.log('pass  ' + name);
+    } catch (err) {
+      failed++;
+      console.log('FAIL  ' + name + '\n      ' + err.message.split('\n')[0]);
+    }
+    for (const c of browser.contexts()) await c.close();
   }
-  for (const c of browser.contexts()) if (!context.includes(c)) await c.close();
+} finally {
+  await browser?.close();
+  server.kill();
 }
-await browser.close();
-server.kill();
 console.log(`${Object.keys(tests).length - failed} pass, ${failed} fail`);
 process.exit(failed ? 1 : 0);
