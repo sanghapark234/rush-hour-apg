@@ -1,0 +1,313 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v5.1.20",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "pliers_b"
+    },
+    {
+      "mesh": 1,
+      "name": "pliers_a"
+    },
+    {
+      "mesh": 2,
+      "name": "pliers_pin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "pliers",
+      "normalTexture": {
+        "index": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "handle_02_low.001",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    },
+    {
+      "name": "handle_01_low.001",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "NORMAL": 5,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 0
+        }
+      ]
+    },
+    {
+      "name": "center_low.001",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 8,
+            "NORMAL": 9,
+            "TEXCOORD_0": 10
+          },
+          "indices": 11,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/jpeg",
+      "name": "pliers_nor_gl",
+      "uri": "textures/pliers_nor_gl_1k.jpg"
+    },
+    {
+      "mimeType": "image/jpeg",
+      "name": "pliers_diff",
+      "uri": "textures/pliers_diff_1k.jpg"
+    },
+    {
+      "mimeType": "image/jpeg",
+      "name": "pliers_metal-pliers_rough",
+      "uri": "textures/pliers_arm_1k.jpg"
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 1741,
+      "max": [
+        0.027644846588373184,
+        0.049919553101062775,
+        0.008992722257971764
+      ],
+      "min": [
+        -0.012741262093186378,
+        -0.1298636794090271,
+        -0.008992730639874935
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 1741,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 1741,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 6459,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 1789,
+      "max": [
+        0.012741225771605968,
+        0.049919553101062775,
+        0.008992722257971764
+      ],
+      "min": [
+        -0.027644846588373184,
+        -0.1298636794090271,
+        -0.008992730639874935
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 1789,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 6,
+      "componentType": 5126,
+      "count": 1789,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 7,
+      "componentType": 5123,
+      "count": 6597,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 8,
+      "componentType": 5126,
+      "count": 192,
+      "max": [
+        0.004889736883342266,
+        0.004889737349003553,
+        0.004582571797072887
+      ],
+      "min": [
+        -0.004889736883342266,
+        -0.004889737349003553,
+        -0.004582571797072887
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 9,
+      "componentType": 5126,
+      "count": 192,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 10,
+      "componentType": 5126,
+      "count": 192,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 11,
+      "componentType": 5123,
+      "count": 564,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 20892,
+      "byteOffset": 0,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 20892,
+      "byteOffset": 20892,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 13928,
+      "byteOffset": 41784,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 12918,
+      "byteOffset": 55712,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 21468,
+      "byteOffset": 68632,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 21468,
+      "byteOffset": 90100,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 14312,
+      "byteOffset": 111568,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 13194,
+      "byteOffset": 125880,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2304,
+      "byteOffset": 139076,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2304,
+      "byteOffset": 141380,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1536,
+      "byteOffset": 143684,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1128,
+      "byteOffset": 145220,
+      "target": 34963
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 146348,
+      "uri": "pliers.bin"
+    }
+  ]
+}

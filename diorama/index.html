@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tiny Gridlock — a chat-controlled parking puzzle</title>
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/build/three.module.js",
+  "three/addons/": "./vendor/three/examples/jsm/",
+  "three/examples/jsm/": "./vendor/three/examples/jsm/",
+  "postprocessing": "./vendor/postprocessing/index.js",
+  "n8ao": "./vendor/n8ao/N8AO.js"
+} }
+</script>
+<style>
+:root {
+  --paper: #f4eddc; --paper-2: #e9dfc8; --ink: #26221d; --ink-2: #6a6257; --rule: #cfc3a8;
+  --red: #c8202b; --ok: #1f7a43; --bad: #b3261e;
+  --display: "Avenir Next Condensed", "DIN Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --text: "Avenir Next", "Helvetica Neue", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: #14110e; color: var(--ink); font: 15px/1.45 var(--text); overflow: hidden; }
+#stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .9s ease; touch-action: none; }
+.ready #stage { opacity: 1; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid #f2c230; outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* ---- welcome ---- */
+#welcome { position: fixed; left: clamp(20px, 6vw, 88px); bottom: clamp(24px, 9vh, 96px); max-width: 30rem; color: #fbf6ea; text-shadow: 0 2px 22px rgba(0,0,0,.55); transition: opacity .6s ease, transform .6s ease; }
+body:not([data-phase=welcome]) #welcome { opacity: 0; transform: translateY(14px); pointer-events: none; visibility: hidden; transition: opacity .6s ease, transform .6s ease, visibility 0s .6s; }
+.kicker { font: 600 13px/1 var(--text); letter-spacing: .22em; text-transform: uppercase; opacity: .85; margin: 0 0 14px; }
+h1 { font: 800 clamp(58px, 9vw, 118px)/.86 var(--display); letter-spacing: -.01em; text-transform: uppercase; margin: 0 0 18px; }
+h1 span { display: block; }
+.lede { font-size: 17px; line-height: 1.5; margin: 0 0 22px; max-width: 26rem; }
+.lede code { font: 600 .92em var(--mono); background: rgba(20,17,14,.55); padding: .12em .42em; border-radius: 4px; text-shadow: none; }
+.levels { display: inline-flex; border-radius: 10px; background: rgba(20,17,14,.5); padding: 4px; margin: 0 0 16px; border: 0; backdrop-filter: blur(8px); text-shadow: none; }
+.levels legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.levels label { position: relative; }
+.levels input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.levels span { display: block; padding: 8px 14px; border-radius: 7px; font-weight: 600; font-size: 14px; }
+.levels input:checked + span { background: var(--paper); color: var(--ink); }
+.levels input:focus-visible + span { outline: 3px solid #f2c230; outline-offset: 2px; }
+.go { display: flex; align-items: center; gap: 16px; text-shadow: none; }
+#start { border: 0; border-radius: 12px; background: var(--red); color: #fff; font: 800 22px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; padding: 17px 34px 15px; box-shadow: 0 10px 30px rgba(0,0,0,.4), inset 0 -3px 0 rgba(0,0,0,.22); transition: transform .12s ease, background .12s ease; }
+#start:hover:not(:disabled) { background: #db2a35; }
+#start:active:not(:disabled) { transform: translateY(2px) scale(.98); }
+#start:disabled { background: #6f6a62; cursor: progress; }
+.go small { color: #fbf6ea; opacity: .8; font-size: 13px; text-shadow: 0 1px 10px rgba(0,0,0,.6); }
+
+/* ---- side panel: a model-kit instruction card ---- */
+#panel { position: fixed; top: 16px; right: 16px; bottom: 16px; width: 344px; display: flex; flex-direction: column; background: var(--paper); border-radius: 14px; box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.2); overflow: hidden; transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s ease; }
+body[data-phase=welcome] #panel, body:not([data-phase]) #panel { transform: translateX(calc(100% + 32px)); opacity: 0; visibility: hidden; }
+.head { padding: 16px 18px 12px; border-bottom: 2px solid var(--ink); display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.head strong { font: 800 26px/1 var(--display); letter-spacing: .02em; text-transform: uppercase; }
+.head span { font: 600 11px/1 var(--text); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2); }
+.stats { display: grid; grid-template-columns: auto 1fr; gap: 0 16px; padding: 12px 18px; border-bottom: 1px solid var(--rule); align-items: end; }
+.stats .n { font: 800 44px/.9 var(--display); font-variant-numeric: tabular-nums; grid-row: span 2; min-width: 2ch; }
+.stats .l { font: 600 11px/1.2 var(--text); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+#status { font-weight: 600; }
+#info { grid-column: 1 / -1; margin: 8px 0 0; font-size: 12.5px; color: var(--ink-2); }
+#legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 18px; border-bottom: 1px solid var(--rule); }
+.chip { border: 1px solid rgba(0,0,0,.18); background: #fffaf0; border-radius: 999px; padding: 3px 10px 3px 7px; font: 600 12.5px/1.4 var(--text); display: inline-flex; align-items: center; gap: 6px; }
+.chip::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+.chip:hover { background: #fff; }
+#chat { flex: 1; min-height: 60px; overflow-y: auto; padding: 10px 18px; font-size: 13.5px; background: var(--paper-2); scrollbar-width: thin; }
+.line { padding: 2px 0; overflow-wrap: anywhere; }
+.line b { font-weight: 700; margin-right: 2px; }
+.line.user b { color: #5a3fa0; }
+.line.system, .line.success, .line.error { color: var(--ink-2); }
+.line.success b { color: var(--ok); } .line.error b { color: var(--bad); } .line.error { color: var(--bad); }
+form { display: flex; gap: 8px; padding: 12px 18px 8px; border-top: 2px solid var(--ink); }
+#command { flex: 1; min-width: 0; border: 1.5px solid var(--ink); border-radius: 8px; background: #fffaf0; padding: 9px 11px; font: 500 15px var(--mono); }
+form button, .tools button, #win button { border: 1.5px solid var(--ink); border-radius: 8px; background: var(--ink); color: var(--paper); font-weight: 700; padding: 9px 14px; }
+.tools { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 18px 14px; align-items: center; }
+.tools button, .tools select { background: transparent; color: var(--ink); border: 1.5px solid var(--rule); border-radius: 8px; font-weight: 600; font-size: 13px; padding: 6px 10px; }
+.tools button:hover, .tools select:hover { border-color: var(--ink); }
+.tools button[aria-pressed=true] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.tools .sep { flex-basis: 100%; height: 0; }
+.tools .cap { font: 600 11px/1 var(--text); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin-right: 2px; }
+.help { margin: 0; padding: 0 18px 10px; font-size: 12.5px; color: var(--ink-2); }
+.help code { font: 600 12px var(--mono); color: var(--ink); }
+
+/* ---- win card ---- */
+#win { position: fixed; left: clamp(20px, 6vw, 88px); bottom: clamp(24px, 9vh, 96px); width: min(26rem, calc(100vw - 40px)); background: var(--paper); border-radius: 14px; padding: 22px 24px; box-shadow: 0 24px 60px rgba(0,0,0,.5); animation: rise .6s cubic-bezier(.2,.8,.2,1); }
+#win h2 { font: 800 64px/.9 var(--display); text-transform: uppercase; margin: 0 0 10px; color: var(--red); }
+#win p { margin: 0 0 6px; } #win .big { font-size: 18px; font-weight: 600; }
+#win .row { display: flex; gap: 8px; margin-top: 16px; }
+#win button.alt { background: transparent; color: var(--ink); }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+
+@media (max-width: 859px) {
+  #panel { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; height: 46vh; }
+  body[data-phase=welcome] #panel, body:not([data-phase]) #panel { transform: translateY(calc(100% + 16px)); }
+  .stats .n { font-size: 32px; } .help { display: none; }
+  #win { left: 12px; bottom: auto; top: 12px; } #win h2 { font-size: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before { transition-duration: .01s !important; animation-duration: .01s !important; } }
+</style>
+</head>
+<body data-phase="welcome">
+<canvas id="stage" aria-label="A scale-model car park on a workbench. Toy cars slide when chat sends commands."></canvas>
+
+<main id="welcome">
+  <p class="kicker">Audience participation game · 1:43 scale</p>
+  <h1><span>Tiny</span><span>Gridlock</span></h1>
+  <p class="lede">Chat drives the cars. Type <code>blue right</code> to slide a car, and work together to get the red one out of the car park.</p>
+  <fieldset class="levels">
+    <legend>Difficulty</legend>
+    <label><input type="radio" name="level" value="easy"><span>Easy</span></label>
+    <label><input type="radio" name="level" value="normal" checked><span>Normal</span></label>
+    <label><input type="radio" name="level" value="hard"><span>Hard</span></label>
+    <label><input type="radio" name="level" value="expert"><span>Expert</span></label>
+  </fieldset>
+  <div class="go">
+    <button id="start" type="button" disabled>Setting up…</button>
+    <small>Sound on. Drag to look around.</small>
+  </div>
+</main>
+
+<aside id="panel" aria-label="Game panel">
+  <div class="head"><strong>Tiny Gridlock</strong><span>Chat plays</span></div>
+  <div class="stats">
+    <div class="n" id="moves">0</div>
+    <div class="l">Moves</div>
+    <div id="status" role="status">In play</div>
+    <p id="info"></p>
+  </div>
+  <div id="legend" aria-label="Vehicles in this puzzle"></div>
+  <div id="chat" role="log" aria-live="polite" aria-label="Chat"></div>
+  <form id="form" autocomplete="off">
+    <input id="command" aria-label="Chat command" placeholder="blue right" spellcheck="false" autocapitalize="off">
+    <button type="submit">Send</button>
+  </form>
+  <p class="help">Commands: <code>colour left|right|up|down</code>, <code>hint</code>, <code>cam top</code>.</p>
+  <div class="tools">
+    <button id="hint" type="button">Hint</button>
+    <button id="reset" type="button">Reset</button>
+    <button id="new" type="button">New puzzle</button>
+    <select id="level" aria-label="Difficulty">
+      <option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option><option value="expert">Expert</option>
+    </select>
+    <span class="sep"></span>
+    <span class="cap">View</span>
+    <button type="button" data-cam="angle" aria-pressed="true">Angle</button>
+    <button type="button" data-cam="top" aria-pressed="false">Top</button>
+    <button type="button" data-cam="low" aria-pressed="false">Low</button>
+    <button id="sound" type="button" aria-pressed="true" style="margin-left:auto">Sound on</button>
+  </div>
+</aside>
+
+<section id="win" hidden aria-live="polite">
+  <h2>Cleared!</h2>
+  <p class="big">Red is out in <span id="win-moves">0</span> moves.</p>
+  <p id="win-note"></p>
+  <div class="row"><button id="again" type="button">New puzzle</button><button id="replay" type="button" class="alt">Play this one again</button></div>
+</section>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

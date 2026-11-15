@@ -1,0 +1,241 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v5.1.19",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "screwdrivers_02_a"
+    },
+    {
+      "mesh": 1,
+      "name": "screwdrivers_02_b",
+      "translation": [
+        -0.07338611781597137,
+        0,
+        0
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "screwdrivers_02",
+      "normalTexture": {
+        "index": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Bolt.001",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    },
+    {
+      "name": "Bolt.002",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "NORMAL": 5,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/jpeg",
+      "name": "screwdrivers_02_nor_gl",
+      "uri": "textures/screwdrivers_02_nor_gl_1k.jpg"
+    },
+    {
+      "mimeType": "image/jpeg",
+      "name": "screwdrivers_02_diff",
+      "uri": "textures/screwdrivers_02_diff_1k.jpg"
+    },
+    {
+      "mimeType": "image/jpeg",
+      "name": "screwdrivers_02_metal-screwdrivers_02_rough",
+      "uri": "textures/screwdrivers_02_arm_1k.jpg"
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 1226,
+      "max": [
+        0.01353853102773428,
+        0.01353849470615387,
+        0.13488644361495972
+      ],
+      "min": [
+        -0.01353853102773428,
+        -0.01353849470615387,
+        -0.1350463330745697
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 1226,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 1226,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 4548,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 1350,
+      "max": [
+        0.013533735647797585,
+        0.013533730059862137,
+        0.1099901795387268
+      ],
+      "min": [
+        -0.013533735647797585,
+        -0.013533730059862137,
+        -0.10999016463756561
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 1350,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 6,
+      "componentType": 5126,
+      "count": 1350,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 7,
+      "componentType": 5123,
+      "count": 6096,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 14712,
+      "byteOffset": 0,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 14712,
+      "byteOffset": 14712,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 9808,
+      "byteOffset": 29424,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 9096,
+      "byteOffset": 39232,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 16200,
+      "byteOffset": 48328,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 16200,
+      "byteOffset": 64528,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 10800,
+      "byteOffset": 80728,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 12192,
+      "byteOffset": 91528,
+      "target": 34963
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 103720,
+      "uri": "screwdrivers_02.bin"
+    }
+  ]
+}
