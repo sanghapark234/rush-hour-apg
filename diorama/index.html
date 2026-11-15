@@ -441,6 +441,7 @@
       }
       #win .row {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         margin-top: 16px;
       }
@@ -529,10 +530,12 @@
         <button type="submit">Send</button>
       </form>
       <p class="help">
-        Commands: <code>colour left|right|up|down</code>, with an optional count (<code>blue right 3</code>), <code>hint</code>, <code>cam top</code>.
+        Commands: <code>colour left|right|up|down</code>, with an optional count (<code>blue right 3</code>), <code>hint</code>, <code>solve</code>,
+        <code>cam top</code>.
       </p>
       <div class="tools">
         <button id="hint" type="button">Hint</button>
+        <button id="solve" type="button" title="Give up: the game plays the shortest solution from here">Show solution</button>
         <button id="reset" type="button">Reset</button>
         <button id="new" type="button">New puzzle</button>
         <select id="level" aria-label="Difficulty">
@@ -555,7 +558,10 @@
       <h2>Cleared!</h2>
       <p class="big">Red is out in <span id="win-moves">0</span> moves.</p>
       <p id="win-note"></p>
-      <div class="row"><button id="again" type="button">New puzzle</button><button id="replay" type="button" class="alt">Play this one again</button></div>
+      <div class="row">
+        <button id="again" type="button">New puzzle</button><button id="replay" type="button" class="alt">Play this one again</button
+        ><button id="watch" type="button" class="alt" hidden>Watch the shortest solution</button>
+      </div>
     </section>
 
     <script type="module" src="./src/main.js"></script>

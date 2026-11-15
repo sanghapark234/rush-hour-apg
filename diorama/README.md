@@ -47,6 +47,11 @@ bun test                     # solver, bank, Auto level and server tests
 - `blue right 3`: slide up to three cells (1 to 7). Each cell counts as one move.
 - `hint`: the next move of a shortest solution, and the number of moves that remain.
   The vehicle flashes its headlights.
+- `solve`, or the **Show solution** button: chat gives up, and the game plays a shortest solution
+  from the current position. **Stop** ends the replay, and chat goes on from that position.
+  A replay is not a solve: the Auto level counts the puzzle as not solved.
+- After a win with more moves than the shortest solution, **Watch the shortest solution** puts
+  the cars back and plays it from the start.
 - `cam angle`, `cam top`, `cam low`: change the camera. Drag to orbit, scroll to zoom.
 - The red car leaves when it is at the exit and chat sends `red right` once more.
 

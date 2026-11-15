@@ -22,6 +22,9 @@ let puzzle = null,
   viewer = 0,
   lastMove = null;
 let phase = 'welcome'; // welcome | fly | play | won
+// The replay of the shortest solution: null, or {done}. `done` is true when the red car left.
+// A new object marks each replay, so a replay that was stopped or replaced ends its loop.
+let demo = null;
 let cars = [],
   boardInfo = null,
   level = Object.hasOwn(LEVELS, params.get('level')) || params.get('level') === 'auto' ? params.get('level') : 'normal';
@@ -264,7 +267,7 @@ function stepCars(dt, time) {
     u.lamps.emissiveIntensity = 0.35 + pulse * 5 * Math.min(1, u.hint * 3);
   });
   const gate = stage.gate;
-  if (gate) gate.rotation.x += ((won ? 1.38 : 0) - gate.rotation.x) * Math.min(1, dt * 5);
+  if (gate) gate.rotation.x += ((won || demo?.done ? 1.38 : 0) - gate.rotation.x) * Math.min(1, dt * 5);
 }
 
 // ---------- confetti: paper punch-outs ----------
@@ -324,7 +327,9 @@ function stepConfetti(dt) {
 const dirName = (i, d) => (puzzle.meta[i].axis == 'h' ? (d > 0 ? 'right' : 'left') : d > 0 ? 'down' : 'up');
 function render() {
   $('moves').textContent = moves;
-  $('status').textContent = busy ? 'Building a puzzle…' : won ? 'Cleared' : 'In play';
+  $('status').textContent = busy ? 'Building a puzzle…' : won ? 'Cleared' : demo ? (demo.done ? 'Solution shown' : 'Showing the solution') : 'In play';
+  $('solve').textContent = demo && !demo.done ? 'Stop' : 'Show solution';
+  $('solve').disabled = won || Boolean(demo?.done);
   document.body.dataset.phase = phase;
 }
 function legend() {
@@ -356,6 +361,8 @@ async function command(raw, name) {
     return sys('Camera: ' + name2 + '.');
   }
   if (won) return sys('Already cleared. Reset or start a new puzzle.');
+  if (demo) return sys(demo.done ? 'The solution was shown. Reset or start a new puzzle.' : 'The solution is playing. Press Stop to end it.');
+  if (raw === 'solve') return showSolution(false);
   if (raw === 'hint') {
     const asked = puzzle,
       h = await ask({ type: 'hint', pos: pos.slice(), last: lastMove }).catch(() => null); // a stopped solver gives no hint
@@ -414,6 +421,7 @@ function win() {
   const best = puzzle.moves;
   $('win-moves').textContent = moves;
   $('win-note').textContent = moves <= best ? 'A perfect run. That is the shortest solution.' : `The shortest solution takes ${best}.`;
+  $('watch').hidden = moves <= best;
   flyTo('won', 3.6);
   render();
   setTimeout(
@@ -422,6 +430,52 @@ function win() {
     },
     calm ? 0 : 2400,
   );
+}
+// Plays the shortest solution: from the start of the puzzle after a win, or from the current
+// position when the audience gives up. Each step is one hint lookup, so the route is shortest
+// from wherever the cars are. It is not a solve: the Auto level counts a give-up as not solved.
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+async function showSolution(fromStart) {
+  if (busy || !puzzle || (demo && !demo.done) || (fromStart ? phase !== 'won' : phase !== 'play' || won || demo)) return;
+  if (fromStart) reset(false);
+  else outcome ??= { solved: false };
+  const run = (demo = { done: false }),
+    first = moves;
+  sys(fromStart ? 'The shortest solution, from the start:' : 'The shortest solution from here:');
+  render();
+  if (fromStart) await pause(calm ? 0 : 1800); // the camera returns to the lot first
+  let car = -1;
+  while (demo === run) {
+    const h = await ask({ type: 'hint', pos: pos.slice(), last: lastMove }).catch(() => null); // a stopped solver gives no route
+    if (demo !== run) return;
+    if (!h) {
+      demo = null;
+      render();
+      return sys('The solution is unavailable.', 'error');
+    }
+    const [i, d] = h.move ?? [0, 1];
+    await pause(i === car ? 260 : 620); // a short stop when another vehicle starts
+    if (demo !== run) return;
+    car = i;
+    const { exit } = slide(puzzle, pos, i, d, 1),
+      u = cars[i].userData;
+    moves++;
+    lastMove = [i, d];
+    sfx.roll();
+    if (exit) {
+      Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
+      run.done = true;
+      render();
+      return sys(`Red is out in ${moves - first} moves${fromStart ? '' : ' from there'}. Reset to try again, or start a new puzzle.`, 'success');
+    }
+    u.tgt = pos[i];
+    render();
+  }
+}
+function stopSolution() {
+  demo = null;
+  render();
+  sys('Replay stopped. You can go on from here.');
 }
 function backToPlay() {
   $('win').hidden = true;
@@ -439,6 +493,7 @@ function reset(dropIn = false) {
   moves = 0;
   won = false;
   lastMove = null;
+  demo = null;
   backToPlay();
   buildCars(dropIn);
   render();
@@ -527,6 +582,8 @@ const fresh = () =>
 $('new').addEventListener('click', fresh);
 $('again').addEventListener('click', fresh);
 $('replay').addEventListener('click', () => reset(true));
+$('watch').addEventListener('click', () => showSolution(true));
+$('solve').addEventListener('click', () => (demo && !demo.done ? stopSolution() : showSolution(false)));
 $('sound').addEventListener('click', (e) => {
   sfx.init();
   sfx.setMuted(!sfx.muted);
@@ -545,7 +602,7 @@ for (const o of document.querySelectorAll('input[name=level]')) o.checked = o.va
 $('level').value = level;
 // Hook for a real chat source (for example tmi.js): apg.command('alice', 'blue right').
 // apg.state() gives a copy of the puzzle and the position, for a bot or a test.
-window.apg = { command: (user, text) => command(String(text), String(user)), state: () => structuredClone({ puzzle, pos, moves, won, level }), stage };
+window.apg = { command: (user, text) => command(String(text), String(user)), state: () => structuredClone({ puzzle, pos, moves, won, level, demo }), stage };
 
 function resize() {
   stage.resize(innerWidth, innerHeight);
