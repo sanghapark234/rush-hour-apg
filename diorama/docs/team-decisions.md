@@ -31,42 +31,29 @@
   from Twitch chat do nothing. The team can reopen this.
 - **Why not a Twitch poll (D):** Twitch allows polls only on Partner and Affiliate channels
   ([Twitch developer documentation](https://dev.twitch.tv/docs/api/polls/), read 15 November
-  2026). A new channel is neither, so a poll works only if the channel of decision 4 is one.
+  2026). A new channel is neither, so a poll works only if the channel of decision 3 is one.
 
-## 3. Who controls the puzzle and the camera
-
-- **Today in Tiny Gridlock:** only the streamer can reset, take a new puzzle or change the level
-  (buttons). Any viewer can change the camera for everyone with `cam top`, `cam low` or
-  `cam angle`. Any viewer can end a running solution replay with `stop`.
-- **Options:**
-  - **A. Keep it.**
-  - **B. Camera and `stop` for the streamer only.** A viewer cannot disturb the view of the
-    others or end the replay that the streamer started.
-  - **C. Let chat vote** on a reset or a new puzzle.
-- **Recommendation:** B.
-- **Decided (15 November 2026):** B. Only the streamers change the camera and end a replay.
-  The `cam` and `stop` commands from Twitch chat do nothing. The team can reopen this.
-
-## 4. The Twitch channel and the reply account
+## 3. The Twitch channel and the reply account
 
 - **Today:** no channel is named anywhere.
 - **Decide:**
   - Whose Twitch channel the audience writes in.
   - Which account sends the replies: the streamer's account or a separate bot account. The token
     of that account stays on the streamer's laptop and never goes into the repository.
-  - Which messages get a reply. Twitch limits the messages an account may send in a period;
+  - Which messages get a reply. This includes a message with the prefix that the game refuses,
+    such as `!hint` from a viewer or a typing error (`!bleu right`). Twitch limits the messages an account may send in a period;
     check the current limit in the Twitch developer documentation before the presentation. A
     reply to every invalid command can reach the limit in a busy chat.
 - **Recommendation:** a separate bot account, with moderator rights in the channel. Reply to the
   win, and to the refused or invalid commands of a player at most once in some seconds; show the
   rest only on the screen.
 
-## 5. Message format
+## 4. Message format
 
 - **Today:** a command is the whole message, without a prefix: `blue right`. A message that is no
   command gets "Invalid command". After a win, and during or after a solution replay, every
   message gets a reply such as "Already cleared. Reset or start a new puzzle." The reply rule of
-  decision 4 must cover these replies too.
+  decision 3 must cover these replies too.
 - **Options:**
   - **A. No prefix.** Short to type. Normal talk in chat counts as invalid commands.
   - **B. A prefix**, `!blue right`, the common form for Twitch commands. Talk is ignored without
