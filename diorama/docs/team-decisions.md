@@ -54,8 +54,7 @@
   - Whose Twitch channel the audience writes in.
   - Which account sends the replies: the streamer's account or a separate bot account. The token
     of that account stays on the streamer's laptop and never goes into the repository.
-  - Which messages get a reply. This includes a message with the prefix that the game refuses,
-    such as `!hint` from a viewer or a typing error (`!bleu right`). Twitch limits the messages an account may send in a period;
+  - Which messages get a reply. Twitch limits the messages an account may send in a period;
     check the current limit in the Twitch developer documentation before the presentation. A
     reply to every invalid command can reach the limit in a busy chat.
 - **Recommendation:** a separate bot account, with moderator rights in the channel. Reply to the
