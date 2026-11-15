@@ -39,7 +39,11 @@ Oxlint checks the code and Oxfmt formats it.
 bun run check                # format check and lint
 bun run fix                  # apply the format and the lint fixes
 bun test                     # solver, bank, Auto level and server tests
+bun run test:flow            # builds the game, then plays it in a headless browser
 ```
+
+The flow tests need the Chromium of Playwright. Install it once with
+`bunx playwright install chromium`.
 
 ## Play
 

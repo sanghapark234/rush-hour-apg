@@ -9,7 +9,8 @@
     "serve": "bun serve.js",
     "check": "vp check",
     "fix": "vp check --fix",
-    "test": "bun test"
+    "test": "bun test",
+    "test:flow": "vp build && bun tools/flow.js"
   },
   "dependencies": {
     "n8ao": "2.0.2",
@@ -17,6 +18,7 @@
     "three": "0.187.0"
   },
   "devDependencies": {
+    "playwright": "1.64.1",
     "vite-plus": "1.6.0"
   }
 }
