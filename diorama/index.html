@@ -31,6 +31,7 @@
 <link rel="modulepreload" href="./src/scene.js">
 <link rel="modulepreload" href="./src/vehicles.js">
 <link rel="modulepreload" href="./src/engine.js">
+<link rel="modulepreload" href="./src/adapt.js">
 <link rel="modulepreload" href="./src/audio.js">
 <link rel="preload" href="./src/puzzles.json" as="fetch" type="application/json" crossorigin>
 <style>
@@ -140,6 +141,7 @@ form button, .tools button, #win button { border: 1.5px solid var(--ink); border
     <label><input type="radio" name="level" value="normal" checked><span>Normal</span></label>
     <label><input type="radio" name="level" value="hard"><span>Hard</span></label>
     <label><input type="radio" name="level" value="expert"><span>Expert</span></label>
+    <label title="The game picks each puzzle from how you solved the last one"><input type="radio" name="level" value="auto"><span>Auto</span></label>
   </fieldset>
   <div class="go">
     <button id="start" type="button" disabled>Setting up…</button>
@@ -167,7 +169,7 @@ form button, .tools button, #win button { border: 1.5px solid var(--ink); border
     <button id="reset" type="button">Reset</button>
     <button id="new" type="button">New puzzle</button>
     <select id="level" aria-label="Difficulty">
-      <option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option><option value="expert">Expert</option>
+      <option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option><option value="expert">Expert</option><option value="auto">Auto</option>
     </select>
     <span class="sep"></span>
     <span class="cap">View</span>

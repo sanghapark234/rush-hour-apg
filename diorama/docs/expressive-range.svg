@@ -1,0 +1,1047 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 648" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Expressive range of the Tiny Gridlock puzzle generator</title>
+<desc id="d">For 6×6, 7×7 and 8×8 boards: the kinds of puzzle the search found, the puzzles in the bank, and the two difficulty measures of the bank puzzles.</desc>
+<rect width="100%" height="100%" fill="#fcfcfb"/>
+<text x="58" y="30" font-size="17" fill="#0b0b0b" text-anchor="start" font-weight="600">What the generator can make, and what the bank holds</text>
+<rect x="58" y="43" width="12" height="12" rx="2" fill="#d3d1c9"/>
+<text x="76" y="53" font-size="12" fill="#52514e" text-anchor="start" font-weight="400">kind of puzzle found by the search (one cell = 4 moves × 1 vehicle)</text>
+<circle cx="478" cy="49" r="4.5" fill="#2a78d6"/>
+<text x="489" y="53" font-size="12" fill="#52514e" text-anchor="start" font-weight="400">puzzle in the bank</text>
+<text x="58" y="82" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="600">6×6 board</text>
+<line x1="58" y1="280.85714285714283" x2="326" y2="280.85714285714283" stroke="#e4e2dc"/>
+<text x="50" y="284.85714285714283" font-size="11" fill="#898781" text-anchor="end" font-weight="400">2</text>
+<line x1="58" y1="226.57142857142856" x2="326" y2="226.57142857142856" stroke="#e4e2dc"/>
+<text x="50" y="230.57142857142856" font-size="11" fill="#898781" text-anchor="end" font-weight="400">6</text>
+<line x1="58" y1="172.28571428571428" x2="326" y2="172.28571428571428" stroke="#e4e2dc"/>
+<text x="50" y="176.28571428571428" font-size="11" fill="#898781" text-anchor="end" font-weight="400">10</text>
+<line x1="58" y1="118" x2="326" y2="118" stroke="#e4e2dc"/>
+<text x="50" y="122" font-size="11" fill="#898781" text-anchor="end" font-weight="400">14</text>
+<rect x="58.5" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 11 vehicles</title></rect>
+<rect x="58.5" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 13 vehicles</title></rect>
+<rect x="58.5" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 12 vehicles</title></rect>
+<rect x="58.5" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 10 vehicles</title></rect>
+<rect x="58.5" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 7 vehicles</title></rect>
+<rect x="58.5" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 6 vehicles</title></rect>
+<rect x="58.5" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 9 vehicles</title></rect>
+<rect x="58.5" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 8 vehicles</title></rect>
+<rect x="58.5" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 5 vehicles</title></rect>
+<rect x="58.5" y="247.4" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 4 vehicles</title></rect>
+<rect x="69.2" y="288.1" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 1 vehicles</title></rect>
+<rect x="69.2" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 7 vehicles</title></rect>
+<rect x="69.2" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 13 vehicles</title></rect>
+<rect x="69.2" y="274.6" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 2 vehicles</title></rect>
+<rect x="69.2" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 10 vehicles</title></rect>
+<rect x="69.2" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 8 vehicles</title></rect>
+<rect x="69.2" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 11 vehicles</title></rect>
+<rect x="69.2" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 9 vehicles</title></rect>
+<rect x="69.2" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 12 vehicles</title></rect>
+<rect x="69.2" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 6 vehicles</title></rect>
+<rect x="69.2" y="247.4" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 4 vehicles</title></rect>
+<rect x="69.2" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 5 vehicles</title></rect>
+<rect x="69.2" y="261" width="9.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 3 vehicles</title></rect>
+<rect x="79.9" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 5 vehicles</title></rect>
+<rect x="79.9" y="247.4" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 4 vehicles</title></rect>
+<rect x="79.9" y="261" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 3 vehicles</title></rect>
+<rect x="79.9" y="274.6" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 2 vehicles</title></rect>
+<rect x="79.9" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 6 vehicles</title></rect>
+<rect x="79.9" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 7 vehicles</title></rect>
+<rect x="79.9" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 10 vehicles</title></rect>
+<rect x="79.9" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 9 vehicles</title></rect>
+<rect x="79.9" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 8 vehicles</title></rect>
+<rect x="79.9" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 12 vehicles</title></rect>
+<rect x="79.9" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 13 vehicles</title></rect>
+<rect x="79.9" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 11 vehicles</title></rect>
+<rect x="90.7" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 9 vehicles</title></rect>
+<rect x="90.7" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 6 vehicles</title></rect>
+<rect x="90.7" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 5 vehicles</title></rect>
+<rect x="90.7" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 10 vehicles</title></rect>
+<rect x="90.7" y="247.4" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 4 vehicles</title></rect>
+<rect x="90.7" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 13 vehicles</title></rect>
+<rect x="90.7" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 8 vehicles</title></rect>
+<rect x="90.7" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 7 vehicles</title></rect>
+<rect x="90.7" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 12 vehicles</title></rect>
+<rect x="90.7" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 11 vehicles</title></rect>
+<rect x="101.4" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 9 vehicles</title></rect>
+<rect x="101.4" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 8 vehicles</title></rect>
+<rect x="101.4" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 7 vehicles</title></rect>
+<rect x="101.4" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 6 vehicles</title></rect>
+<rect x="101.4" y="247.4" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 4 vehicles</title></rect>
+<rect x="101.4" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 10 vehicles</title></rect>
+<rect x="101.4" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 11 vehicles</title></rect>
+<rect x="101.4" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 5 vehicles</title></rect>
+<rect x="101.4" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 12 vehicles</title></rect>
+<rect x="101.4" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 13 vehicles</title></rect>
+<rect x="112.1" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 13 vehicles</title></rect>
+<rect x="112.1" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 7 vehicles</title></rect>
+<rect x="112.1" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 10 vehicles</title></rect>
+<rect x="112.1" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 6 vehicles</title></rect>
+<rect x="112.1" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 5 vehicles</title></rect>
+<rect x="112.1" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 11 vehicles</title></rect>
+<rect x="112.1" y="247.4" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 4 vehicles</title></rect>
+<rect x="112.1" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 12 vehicles</title></rect>
+<rect x="112.1" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 8 vehicles</title></rect>
+<rect x="112.1" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 9 vehicles</title></rect>
+<rect x="122.8" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 8 vehicles</title></rect>
+<rect x="122.8" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 12 vehicles</title></rect>
+<rect x="122.8" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 13 vehicles</title></rect>
+<rect x="122.8" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 7 vehicles</title></rect>
+<rect x="122.8" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 11 vehicles</title></rect>
+<rect x="122.8" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 6 vehicles</title></rect>
+<rect x="122.8" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 10 vehicles</title></rect>
+<rect x="122.8" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 9 vehicles</title></rect>
+<rect x="122.8" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 5 vehicles</title></rect>
+<rect x="133.5" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 13 vehicles</title></rect>
+<rect x="133.5" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 12 vehicles</title></rect>
+<rect x="133.5" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 9 vehicles</title></rect>
+<rect x="133.5" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 8 vehicles</title></rect>
+<rect x="133.5" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 10 vehicles</title></rect>
+<rect x="133.5" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 6 vehicles</title></rect>
+<rect x="133.5" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 11 vehicles</title></rect>
+<rect x="133.5" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 7 vehicles</title></rect>
+<rect x="144.3" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 7 vehicles</title></rect>
+<rect x="144.3" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 8 vehicles</title></rect>
+<rect x="144.3" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 11 vehicles</title></rect>
+<rect x="144.3" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 12 vehicles</title></rect>
+<rect x="144.3" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 9 vehicles</title></rect>
+<rect x="144.3" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 10 vehicles</title></rect>
+<rect x="144.3" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 13 vehicles</title></rect>
+<rect x="144.3" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 6 vehicles</title></rect>
+<rect x="155" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 10 vehicles</title></rect>
+<rect x="155" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 11 vehicles</title></rect>
+<rect x="155" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 9 vehicles</title></rect>
+<rect x="155" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 8 vehicles</title></rect>
+<rect x="155" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 12 vehicles</title></rect>
+<rect x="155" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 6 vehicles</title></rect>
+<rect x="155" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 13 vehicles</title></rect>
+<rect x="155" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 7 vehicles</title></rect>
+<rect x="165.7" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 11 vehicles</title></rect>
+<rect x="165.7" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 10 vehicles</title></rect>
+<rect x="165.7" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 13 vehicles</title></rect>
+<rect x="165.7" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 7 vehicles</title></rect>
+<rect x="165.7" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 9 vehicles</title></rect>
+<rect x="165.7" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 8 vehicles</title></rect>
+<rect x="165.7" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 12 vehicles</title></rect>
+<rect x="176.4" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 11 vehicles</title></rect>
+<rect x="176.4" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 8 vehicles</title></rect>
+<rect x="176.4" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 7 vehicles</title></rect>
+<rect x="176.4" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 13 vehicles</title></rect>
+<rect x="176.4" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 12 vehicles</title></rect>
+<rect x="176.4" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 10 vehicles</title></rect>
+<rect x="176.4" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 9 vehicles</title></rect>
+<rect x="187.1" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 9 vehicles</title></rect>
+<rect x="187.1" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 8 vehicles</title></rect>
+<rect x="187.1" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 7 vehicles</title></rect>
+<rect x="187.1" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 10 vehicles</title></rect>
+<rect x="187.1" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 12 vehicles</title></rect>
+<rect x="187.1" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 13 vehicles</title></rect>
+<rect x="187.1" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 11 vehicles</title></rect>
+<rect x="197.9" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 9 vehicles</title></rect>
+<rect x="197.9" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 12 vehicles</title></rect>
+<rect x="197.9" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 8 vehicles</title></rect>
+<rect x="197.9" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 11 vehicles</title></rect>
+<rect x="197.9" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 13 vehicles</title></rect>
+<rect x="197.9" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 10 vehicles</title></rect>
+<rect x="208.6" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 12 vehicles</title></rect>
+<rect x="208.6" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 9 vehicles</title></rect>
+<rect x="208.6" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 11 vehicles</title></rect>
+<rect x="208.6" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 10 vehicles</title></rect>
+<rect x="208.6" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 13 vehicles</title></rect>
+<rect x="208.6" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 8 vehicles</title></rect>
+<rect x="219.3" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 10 vehicles</title></rect>
+<rect x="219.3" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 12 vehicles</title></rect>
+<rect x="219.3" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 11 vehicles</title></rect>
+<rect x="219.3" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 7 vehicles</title></rect>
+<rect x="219.3" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 13 vehicles</title></rect>
+<rect x="219.3" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 8 vehicles</title></rect>
+<rect x="219.3" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 9 vehicles</title></rect>
+<rect x="230" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 12 vehicles</title></rect>
+<rect x="230" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 13 vehicles</title></rect>
+<rect x="230" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 11 vehicles</title></rect>
+<rect x="230" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 10 vehicles</title></rect>
+<rect x="230" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 8 vehicles</title></rect>
+<rect x="230" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 9 vehicles</title></rect>
+<rect x="240.7" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 9 vehicles</title></rect>
+<rect x="240.7" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 10 vehicles</title></rect>
+<rect x="240.7" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 13 vehicles</title></rect>
+<rect x="240.7" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 12 vehicles</title></rect>
+<rect x="283.6" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 9 vehicles</title></rect>
+<rect x="283.6" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 10 vehicles</title></rect>
+<rect x="58.5" y="261" width="9.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 3 vehicles</title></rect>
+<rect x="133.5" y="233.9" width="9.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 5 vehicles</title></rect>
+<rect x="165.7" y="220.3" width="9.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 6 vehicles</title></rect>
+<rect x="197.9" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 7 vehicles</title></rect>
+<rect x="240.7" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 11 vehicles</title></rect>
+<rect x="240.7" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 8 vehicles</title></rect>
+<rect x="251.5" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 13 vehicles</title></rect>
+<rect x="251.5" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 12 vehicles</title></rect>
+<rect x="251.5" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 11 vehicles</title></rect>
+<rect x="251.5" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 10 vehicles</title></rect>
+<rect x="251.5" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 9 vehicles</title></rect>
+<rect x="262.2" y="166" width="9.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 10 vehicles</title></rect>
+<rect x="262.2" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 12 vehicles</title></rect>
+<rect x="262.2" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 9 vehicles</title></rect>
+<rect x="262.2" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 13 vehicles</title></rect>
+<rect x="262.2" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 11 vehicles</title></rect>
+<rect x="272.9" y="193.1" width="9.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 8 vehicles</title></rect>
+<rect x="272.9" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 11 vehicles</title></rect>
+<rect x="272.9" y="179.6" width="9.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 9 vehicles</title></rect>
+<rect x="272.9" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 12 vehicles</title></rect>
+<rect x="272.9" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 13 vehicles</title></rect>
+<rect x="283.6" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 12 vehicles</title></rect>
+<rect x="283.6" y="152.4" width="9.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 11 vehicles</title></rect>
+<rect x="294.3" y="138.9" width="9.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 12 vehicles</title></rect>
+<rect x="208.6" y="206.7" width="9.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 7 vehicles</title></rect>
+<rect x="294.3" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 13 vehicles</title></rect>
+<rect x="305.1" y="125.3" width="9.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 13 vehicles</title></rect>
+<path d="M90.2 112v-5H111.6v5" fill="none" stroke="#52514e"/>
+<text x="100.88" y="103" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">easy</text>
+<path d="M133 112v-5H175.9v5" fill="none" stroke="#52514e"/>
+<text x="154.48000000000002" y="103" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">normal</text>
+<circle cx="90.2" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, 9 vehicles</title></circle>
+<circle cx="90.2" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, 6 vehicles</title></circle>
+<circle cx="92.8" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>13 moves, 10 vehicles</title></circle>
+<circle cx="92.8" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>13 moves, 7 vehicles</title></circle>
+<circle cx="95.5" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>14 moves, 8 vehicles</title></circle>
+<circle cx="98.2" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 8 vehicles</title></circle>
+<circle cx="98.2" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 11 vehicles</title></circle>
+<circle cx="98.2" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 8 vehicles</title></circle>
+<circle cx="98.2" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 10 vehicles</title></circle>
+<circle cx="98.2" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 7 vehicles</title></circle>
+<circle cx="98.2" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 9 vehicles</title></circle>
+<circle cx="98.2" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 9 vehicles</title></circle>
+<circle cx="98.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, 13 vehicles</title></circle>
+<circle cx="100.9" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>16 moves, 8 vehicles</title></circle>
+<circle cx="100.9" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>16 moves, 8 vehicles</title></circle>
+<circle cx="103.6" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>17 moves, 11 vehicles</title></circle>
+<circle cx="103.6" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>17 moves, 10 vehicles</title></circle>
+<circle cx="103.6" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>17 moves, 9 vehicles</title></circle>
+<circle cx="106.2" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>18 moves, 12 vehicles</title></circle>
+<circle cx="108.9" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 13 vehicles</title></circle>
+<circle cx="108.9" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 12 vehicles</title></circle>
+<circle cx="108.9" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 11 vehicles</title></circle>
+<circle cx="108.9" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 10 vehicles</title></circle>
+<circle cx="108.9" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 12 vehicles</title></circle>
+<circle cx="108.9" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 9 vehicles</title></circle>
+<circle cx="108.9" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 11 vehicles</title></circle>
+<circle cx="108.9" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, 10 vehicles</title></circle>
+<circle cx="111.6" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 13 vehicles</title></circle>
+<circle cx="111.6" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 12 vehicles</title></circle>
+<circle cx="111.6" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 10 vehicles</title></circle>
+<circle cx="111.6" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 11 vehicles</title></circle>
+<circle cx="111.6" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 9 vehicles</title></circle>
+<circle cx="111.6" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 7 vehicles</title></circle>
+<circle cx="111.6" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 7 vehicles</title></circle>
+<circle cx="111.6" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 7 vehicles</title></circle>
+<circle cx="111.6" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 6 vehicles</title></circle>
+<circle cx="111.6" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 6 vehicles</title></circle>
+<circle cx="111.6" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 5 vehicles</title></circle>
+<circle cx="111.6" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 5 vehicles</title></circle>
+<circle cx="111.6" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 5 vehicles</title></circle>
+<circle cx="135.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, 10 vehicles</title></circle>
+<circle cx="135.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, 10 vehicles</title></circle>
+<circle cx="135.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, 10 vehicles</title></circle>
+<circle cx="138.4" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, 12 vehicles</title></circle>
+<circle cx="138.4" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, 11 vehicles</title></circle>
+<circle cx="138.4" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, 13 vehicles</title></circle>
+<circle cx="141.1" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>31 moves, 12 vehicles</title></circle>
+<circle cx="141.1" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>31 moves, 11 vehicles</title></circle>
+<circle cx="143.8" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>32 moves, 11 vehicles</title></circle>
+<circle cx="143.8" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>32 moves, 10 vehicles</title></circle>
+<circle cx="146.4" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>33 moves, 12 vehicles</title></circle>
+<circle cx="146.4" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>33 moves, 12 vehicles</title></circle>
+<circle cx="149.1" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>34 moves, 13 vehicles</title></circle>
+<circle cx="149.1" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>34 moves, 13 vehicles</title></circle>
+<circle cx="151.8" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>35 moves, 13 vehicles</title></circle>
+<circle cx="151.8" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>35 moves, 12 vehicles</title></circle>
+<circle cx="151.8" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>35 moves, 11 vehicles</title></circle>
+<circle cx="154.5" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, 12 vehicles</title></circle>
+<circle cx="154.5" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, 13 vehicles</title></circle>
+<circle cx="154.5" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, 11 vehicles</title></circle>
+<circle cx="154.5" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, 10 vehicles</title></circle>
+<circle cx="157.2" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>37 moves, 12 vehicles</title></circle>
+<circle cx="157.2" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>37 moves, 10 vehicles</title></circle>
+<circle cx="157.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>37 moves, 13 vehicles</title></circle>
+<circle cx="162.5" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>39 moves, 11 vehicles</title></circle>
+<circle cx="165.2" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>40 moves, 10 vehicles</title></circle>
+<circle cx="167.9" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>41 moves, 11 vehicles</title></circle>
+<circle cx="170.6" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, 13 vehicles</title></circle>
+<circle cx="170.6" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, 12 vehicles</title></circle>
+<circle cx="170.6" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, 13 vehicles</title></circle>
+<circle cx="170.6" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, 12 vehicles</title></circle>
+<circle cx="173.2" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>43 moves, 11 vehicles</title></circle>
+<circle cx="173.2" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>43 moves, 12 vehicles</title></circle>
+<circle cx="175.9" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 12 vehicles</title></circle>
+<circle cx="175.9" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 13 vehicles</title></circle>
+<circle cx="175.9" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 11 vehicles</title></circle>
+<circle cx="175.9" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 11 vehicles</title></circle>
+<circle cx="175.9" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 10 vehicles</title></circle>
+<circle cx="175.9" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 8 vehicles</title></circle>
+<circle cx="175.9" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 8 vehicles</title></circle>
+<line x1="58" y1="308" x2="326" y2="308" stroke="#898781"/>
+<text x="58" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>
+<text x="165.2" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">40</text>
+<text x="272.4" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">80</text>
+<line x1="58" y1="590" x2="326" y2="590" stroke="#e4e2dc"/>
+<text x="50" y="594" font-size="11" fill="#898781" text-anchor="end" font-weight="400">10</text>
+<line x1="58" y1="530.625" x2="326" y2="530.625" stroke="#e4e2dc"/>
+<text x="50" y="534.625" font-size="11" fill="#898781" text-anchor="end" font-weight="400">100</text>
+<line x1="58" y1="471.25" x2="326" y2="471.25" stroke="#e4e2dc"/>
+<text x="50" y="475.25" font-size="11" fill="#898781" text-anchor="end" font-weight="400">1,000</text>
+<line x1="58" y1="411.875" x2="326" y2="411.875" stroke="#e4e2dc"/>
+<text x="50" y="415.875" font-size="11" fill="#898781" text-anchor="end" font-weight="400">10,000</text>
+<circle cx="90.2" cy="573.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, walk model 19</title></circle>
+<circle cx="90.2" cy="574.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, walk model 18</title></circle>
+<circle cx="92.8" cy="569.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>13 moves, walk model 22</title></circle>
+<circle cx="92.8" cy="568.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>13 moves, walk model 23</title></circle>
+<circle cx="95.5" cy="567.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>14 moves, walk model 24</title></circle>
+<circle cx="98.2" cy="560.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 31</title></circle>
+<circle cx="98.2" cy="565.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 26</title></circle>
+<circle cx="98.2" cy="562.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 29</title></circle>
+<circle cx="98.2" cy="563.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 28</title></circle>
+<circle cx="98.2" cy="562.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 29</title></circle>
+<circle cx="98.2" cy="563.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 28</title></circle>
+<circle cx="98.2" cy="565.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 26</title></circle>
+<circle cx="98.2" cy="566.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>15 moves, walk model 25</title></circle>
+<circle cx="100.9" cy="555.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>16 moves, walk model 38</title></circle>
+<circle cx="100.9" cy="558.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>16 moves, walk model 34</title></circle>
+<circle cx="103.6" cy="556.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>17 moves, walk model 37</title></circle>
+<circle cx="103.6" cy="556.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>17 moves, walk model 37</title></circle>
+<circle cx="103.6" cy="558.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>17 moves, walk model 34</title></circle>
+<circle cx="106.2" cy="554.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>18 moves, walk model 39</title></circle>
+<circle cx="108.9" cy="552.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 43</title></circle>
+<circle cx="108.9" cy="553.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 41</title></circle>
+<circle cx="108.9" cy="554.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 39</title></circle>
+<circle cx="108.9" cy="553.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 41</title></circle>
+<circle cx="108.9" cy="553" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 42</title></circle>
+<circle cx="108.9" cy="553" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 42</title></circle>
+<circle cx="108.9" cy="552.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 43</title></circle>
+<circle cx="108.9" cy="551.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>19 moves, walk model 45</title></circle>
+<circle cx="111.6" cy="550.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 47</title></circle>
+<circle cx="111.6" cy="549.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 48</title></circle>
+<circle cx="111.6" cy="550.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 47</title></circle>
+<circle cx="111.6" cy="551.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 44</title></circle>
+<circle cx="111.6" cy="554.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 39</title></circle>
+<circle cx="111.6" cy="548.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 50</title></circle>
+<circle cx="111.6" cy="546.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 54</title></circle>
+<circle cx="111.6" cy="548.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 50</title></circle>
+<circle cx="111.6" cy="550.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 47</title></circle>
+<circle cx="111.6" cy="551.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 45</title></circle>
+<circle cx="111.6" cy="549" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 49</title></circle>
+<circle cx="111.6" cy="553" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 42</title></circle>
+<circle cx="111.6" cy="552.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 43</title></circle>
+<circle cx="135.7" cy="531.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, walk model 97</title></circle>
+<circle cx="135.7" cy="530.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, walk model 102</title></circle>
+<circle cx="135.7" cy="527.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, walk model 111</title></circle>
+<circle cx="138.4" cy="526.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, walk model 119</title></circle>
+<circle cx="138.4" cy="529.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, walk model 103</title></circle>
+<circle cx="138.4" cy="531.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, walk model 98</title></circle>
+<circle cx="141.1" cy="531.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>31 moves, walk model 95</title></circle>
+<circle cx="141.1" cy="529.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>31 moves, walk model 104</title></circle>
+<circle cx="143.8" cy="521.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>32 moves, walk model 142</title></circle>
+<circle cx="143.8" cy="519.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>32 moves, walk model 155</title></circle>
+<circle cx="146.4" cy="519.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>33 moves, walk model 153</title></circle>
+<circle cx="146.4" cy="527.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>33 moves, walk model 112</title></circle>
+<circle cx="149.1" cy="526.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>34 moves, walk model 119</title></circle>
+<circle cx="149.1" cy="525.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>34 moves, walk model 124</title></circle>
+<circle cx="151.8" cy="517.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>35 moves, walk model 169</title></circle>
+<circle cx="151.8" cy="514.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>35 moves, walk model 189</title></circle>
+<circle cx="151.8" cy="514.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>35 moves, walk model 186</title></circle>
+<circle cx="154.5" cy="519" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, walk model 157</title></circle>
+<circle cx="154.5" cy="519.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, walk model 154</title></circle>
+<circle cx="154.5" cy="514.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, walk model 185</title></circle>
+<circle cx="154.5" cy="514.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>36 moves, walk model 184</title></circle>
+<circle cx="157.2" cy="513.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>37 moves, walk model 193</title></circle>
+<circle cx="157.2" cy="516.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>37 moves, walk model 175</title></circle>
+<circle cx="157.2" cy="519.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>37 moves, walk model 152</title></circle>
+<circle cx="162.5" cy="513.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>39 moves, walk model 195</title></circle>
+<circle cx="165.2" cy="508.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>40 moves, walk model 238</title></circle>
+<circle cx="167.9" cy="510.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>41 moves, walk model 222</title></circle>
+<circle cx="170.6" cy="506.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, walk model 259</title></circle>
+<circle cx="170.6" cy="510.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, walk model 215</title></circle>
+<circle cx="170.6" cy="515.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, walk model 178</title></circle>
+<circle cx="170.6" cy="510.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>42 moves, walk model 215</title></circle>
+<circle cx="173.2" cy="508.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>43 moves, walk model 232</title></circle>
+<circle cx="173.2" cy="518.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>43 moves, walk model 159</title></circle>
+<circle cx="175.9" cy="506.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 255</title></circle>
+<circle cx="175.9" cy="509.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 229</title></circle>
+<circle cx="175.9" cy="506.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 255</title></circle>
+<circle cx="175.9" cy="507.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 242</title></circle>
+<circle cx="175.9" cy="503.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 284</title></circle>
+<circle cx="175.9" cy="504.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 274</title></circle>
+<circle cx="175.9" cy="504.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 274</title></circle>
+<line x1="58" y1="590" x2="326" y2="590" stroke="#898781"/>
+<text x="58" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>
+<text x="165.2" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">40</text>
+<text x="272.4" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">80</text>
+<text x="192" y="626" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">shortest solution (moves)</text>
+<text x="356" y="82" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="600">7×7 board</text>
+<line x1="356" y1="280.85714285714283" x2="624" y2="280.85714285714283" stroke="#e4e2dc"/>
+<line x1="356" y1="226.57142857142856" x2="624" y2="226.57142857142856" stroke="#e4e2dc"/>
+<line x1="356" y1="172.28571428571428" x2="624" y2="172.28571428571428" stroke="#e4e2dc"/>
+<line x1="356" y1="118" x2="624" y2="118" stroke="#e4e2dc"/>
+<rect x="356.5" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 12 vehicles</title></rect>
+<rect x="356.5" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 9 vehicles</title></rect>
+<rect x="356.5" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 10 vehicles</title></rect>
+<rect x="356.5" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 7 vehicles</title></rect>
+<rect x="356.5" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 11 vehicles</title></rect>
+<rect x="356.5" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 8 vehicles</title></rect>
+<rect x="356.5" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 6 vehicles</title></rect>
+<rect x="356.5" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 13 vehicles</title></rect>
+<rect x="356.5" y="233.9" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 5 vehicles</title></rect>
+<rect x="356.5" y="247.4" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 4 vehicles</title></rect>
+<rect x="364.2" y="247.4" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 4 vehicles</title></rect>
+<rect x="364.2" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 8 vehicles</title></rect>
+<rect x="364.2" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 10 vehicles</title></rect>
+<rect x="364.2" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 9 vehicles</title></rect>
+<rect x="364.2" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 11 vehicles</title></rect>
+<rect x="364.2" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 7 vehicles</title></rect>
+<rect x="364.2" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 12 vehicles</title></rect>
+<rect x="364.2" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 13 vehicles</title></rect>
+<rect x="364.2" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 6 vehicles</title></rect>
+<rect x="364.2" y="233.9" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 5 vehicles</title></rect>
+<rect x="364.2" y="261" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 3 vehicles</title></rect>
+<rect x="364.2" y="274.6" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 2 vehicles</title></rect>
+<rect x="371.8" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 6 vehicles</title></rect>
+<rect x="371.8" y="261" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 3 vehicles</title></rect>
+<rect x="371.8" y="274.6" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 2 vehicles</title></rect>
+<rect x="371.8" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 10 vehicles</title></rect>
+<rect x="371.8" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 9 vehicles</title></rect>
+<rect x="371.8" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 7 vehicles</title></rect>
+<rect x="371.8" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 8 vehicles</title></rect>
+<rect x="371.8" y="247.4" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 4 vehicles</title></rect>
+<rect x="371.8" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 11 vehicles</title></rect>
+<rect x="371.8" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 12 vehicles</title></rect>
+<rect x="371.8" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 13 vehicles</title></rect>
+<rect x="371.8" y="233.9" width="6.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 5 vehicles</title></rect>
+<rect x="379.5" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 6 vehicles</title></rect>
+<rect x="379.5" y="233.9" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 5 vehicles</title></rect>
+<rect x="379.5" y="247.4" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 4 vehicles</title></rect>
+<rect x="379.5" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 10 vehicles</title></rect>
+<rect x="379.5" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 8 vehicles</title></rect>
+<rect x="379.5" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 9 vehicles</title></rect>
+<rect x="379.5" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 12 vehicles</title></rect>
+<rect x="379.5" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 11 vehicles</title></rect>
+<rect x="379.5" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 13 vehicles</title></rect>
+<rect x="379.5" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 7 vehicles</title></rect>
+<rect x="387.1" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 8 vehicles</title></rect>
+<rect x="387.1" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 10 vehicles</title></rect>
+<rect x="387.1" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 13 vehicles</title></rect>
+<rect x="387.1" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 6 vehicles</title></rect>
+<rect x="387.1" y="233.9" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 5 vehicles</title></rect>
+<rect x="387.1" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 7 vehicles</title></rect>
+<rect x="387.1" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 11 vehicles</title></rect>
+<rect x="387.1" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 9 vehicles</title></rect>
+<rect x="387.1" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 12 vehicles</title></rect>
+<rect x="394.8" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 8 vehicles</title></rect>
+<rect x="394.8" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 12 vehicles</title></rect>
+<rect x="394.8" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 11 vehicles</title></rect>
+<rect x="394.8" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 13 vehicles</title></rect>
+<rect x="394.8" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 6 vehicles</title></rect>
+<rect x="394.8" y="233.9" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 5 vehicles</title></rect>
+<rect x="394.8" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 7 vehicles</title></rect>
+<rect x="394.8" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 10 vehicles</title></rect>
+<rect x="394.8" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 9 vehicles</title></rect>
+<rect x="402.4" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 10 vehicles</title></rect>
+<rect x="402.4" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 8 vehicles</title></rect>
+<rect x="402.4" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 7 vehicles</title></rect>
+<rect x="402.4" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 9 vehicles</title></rect>
+<rect x="402.4" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 11 vehicles</title></rect>
+<rect x="402.4" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 12 vehicles</title></rect>
+<rect x="402.4" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 13 vehicles</title></rect>
+<rect x="402.4" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 6 vehicles</title></rect>
+<rect x="410.1" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 8 vehicles</title></rect>
+<rect x="410.1" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 7 vehicles</title></rect>
+<rect x="410.1" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 9 vehicles</title></rect>
+<rect x="410.1" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 13 vehicles</title></rect>
+<rect x="410.1" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 6 vehicles</title></rect>
+<rect x="410.1" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 10 vehicles</title></rect>
+<rect x="410.1" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 11 vehicles</title></rect>
+<rect x="410.1" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 12 vehicles</title></rect>
+<rect x="417.8" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 12 vehicles</title></rect>
+<rect x="417.8" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 8 vehicles</title></rect>
+<rect x="417.8" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 11 vehicles</title></rect>
+<rect x="417.8" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 10 vehicles</title></rect>
+<rect x="417.8" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 9 vehicles</title></rect>
+<rect x="417.8" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 7 vehicles</title></rect>
+<rect x="417.8" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 13 vehicles</title></rect>
+<rect x="425.4" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 13 vehicles</title></rect>
+<rect x="425.4" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 10 vehicles</title></rect>
+<rect x="425.4" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 9 vehicles</title></rect>
+<rect x="425.4" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 7 vehicles</title></rect>
+<rect x="425.4" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 12 vehicles</title></rect>
+<rect x="425.4" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 11 vehicles</title></rect>
+<rect x="425.4" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 8 vehicles</title></rect>
+<rect x="433.1" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 10 vehicles</title></rect>
+<rect x="433.1" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 12 vehicles</title></rect>
+<rect x="433.1" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 8 vehicles</title></rect>
+<rect x="433.1" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 6 vehicles</title></rect>
+<rect x="433.1" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 9 vehicles</title></rect>
+<rect x="433.1" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 7 vehicles</title></rect>
+<rect x="433.1" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 13 vehicles</title></rect>
+<rect x="433.1" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 11 vehicles</title></rect>
+<rect x="440.7" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 12 vehicles</title></rect>
+<rect x="440.7" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 13 vehicles</title></rect>
+<rect x="440.7" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 9 vehicles</title></rect>
+<rect x="440.7" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 8 vehicles</title></rect>
+<rect x="440.7" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 11 vehicles</title></rect>
+<rect x="440.7" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 10 vehicles</title></rect>
+<rect x="448.4" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 12 vehicles</title></rect>
+<rect x="448.4" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 11 vehicles</title></rect>
+<rect x="448.4" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 13 vehicles</title></rect>
+<rect x="448.4" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 10 vehicles</title></rect>
+<rect x="448.4" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 9 vehicles</title></rect>
+<rect x="448.4" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 8 vehicles</title></rect>
+<rect x="456" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 10 vehicles</title></rect>
+<rect x="456" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 9 vehicles</title></rect>
+<rect x="456" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 12 vehicles</title></rect>
+<rect x="456" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 11 vehicles</title></rect>
+<rect x="456" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 13 vehicles</title></rect>
+<rect x="463.7" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 12 vehicles</title></rect>
+<rect x="463.7" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 9 vehicles</title></rect>
+<rect x="463.7" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 10 vehicles</title></rect>
+<rect x="463.7" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 11 vehicles</title></rect>
+<rect x="463.7" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 13 vehicles</title></rect>
+<rect x="471.4" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 12 vehicles</title></rect>
+<rect x="471.4" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 13 vehicles</title></rect>
+<rect x="471.4" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 11 vehicles</title></rect>
+<rect x="471.4" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 9 vehicles</title></rect>
+<rect x="471.4" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 10 vehicles</title></rect>
+<rect x="479" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 11 vehicles</title></rect>
+<rect x="479" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 12 vehicles</title></rect>
+<rect x="479" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 13 vehicles</title></rect>
+<rect x="486.7" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 13 vehicles</title></rect>
+<rect x="486.7" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 11 vehicles</title></rect>
+<rect x="486.7" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 12 vehicles</title></rect>
+<rect x="494.3" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 13 vehicles</title></rect>
+<rect x="502" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 12 vehicles</title></rect>
+<rect x="502" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 11 vehicles</title></rect>
+<rect x="509.6" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 12 vehicles</title></rect>
+<rect x="509.6" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 13 vehicles</title></rect>
+<rect x="517.3" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 13 vehicles</title></rect>
+<rect x="517.3" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 12 vehicles</title></rect>
+<rect x="525" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 13 vehicles</title></rect>
+<rect x="525" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 12 vehicles</title></rect>
+<rect x="532.6" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 13 vehicles</title></rect>
+<rect x="540.3" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 12 vehicles</title></rect>
+<rect x="540.3" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 13 vehicles</title></rect>
+<rect x="547.9" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 13 vehicles</title></rect>
+<rect x="356.5" y="274.6" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 2 vehicles</title></rect>
+<rect x="356.5" y="261" width="6.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 3 vehicles</title></rect>
+<rect x="456" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 8 vehicles</title></rect>
+<rect x="479" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 10 vehicles</title></rect>
+<rect x="479" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 9 vehicles</title></rect>
+<rect x="486.7" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 9 vehicles</title></rect>
+<rect x="486.7" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 10 vehicles</title></rect>
+<rect x="494.3" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 10 vehicles</title></rect>
+<rect x="494.3" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 12 vehicles</title></rect>
+<rect x="494.3" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 11 vehicles</title></rect>
+<rect x="494.3" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 9 vehicles</title></rect>
+<rect x="502" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 10 vehicles</title></rect>
+<rect x="502" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 13 vehicles</title></rect>
+<rect x="509.6" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 10 vehicles</title></rect>
+<rect x="509.6" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 11 vehicles</title></rect>
+<rect x="517.3" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 11 vehicles</title></rect>
+<rect x="525" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 11 vehicles</title></rect>
+<rect x="525" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 10 vehicles</title></rect>
+<rect x="532.6" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 11 vehicles</title></rect>
+<rect x="532.6" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 12 vehicles</title></rect>
+<rect x="540.3" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 11 vehicles</title></rect>
+<rect x="547.9" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 11 vehicles</title></rect>
+<rect x="547.9" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 12 vehicles</title></rect>
+<rect x="555.6" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 13 vehicles</title></rect>
+<rect x="555.6" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 12 vehicles</title></rect>
+<rect x="563.2" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 12 vehicles</title></rect>
+<rect x="563.2" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 13 vehicles</title></rect>
+<rect x="570.9" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 13 vehicles</title></rect>
+<rect x="570.9" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 12 vehicles</title></rect>
+<rect x="578.6" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 13 vehicles</title></rect>
+<rect x="586.2" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 13 vehicles</title></rect>
+<rect x="586.2" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 12 vehicles</title></rect>
+<rect x="593.9" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>124-127 moves, 13 vehicles</title></rect>
+<rect x="609.2" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>132-135 moves, 13 vehicles</title></rect>
+<rect x="616.8" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>136-139 moves, 13 vehicles</title></rect>
+<rect x="364.2" y="288.1" width="6.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 1 vehicles</title></rect>
+<rect x="463.7" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 8 vehicles</title></rect>
+<rect x="502" y="179.6" width="6.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 9 vehicles</title></rect>
+<rect x="517.3" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 10 vehicles</title></rect>
+<rect x="532.6" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 10 vehicles</title></rect>
+<rect x="540.3" y="166" width="6.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 10 vehicles</title></rect>
+<rect x="555.6" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 11 vehicles</title></rect>
+<rect x="578.6" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 12 vehicles</title></rect>
+<rect x="586.2" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 11 vehicles</title></rect>
+<rect x="593.9" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>124-127 moves, 12 vehicles</title></rect>
+<rect x="601.5" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>128-131 moves, 12 vehicles</title></rect>
+<rect x="601.5" y="125.3" width="6.7" height="12.6" fill="#d3d1c9"><title>128-131 moves, 13 vehicles</title></rect>
+<rect x="379.5" y="261" width="6.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 3 vehicles</title></rect>
+<rect x="387.1" y="247.4" width="6.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 4 vehicles</title></rect>
+<rect x="417.8" y="220.3" width="6.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 6 vehicles</title></rect>
+<rect x="440.7" y="206.7" width="6.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 7 vehicles</title></rect>
+<rect x="471.4" y="193.1" width="6.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 8 vehicles</title></rect>
+<rect x="578.6" y="152.4" width="6.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 11 vehicles</title></rect>
+<rect x="609.2" y="138.9" width="6.7" height="12.6" fill="#d3d1c9"><title>132-135 moves, 12 vehicles</title></rect>
+<path d="M461.3 112v-5H518.7v5" fill="none" stroke="#52514e"/>
+<text x="490" y="103" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">hard</text>
+<circle cx="461.3" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, 12 vehicles</title></circle>
+<circle cx="461.3" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, 11 vehicles</title></circle>
+<circle cx="461.3" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, 13 vehicles</title></circle>
+<circle cx="461.3" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, 12 vehicles</title></circle>
+<circle cx="463.2" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>56 moves, 12 vehicles</title></circle>
+<circle cx="465.1" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>57 moves, 13 vehicles</title></circle>
+<circle cx="468.9" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>59 moves, 12 vehicles</title></circle>
+<circle cx="468.9" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>59 moves, 11 vehicles</title></circle>
+<circle cx="472.8" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>61 moves, 11 vehicles</title></circle>
+<circle cx="472.8" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>61 moves, 12 vehicles</title></circle>
+<circle cx="474.7" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>62 moves, 13 vehicles</title></circle>
+<circle cx="474.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>62 moves, 10 vehicles</title></circle>
+<circle cx="474.7" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>62 moves, 13 vehicles</title></circle>
+<circle cx="478.5" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>64 moves, 13 vehicles</title></circle>
+<circle cx="478.5" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>64 moves, 11 vehicles</title></circle>
+<circle cx="482.3" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>66 moves, 12 vehicles</title></circle>
+<circle cx="484.3" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>67 moves, 13 vehicles</title></circle>
+<circle cx="484.3" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>67 moves, 12 vehicles</title></circle>
+<circle cx="486.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, 13 vehicles</title></circle>
+<circle cx="486.2" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, 12 vehicles</title></circle>
+<circle cx="486.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, 13 vehicles</title></circle>
+<circle cx="486.2" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, 11 vehicles</title></circle>
+<circle cx="486.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, 13 vehicles</title></circle>
+<circle cx="493.8" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>72 moves, 13 vehicles</title></circle>
+<circle cx="493.8" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>72 moves, 13 vehicles</title></circle>
+<circle cx="497.7" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>74 moves, 11 vehicles</title></circle>
+<circle cx="499.6" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>75 moves, 12 vehicles</title></circle>
+<circle cx="499.6" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>75 moves, 13 vehicles</title></circle>
+<circle cx="501.5" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>76 moves, 13 vehicles</title></circle>
+<circle cx="503.4" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>77 moves, 12 vehicles</title></circle>
+<circle cx="503.4" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>77 moves, 12 vehicles</title></circle>
+<circle cx="505.3" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>78 moves, 13 vehicles</title></circle>
+<circle cx="509.1" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>80 moves, 13 vehicles</title></circle>
+<circle cx="509.1" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>80 moves, 11 vehicles</title></circle>
+<circle cx="513" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>82 moves, 12 vehicles</title></circle>
+<circle cx="513" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>82 moves, 13 vehicles</title></circle>
+<circle cx="516.8" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>84 moves, 13 vehicles</title></circle>
+<circle cx="516.8" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>84 moves, 13 vehicles</title></circle>
+<circle cx="516.8" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>84 moves, 11 vehicles</title></circle>
+<circle cx="518.7" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>85 moves, 12 vehicles</title></circle>
+<line x1="356" y1="308" x2="624" y2="308" stroke="#898781"/>
+<text x="356" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>
+<text x="432.57142857142856" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">40</text>
+<text x="509.1428571428571" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">80</text>
+<text x="585.7142857142857" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">120</text>
+<line x1="356" y1="590" x2="624" y2="590" stroke="#e4e2dc"/>
+<line x1="356" y1="530.625" x2="624" y2="530.625" stroke="#e4e2dc"/>
+<line x1="356" y1="471.25" x2="624" y2="471.25" stroke="#e4e2dc"/>
+<line x1="356" y1="411.875" x2="624" y2="411.875" stroke="#e4e2dc"/>
+<circle cx="461.3" cy="490.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, walk model 479</title></circle>
+<circle cx="461.3" cy="489.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, walk model 489</title></circle>
+<circle cx="461.3" cy="496" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, walk model 383</title></circle>
+<circle cx="461.3" cy="496.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>55 moves, walk model 373</title></circle>
+<circle cx="463.2" cy="490.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>56 moves, walk model 474</title></circle>
+<circle cx="465.1" cy="487.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>57 moves, walk model 527</title></circle>
+<circle cx="468.9" cy="489.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>59 moves, walk model 490</title></circle>
+<circle cx="468.9" cy="488.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>59 moves, walk model 508</title></circle>
+<circle cx="472.8" cy="484.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>61 moves, walk model 592</title></circle>
+<circle cx="472.8" cy="484.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>61 moves, walk model 597</title></circle>
+<circle cx="474.7" cy="485.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>62 moves, walk model 580</title></circle>
+<circle cx="474.7" cy="487.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>62 moves, walk model 527</title></circle>
+<circle cx="474.7" cy="479.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>62 moves, walk model 725</title></circle>
+<circle cx="478.5" cy="474.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>64 moves, walk model 887</title></circle>
+<circle cx="478.5" cy="482" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>64 moves, walk model 658</title></circle>
+<circle cx="482.3" cy="478.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>66 moves, walk model 767</title></circle>
+<circle cx="484.3" cy="476" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>67 moves, walk model 832</title></circle>
+<circle cx="484.3" cy="486.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>67 moves, walk model 559</title></circle>
+<circle cx="486.2" cy="476.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, walk model 807</title></circle>
+<circle cx="486.2" cy="478.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, walk model 754</title></circle>
+<circle cx="486.2" cy="479.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, walk model 738</title></circle>
+<circle cx="486.2" cy="481.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, walk model 674</title></circle>
+<circle cx="486.2" cy="481.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>68 moves, walk model 675</title></circle>
+<circle cx="493.8" cy="473.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>72 moves, walk model 909</title></circle>
+<circle cx="493.8" cy="475.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>72 moves, walk model 861</title></circle>
+<circle cx="497.7" cy="478.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>74 moves, walk model 767</title></circle>
+<circle cx="499.6" cy="475.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>75 moves, walk model 851</title></circle>
+<circle cx="499.6" cy="478.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>75 moves, walk model 763</title></circle>
+<circle cx="501.5" cy="478.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>76 moves, walk model 761</title></circle>
+<circle cx="503.4" cy="478.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>77 moves, walk model 767</title></circle>
+<circle cx="503.4" cy="476.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>77 moves, walk model 830</title></circle>
+<circle cx="505.3" cy="471" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>78 moves, walk model 1011</title></circle>
+<circle cx="509.1" cy="472.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>80 moves, walk model 967</title></circle>
+<circle cx="509.1" cy="476.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>80 moves, walk model 829</title></circle>
+<circle cx="513" cy="471.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>82 moves, walk model 1007</title></circle>
+<circle cx="513" cy="469" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>82 moves, walk model 1093</title></circle>
+<circle cx="516.8" cy="466.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>84 moves, walk model 1182</title></circle>
+<circle cx="516.8" cy="470.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>84 moves, walk model 1047</title></circle>
+<circle cx="516.8" cy="475.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>84 moves, walk model 847</title></circle>
+<circle cx="518.7" cy="471.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>85 moves, walk model 974</title></circle>
+<line x1="356" y1="590" x2="624" y2="590" stroke="#898781"/>
+<text x="356" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>
+<text x="432.57142857142856" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">40</text>
+<text x="509.1428571428571" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">80</text>
+<text x="585.7142857142857" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">120</text>
+<text x="490" y="626" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">shortest solution (moves)</text>
+<text x="654" y="82" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="600">8×8 board</text>
+<line x1="654" y1="280.85714285714283" x2="922" y2="280.85714285714283" stroke="#e4e2dc"/>
+<line x1="654" y1="226.57142857142856" x2="922" y2="226.57142857142856" stroke="#e4e2dc"/>
+<line x1="654" y1="172.28571428571428" x2="922" y2="172.28571428571428" stroke="#e4e2dc"/>
+<line x1="654" y1="118" x2="922" y2="118" stroke="#e4e2dc"/>
+<rect x="654.5" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 11 vehicles</title></rect>
+<rect x="654.5" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 9 vehicles</title></rect>
+<rect x="654.5" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 13 vehicles</title></rect>
+<rect x="654.5" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 7 vehicles</title></rect>
+<rect x="654.5" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 12 vehicles</title></rect>
+<rect x="654.5" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 8 vehicles</title></rect>
+<rect x="654.5" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 6 vehicles</title></rect>
+<rect x="654.5" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 5 vehicles</title></rect>
+<rect x="654.5" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 10 vehicles</title></rect>
+<rect x="654.5" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>0-3 moves, 4 vehicles</title></rect>
+<rect x="661.2" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 5 vehicles</title></rect>
+<rect x="661.2" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 4 vehicles</title></rect>
+<rect x="661.2" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 13 vehicles</title></rect>
+<rect x="661.2" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 9 vehicles</title></rect>
+<rect x="661.2" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 8 vehicles</title></rect>
+<rect x="661.2" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 11 vehicles</title></rect>
+<rect x="661.2" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 7 vehicles</title></rect>
+<rect x="661.2" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 10 vehicles</title></rect>
+<rect x="661.2" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 12 vehicles</title></rect>
+<rect x="661.2" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 6 vehicles</title></rect>
+<rect x="661.2" y="261" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 3 vehicles</title></rect>
+<rect x="661.2" y="274.6" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 2 vehicles</title></rect>
+<rect x="667.9" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 7 vehicles</title></rect>
+<rect x="667.9" y="274.6" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 2 vehicles</title></rect>
+<rect x="667.9" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 8 vehicles</title></rect>
+<rect x="667.9" y="261" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 3 vehicles</title></rect>
+<rect x="667.9" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 9 vehicles</title></rect>
+<rect x="667.9" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 12 vehicles</title></rect>
+<rect x="667.9" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 13 vehicles</title></rect>
+<rect x="667.9" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 4 vehicles</title></rect>
+<rect x="667.9" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 10 vehicles</title></rect>
+<rect x="667.9" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 11 vehicles</title></rect>
+<rect x="667.9" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 6 vehicles</title></rect>
+<rect x="667.9" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>8-11 moves, 5 vehicles</title></rect>
+<rect x="674.6" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 7 vehicles</title></rect>
+<rect x="674.6" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 13 vehicles</title></rect>
+<rect x="674.6" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 6 vehicles</title></rect>
+<rect x="674.6" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 5 vehicles</title></rect>
+<rect x="674.6" y="261" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 3 vehicles</title></rect>
+<rect x="674.6" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 4 vehicles</title></rect>
+<rect x="674.6" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 8 vehicles</title></rect>
+<rect x="674.6" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 9 vehicles</title></rect>
+<rect x="674.6" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 11 vehicles</title></rect>
+<rect x="674.6" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 12 vehicles</title></rect>
+<rect x="674.6" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>12-15 moves, 10 vehicles</title></rect>
+<rect x="681.3" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 11 vehicles</title></rect>
+<rect x="681.3" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 7 vehicles</title></rect>
+<rect x="681.3" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 6 vehicles</title></rect>
+<rect x="681.3" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 12 vehicles</title></rect>
+<rect x="681.3" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 10 vehicles</title></rect>
+<rect x="681.3" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 5 vehicles</title></rect>
+<rect x="681.3" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 4 vehicles</title></rect>
+<rect x="681.3" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 13 vehicles</title></rect>
+<rect x="681.3" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 9 vehicles</title></rect>
+<rect x="681.3" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>16-19 moves, 8 vehicles</title></rect>
+<rect x="688" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 9 vehicles</title></rect>
+<rect x="688" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 7 vehicles</title></rect>
+<rect x="688" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 10 vehicles</title></rect>
+<rect x="688" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 6 vehicles</title></rect>
+<rect x="688" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 12 vehicles</title></rect>
+<rect x="688" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 11 vehicles</title></rect>
+<rect x="688" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 13 vehicles</title></rect>
+<rect x="688" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 4 vehicles</title></rect>
+<rect x="688" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 8 vehicles</title></rect>
+<rect x="688" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>20-23 moves, 5 vehicles</title></rect>
+<rect x="694.7" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 9 vehicles</title></rect>
+<rect x="694.7" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 7 vehicles</title></rect>
+<rect x="694.7" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 8 vehicles</title></rect>
+<rect x="694.7" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 10 vehicles</title></rect>
+<rect x="694.7" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 6 vehicles</title></rect>
+<rect x="694.7" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 12 vehicles</title></rect>
+<rect x="694.7" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 11 vehicles</title></rect>
+<rect x="694.7" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 13 vehicles</title></rect>
+<rect x="694.7" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 5 vehicles</title></rect>
+<rect x="701.4" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 12 vehicles</title></rect>
+<rect x="701.4" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 6 vehicles</title></rect>
+<rect x="701.4" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 8 vehicles</title></rect>
+<rect x="701.4" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 10 vehicles</title></rect>
+<rect x="701.4" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 7 vehicles</title></rect>
+<rect x="701.4" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 9 vehicles</title></rect>
+<rect x="701.4" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 11 vehicles</title></rect>
+<rect x="701.4" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 13 vehicles</title></rect>
+<rect x="701.4" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 5 vehicles</title></rect>
+<rect x="708.1" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 9 vehicles</title></rect>
+<rect x="708.1" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 8 vehicles</title></rect>
+<rect x="708.1" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 10 vehicles</title></rect>
+<rect x="708.1" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 7 vehicles</title></rect>
+<rect x="708.1" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 11 vehicles</title></rect>
+<rect x="708.1" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 6 vehicles</title></rect>
+<rect x="708.1" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 13 vehicles</title></rect>
+<rect x="708.1" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 12 vehicles</title></rect>
+<rect x="714.8" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 7 vehicles</title></rect>
+<rect x="714.8" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 10 vehicles</title></rect>
+<rect x="714.8" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 8 vehicles</title></rect>
+<rect x="714.8" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 6 vehicles</title></rect>
+<rect x="714.8" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 13 vehicles</title></rect>
+<rect x="714.8" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 9 vehicles</title></rect>
+<rect x="714.8" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 12 vehicles</title></rect>
+<rect x="714.8" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 11 vehicles</title></rect>
+<rect x="721.5" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 12 vehicles</title></rect>
+<rect x="721.5" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 9 vehicles</title></rect>
+<rect x="721.5" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 6 vehicles</title></rect>
+<rect x="721.5" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 13 vehicles</title></rect>
+<rect x="721.5" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 7 vehicles</title></rect>
+<rect x="721.5" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 10 vehicles</title></rect>
+<rect x="721.5" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 11 vehicles</title></rect>
+<rect x="721.5" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 8 vehicles</title></rect>
+<rect x="728.2" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 11 vehicles</title></rect>
+<rect x="728.2" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 8 vehicles</title></rect>
+<rect x="728.2" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 10 vehicles</title></rect>
+<rect x="728.2" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 7 vehicles</title></rect>
+<rect x="728.2" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 12 vehicles</title></rect>
+<rect x="728.2" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 9 vehicles</title></rect>
+<rect x="728.2" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 13 vehicles</title></rect>
+<rect x="734.9" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 9 vehicles</title></rect>
+<rect x="734.9" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 11 vehicles</title></rect>
+<rect x="734.9" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 10 vehicles</title></rect>
+<rect x="734.9" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 12 vehicles</title></rect>
+<rect x="734.9" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 7 vehicles</title></rect>
+<rect x="734.9" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 6 vehicles</title></rect>
+<rect x="734.9" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 13 vehicles</title></rect>
+<rect x="734.9" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>48-51 moves, 8 vehicles</title></rect>
+<rect x="741.6" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 11 vehicles</title></rect>
+<rect x="741.6" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 8 vehicles</title></rect>
+<rect x="741.6" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 9 vehicles</title></rect>
+<rect x="741.6" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 7 vehicles</title></rect>
+<rect x="741.6" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 12 vehicles</title></rect>
+<rect x="741.6" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 10 vehicles</title></rect>
+<rect x="741.6" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 13 vehicles</title></rect>
+<rect x="741.6" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>52-55 moves, 6 vehicles</title></rect>
+<rect x="748.3" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 12 vehicles</title></rect>
+<rect x="748.3" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 13 vehicles</title></rect>
+<rect x="748.3" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 10 vehicles</title></rect>
+<rect x="748.3" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 9 vehicles</title></rect>
+<rect x="748.3" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 8 vehicles</title></rect>
+<rect x="748.3" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 7 vehicles</title></rect>
+<rect x="748.3" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>56-59 moves, 11 vehicles</title></rect>
+<rect x="755" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 13 vehicles</title></rect>
+<rect x="755" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 10 vehicles</title></rect>
+<rect x="755" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 9 vehicles</title></rect>
+<rect x="755" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 11 vehicles</title></rect>
+<rect x="755" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 8 vehicles</title></rect>
+<rect x="755" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 12 vehicles</title></rect>
+<rect x="761.7" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 10 vehicles</title></rect>
+<rect x="761.7" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 8 vehicles</title></rect>
+<rect x="761.7" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 7 vehicles</title></rect>
+<rect x="761.7" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 13 vehicles</title></rect>
+<rect x="761.7" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 11 vehicles</title></rect>
+<rect x="761.7" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 12 vehicles</title></rect>
+<rect x="761.7" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>64-67 moves, 9 vehicles</title></rect>
+<rect x="768.4" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 12 vehicles</title></rect>
+<rect x="768.4" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 11 vehicles</title></rect>
+<rect x="768.4" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 13 vehicles</title></rect>
+<rect x="768.4" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 8 vehicles</title></rect>
+<rect x="768.4" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 9 vehicles</title></rect>
+<rect x="768.4" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 10 vehicles</title></rect>
+<rect x="775.1" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 8 vehicles</title></rect>
+<rect x="775.1" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 12 vehicles</title></rect>
+<rect x="775.1" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 13 vehicles</title></rect>
+<rect x="775.1" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 10 vehicles</title></rect>
+<rect x="775.1" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 7 vehicles</title></rect>
+<rect x="775.1" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 11 vehicles</title></rect>
+<rect x="775.1" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>72-75 moves, 9 vehicles</title></rect>
+<rect x="781.8" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 13 vehicles</title></rect>
+<rect x="781.8" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 11 vehicles</title></rect>
+<rect x="781.8" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 9 vehicles</title></rect>
+<rect x="781.8" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 10 vehicles</title></rect>
+<rect x="781.8" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 8 vehicles</title></rect>
+<rect x="781.8" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 12 vehicles</title></rect>
+<rect x="788.5" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 9 vehicles</title></rect>
+<rect x="788.5" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 8 vehicles</title></rect>
+<rect x="788.5" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 10 vehicles</title></rect>
+<rect x="788.5" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 12 vehicles</title></rect>
+<rect x="788.5" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 7 vehicles</title></rect>
+<rect x="788.5" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 11 vehicles</title></rect>
+<rect x="788.5" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>80-83 moves, 13 vehicles</title></rect>
+<rect x="795.2" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 10 vehicles</title></rect>
+<rect x="795.2" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 8 vehicles</title></rect>
+<rect x="795.2" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 11 vehicles</title></rect>
+<rect x="795.2" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 9 vehicles</title></rect>
+<rect x="795.2" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 12 vehicles</title></rect>
+<rect x="795.2" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>84-87 moves, 13 vehicles</title></rect>
+<rect x="801.9" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 13 vehicles</title></rect>
+<rect x="801.9" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 9 vehicles</title></rect>
+<rect x="801.9" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 7 vehicles</title></rect>
+<rect x="801.9" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 8 vehicles</title></rect>
+<rect x="801.9" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 10 vehicles</title></rect>
+<rect x="801.9" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 11 vehicles</title></rect>
+<rect x="801.9" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>88-91 moves, 12 vehicles</title></rect>
+<rect x="808.6" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 10 vehicles</title></rect>
+<rect x="808.6" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 8 vehicles</title></rect>
+<rect x="808.6" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 13 vehicles</title></rect>
+<rect x="808.6" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 9 vehicles</title></rect>
+<rect x="808.6" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 11 vehicles</title></rect>
+<rect x="808.6" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>92-95 moves, 12 vehicles</title></rect>
+<rect x="815.3" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 11 vehicles</title></rect>
+<rect x="815.3" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 12 vehicles</title></rect>
+<rect x="815.3" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 7 vehicles</title></rect>
+<rect x="815.3" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 13 vehicles</title></rect>
+<rect x="815.3" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 10 vehicles</title></rect>
+<rect x="815.3" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 8 vehicles</title></rect>
+<rect x="815.3" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>96-99 moves, 9 vehicles</title></rect>
+<rect x="822" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 8 vehicles</title></rect>
+<rect x="822" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 13 vehicles</title></rect>
+<rect x="822" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 9 vehicles</title></rect>
+<rect x="822" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 11 vehicles</title></rect>
+<rect x="822" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 10 vehicles</title></rect>
+<rect x="828.7" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 8 vehicles</title></rect>
+<rect x="828.7" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 10 vehicles</title></rect>
+<rect x="828.7" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 13 vehicles</title></rect>
+<rect x="828.7" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 9 vehicles</title></rect>
+<rect x="828.7" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 11 vehicles</title></rect>
+<rect x="828.7" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>104-107 moves, 12 vehicles</title></rect>
+<rect x="835.4" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 8 vehicles</title></rect>
+<rect x="835.4" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 9 vehicles</title></rect>
+<rect x="835.4" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 10 vehicles</title></rect>
+<rect x="835.4" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 11 vehicles</title></rect>
+<rect x="835.4" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 12 vehicles</title></rect>
+<rect x="835.4" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>108-111 moves, 13 vehicles</title></rect>
+<rect x="842.1" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 12 vehicles</title></rect>
+<rect x="842.1" y="193.1" width="5.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 8 vehicles</title></rect>
+<rect x="842.1" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 9 vehicles</title></rect>
+<rect x="842.1" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 11 vehicles</title></rect>
+<rect x="842.1" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 13 vehicles</title></rect>
+<rect x="842.1" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>112-115 moves, 10 vehicles</title></rect>
+<rect x="848.8" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 12 vehicles</title></rect>
+<rect x="848.8" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 9 vehicles</title></rect>
+<rect x="848.8" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 10 vehicles</title></rect>
+<rect x="848.8" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 13 vehicles</title></rect>
+<rect x="848.8" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>116-119 moves, 11 vehicles</title></rect>
+<rect x="855.5" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 10 vehicles</title></rect>
+<rect x="855.5" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 12 vehicles</title></rect>
+<rect x="855.5" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 11 vehicles</title></rect>
+<rect x="855.5" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 13 vehicles</title></rect>
+<rect x="862.2" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>124-127 moves, 11 vehicles</title></rect>
+<rect x="862.2" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>124-127 moves, 12 vehicles</title></rect>
+<rect x="862.2" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>124-127 moves, 13 vehicles</title></rect>
+<rect x="868.9" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>128-131 moves, 12 vehicles</title></rect>
+<rect x="868.9" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>128-131 moves, 13 vehicles</title></rect>
+<rect x="875.6" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>132-135 moves, 13 vehicles</title></rect>
+<rect x="882.3" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>136-139 moves, 13 vehicles</title></rect>
+<rect x="882.3" y="152.4" width="5.7" height="12.6" fill="#d3d1c9"><title>136-139 moves, 11 vehicles</title></rect>
+<rect x="694.7" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>24-27 moves, 4 vehicles</title></rect>
+<rect x="701.4" y="247.4" width="5.7" height="12.6" fill="#d3d1c9"><title>28-31 moves, 4 vehicles</title></rect>
+<rect x="708.1" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>32-35 moves, 5 vehicles</title></rect>
+<rect x="714.8" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>36-39 moves, 5 vehicles</title></rect>
+<rect x="755" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>60-63 moves, 7 vehicles</title></rect>
+<rect x="768.4" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>68-71 moves, 7 vehicles</title></rect>
+<rect x="822" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>100-103 moves, 12 vehicles</title></rect>
+<rect x="855.5" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>120-123 moves, 9 vehicles</title></rect>
+<rect x="875.6" y="138.9" width="5.7" height="12.6" fill="#d3d1c9"><title>132-135 moves, 12 vehicles</title></rect>
+<rect x="889" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>140-143 moves, 13 vehicles</title></rect>
+<rect x="895.7" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>144-147 moves, 13 vehicles</title></rect>
+<rect x="902.4" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>148-151 moves, 13 vehicles</title></rect>
+<rect x="721.5" y="233.9" width="5.7" height="12.6" fill="#d3d1c9"><title>40-43 moves, 5 vehicles</title></rect>
+<rect x="728.2" y="220.3" width="5.7" height="12.6" fill="#d3d1c9"><title>44-47 moves, 6 vehicles</title></rect>
+<rect x="875.6" y="179.6" width="5.7" height="12.6" fill="#d3d1c9"><title>132-135 moves, 9 vehicles</title></rect>
+<rect x="875.6" y="166" width="5.7" height="12.6" fill="#d3d1c9"><title>132-135 moves, 10 vehicles</title></rect>
+<rect x="661.2" y="288.1" width="5.7" height="12.6" fill="#d3d1c9"><title>4-7 moves, 1 vehicles</title></rect>
+<rect x="922.5" y="125.3" width="5.7" height="12.6" fill="#d3d1c9"><title>160-163 moves, 13 vehicles</title></rect>
+<rect x="781.8" y="206.7" width="5.7" height="12.6" fill="#d3d1c9"><title>76-79 moves, 7 vehicles</title></rect>
+<path d="M821.5 112v-5H922v5" fill="none" stroke="#52514e"/>
+<text x="871.75" y="103" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">expert</text>
+<circle cx="821.5" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>100 moves, 12 vehicles</title></circle>
+<circle cx="821.5" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>100 moves, 13 vehicles</title></circle>
+<circle cx="823.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>101 moves, 13 vehicles</title></circle>
+<circle cx="824.9" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>102 moves, 13 vehicles</title></circle>
+<circle cx="828.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>104 moves, 13 vehicles</title></circle>
+<circle cx="828.2" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>104 moves, 12 vehicles</title></circle>
+<circle cx="828.2" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>104 moves, 9 vehicles</title></circle>
+<circle cx="829.9" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>105 moves, 13 vehicles</title></circle>
+<circle cx="836.6" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>109 moves, 11 vehicles</title></circle>
+<circle cx="838.3" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>110 moves, 12 vehicles</title></circle>
+<circle cx="839.9" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>111 moves, 13 vehicles</title></circle>
+<circle cx="841.6" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>112 moves, 11 vehicles</title></circle>
+<circle cx="841.6" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>112 moves, 13 vehicles</title></circle>
+<circle cx="841.6" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>112 moves, 12 vehicles</title></circle>
+<circle cx="845" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>114 moves, 12 vehicles</title></circle>
+<circle cx="848.3" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>116 moves, 12 vehicles</title></circle>
+<circle cx="848.3" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>116 moves, 11 vehicles</title></circle>
+<circle cx="850" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>117 moves, 13 vehicles</title></circle>
+<circle cx="851.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>118 moves, 10 vehicles</title></circle>
+<circle cx="856.7" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>121 moves, 12 vehicles</title></circle>
+<circle cx="858.4" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>122 moves, 9 vehicles</title></circle>
+<circle cx="858.4" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>122 moves, 13 vehicles</title></circle>
+<circle cx="863.4" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>125 moves, 11 vehicles</title></circle>
+<circle cx="865.1" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>126 moves, 12 vehicles</title></circle>
+<circle cx="866.7" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>127 moves, 13 vehicles</title></circle>
+<circle cx="870.1" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>129 moves, 13 vehicles</title></circle>
+<circle cx="870.1" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>129 moves, 12 vehicles</title></circle>
+<circle cx="870.1" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>129 moves, 12 vehicles</title></circle>
+<circle cx="871.8" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>130 moves, 12 vehicles</title></circle>
+<circle cx="875.1" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>132 moves, 13 vehicles</title></circle>
+<circle cx="876.8" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>133 moves, 9 vehicles</title></circle>
+<circle cx="876.8" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>133 moves, 10 vehicles</title></circle>
+<circle cx="881.8" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>136 moves, 13 vehicles</title></circle>
+<circle cx="883.5" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>137 moves, 11 vehicles</title></circle>
+<circle cx="885.2" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>138 moves, 13 vehicles</title></circle>
+<circle cx="888.5" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>140 moves, 13 vehicles</title></circle>
+<circle cx="888.5" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>140 moves, 13 vehicles</title></circle>
+<circle cx="898.6" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>146 moves, 13 vehicles</title></circle>
+<circle cx="901.9" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>148 moves, 13 vehicles</title></circle>
+<circle cx="922" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>160 moves, 13 vehicles</title></circle>
+<line x1="654" y1="308" x2="922" y2="308" stroke="#898781"/>
+<text x="654" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>
+<text x="721" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">40</text>
+<text x="788" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">80</text>
+<text x="855" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">120</text>
+<text x="922" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">160</text>
+<line x1="654" y1="590" x2="922" y2="590" stroke="#e4e2dc"/>
+<line x1="654" y1="530.625" x2="922" y2="530.625" stroke="#e4e2dc"/>
+<line x1="654" y1="471.25" x2="922" y2="471.25" stroke="#e4e2dc"/>
+<line x1="654" y1="411.875" x2="922" y2="411.875" stroke="#e4e2dc"/>
+<circle cx="821.5" cy="459" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>100 moves, walk model 1606</title></circle>
+<circle cx="821.5" cy="455.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>100 moves, walk model 1850</title></circle>
+<circle cx="823.2" cy="457.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>101 moves, walk model 1704</title></circle>
+<circle cx="824.9" cy="446.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>102 moves, walk model 2576</title></circle>
+<circle cx="828.2" cy="450" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>104 moves, walk model 2283</title></circle>
+<circle cx="828.2" cy="458.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>104 moves, walk model 1657</title></circle>
+<circle cx="828.2" cy="451.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>104 moves, walk model 2143</title></circle>
+<circle cx="829.9" cy="455.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>105 moves, walk model 1860</title></circle>
+<circle cx="836.6" cy="450.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>109 moves, walk model 2247</title></circle>
+<circle cx="838.3" cy="445" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>110 moves, walk model 2771</title></circle>
+<circle cx="839.9" cy="451.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>111 moves, walk model 2179</title></circle>
+<circle cx="841.6" cy="445.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>112 moves, walk model 2747</title></circle>
+<circle cx="841.6" cy="449.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>112 moves, walk model 2313</title></circle>
+<circle cx="841.6" cy="435.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>112 moves, walk model 4047</title></circle>
+<circle cx="845" cy="442" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>114 moves, walk model 3107</title></circle>
+<circle cx="848.3" cy="437.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>116 moves, walk model 3657</title></circle>
+<circle cx="848.3" cy="454.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>116 moves, walk model 1897</title></circle>
+<circle cx="850" cy="444.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>117 moves, walk model 2871</title></circle>
+<circle cx="851.7" cy="446.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>118 moves, walk model 2592</title></circle>
+<circle cx="856.7" cy="440.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>121 moves, walk model 3316</title></circle>
+<circle cx="858.4" cy="440.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>122 moves, walk model 3348</title></circle>
+<circle cx="858.4" cy="444.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>122 moves, walk model 2790</title></circle>
+<circle cx="863.4" cy="438.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>125 moves, walk model 3510</title></circle>
+<circle cx="865.1" cy="451.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>126 moves, walk model 2149</title></circle>
+<circle cx="866.7" cy="436.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>127 moves, walk model 3886</title></circle>
+<circle cx="870.1" cy="436" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>129 moves, walk model 3922</title></circle>
+<circle cx="870.1" cy="440.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>129 moves, walk model 3344</title></circle>
+<circle cx="870.1" cy="436.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>129 moves, walk model 3885</title></circle>
+<circle cx="871.8" cy="436.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>130 moves, walk model 3897</title></circle>
+<circle cx="875.1" cy="445.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>132 moves, walk model 2714</title></circle>
+<circle cx="876.8" cy="442.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>133 moves, walk model 3059</title></circle>
+<circle cx="876.8" cy="446.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>133 moves, walk model 2633</title></circle>
+<circle cx="881.8" cy="438.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>136 moves, walk model 3574</title></circle>
+<circle cx="883.5" cy="408.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>137 moves, walk model 11364</title></circle>
+<circle cx="885.2" cy="433.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>138 moves, walk model 4257</title></circle>
+<circle cx="888.5" cy="436.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>140 moves, walk model 3886</title></circle>
+<circle cx="888.5" cy="426.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>140 moves, walk model 5745</title></circle>
+<circle cx="898.6" cy="431" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>146 moves, walk model 4757</title></circle>
+<circle cx="901.9" cy="433.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>148 moves, walk model 4310</title></circle>
+<circle cx="922" cy="421.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>160 moves, walk model 6888</title></circle>
+<line x1="654" y1="590" x2="922" y2="590" stroke="#898781"/>
+<text x="654" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>
+<text x="721" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">40</text>
+<text x="788" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">80</text>
+<text x="855" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">120</text>
+<text x="922" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">160</text>
+<text x="788" y="626" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">shortest solution (moves)</text>
+<text x="16" y="213" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400" transform="rotate(-90 16 213)">vehicles</text>
+<text x="16" y="495" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400" transform="rotate(-90 16 495)">walk model (expected moves)</text>
+<text x="58" y="374" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="600">Two difficulty measures of the bank puzzles</text>
+</svg>

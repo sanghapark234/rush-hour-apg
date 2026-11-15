@@ -152,7 +152,11 @@ function bank({ per = 40 }) {
     for (const e of pool) { const b = Math.floor(e.moves / BUCKET); buckets.set(b, [...(buckets.get(b) ?? []), e]); }
     const picked = [];
     for (let round = 0; picked.length < per && round < per; round++) for (const list of buckets.values()) if (list[round] && picked.length < per) picked.push(list[round]);
-    out[key] = picked.sort((x, y) => x.moves - y.moves).map((e) => ({ N: e.N, v: e.cars.map((v) => [v.axis, v.lane, v.len, v.at]), w: e.walls, moves: e.moves, slides: e.slides, states: e.states }));
+    // effort: the second difficulty measure, the expected moves of the walk model (solver.js).
+    out[key] = picked.sort((x, y) => x.moves - y.moves).map((e) => {
+      const table = analyze({ N: e.N, meta: e.cars, walls: e.walls }, e.cars.map((v) => v.at), CAP);
+      return { N: e.N, v: e.cars.map((v) => [v.axis, v.lane, v.len, v.at]), w: e.walls, moves: e.moves, slides: e.slides, states: e.states, effort: Math.round(table.effort(e.cars.map((v) => v.at))) };
+    });
     console.log(`${key}: pool ${pool.length}, picked ${picked.length}, moves ${out[key][0]?.moves}-${out[key].at(-1)?.moves}`);
   }
   writeFileSync(here('../src/puzzles.json'), JSON.stringify(out).replace(/\{"N"/g, '\n{"N"') + '\n');

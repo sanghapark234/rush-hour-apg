@@ -45,6 +45,26 @@ Planters are fixed obstacles: no vehicle can pass them.
 One move is one cell. The game deals 40 puzzles per level without repeats, with random colours
 and a random top-bottom mirror.
 
+### Auto level
+
+With **Auto**, the game chooses each puzzle from how the audience played the last one
+(`src/adapt.js`). All 160 puzzles form one ladder, ordered by shortest solution.
+
+| Last puzzle | Next puzzle |
+| --- | --- |
+| Solved in at most 1.5 × the shortest solution, with hints for at most 10% of its moves | Harder: 8% up the ladder |
+| Solved in more than 2.5 × the shortest solution, or with hints for more than 30% of its moves | Easier: 8% down the ladder |
+| Not solved: chat moved or asked for a hint, then took a new puzzle | Easier: 8% down the ladder |
+| Any other result, or a puzzle that nobody touched | The same place on the ladder |
+
+The first Auto puzzle is 10% up the ladder, and the game picks at random among the five nearest
+puzzles that were not played. The place on the ladder lasts until the page reloads. This is
+experience-driven procedural content generation (Yannakakis and Togelius, *Artificial
+Intelligence and Games*, 2nd edition, section 7.2.3): a model of the player, here three numbers
+from the last puzzle, selects the content. The aim is the flow channel between boredom and
+anxiety (the same book, p. 329). The thresholds are design values. They are not fitted to
+player data.
+
 ## Puzzle generation
 
 No puzzle is written by hand. `tools/evolve.js` uses search-based procedural content generation
@@ -67,8 +87,73 @@ bun test                                                  # solver and bank chec
 `tools/archive/` holds the search results that produced the current bank. In the game, the same
 solver runs in a worker and gives the hints.
 
+### Expressive range
+
+![Expressive range of the generator](docs/expressive-range.svg)
+
+`bun tools/range.js` draws this chart. The expressive range of a generator is the set of
+content that it can make, shown over a few measures (the book, section 9.7.3). The top row
+shows each kind of puzzle that the search found, and the 160 puzzles that the bank took.
+The search found puzzles up to 94 moves on 6×6, 138 on 7×7 and 160 on 8×8. The bank uses only
+a part of that range: the levels stop at 44 moves on 6×6 and 85 on 7×7, and 142 of the 160 bank
+puzzles have 9 or more vehicles, because the quality score favours busy lots.
+
+### A second difficulty measure
+
+Each bank entry has an `effort` value next to `moves`. It is the difficulty measure of
+Jarušek and Pelánek [1]: a model player moves at random, but a move that brings the exit
+closer has a larger weight (the distance to the exit plus 25, against the distance alone).
+The measure is the expected number of moves of this player. The paper takes the mean of many
+runs; `effort()` in `src/solver.js` solves the same mean exactly, and two tests compare it
+with independent calculations.
+
+- In the paper's data from people (45 Rush Hour puzzles on 6×6), the shortest solution and
+  this model predict the solving time equally well: Spearman correlation 0.90 for each. The
+  size of the state space does not predict it. So the shortest solution stays the measure
+  that defines the levels.
+- In the bank, the two measures agree closely: rank correlation 0.99 over all 160 puzzles, and
+  0.94 (Easy), 0.91 (Normal), 0.89 (Hard) and 0.81 (Expert) inside a level. The values go
+  from 18 to 11,364 expected moves. The bottom row of the chart shows both measures.
+- The model's weight of 25 comes from the paper. Nobody has fitted it to this game, where one
+  move is one cell, and the paper has no 7×7 or 8×8 puzzles.
+
+A second measure from the literature, the structural complexity of Ragni and others [2],
+predicted human performance less well than the shortest solution in their own data, so the
+bank does not use it.
+
+### Comparison with the complete 6×6 database
+
+Michael Fogleman computed every "interesting" 6×6 Rush Hour puzzle with up to two walls:
+2,577,412 clusters of positions [3]. His database holds the hardest position of each cluster
+and counts a move as one slide of any length. `bun tools/fogleman.js path/to/rush.txt` finds
+each 6×6 bank puzzle in it. The database is not in this repository, because its page states
+no licence for it.
+
+| | Easy | Normal |
+| --- | --- | --- |
+| Bank puzzles found in the database | 38 of 40 | 39 of 40 |
+| Shortest solution in one-cell moves | 12 to 20 | 29 to 44 |
+| Shortest solution in slides | 6 to 14 (median 10) | 15 to 30 (median 22) |
+| Share of all clusters that are easier, in slides | 0.5% to 64.8% (median 22.8%) | 71.8% to 99.6% (median 95.6%) |
+
+- For all 77 puzzles that were found, this solver and the database agree on the number of
+  reachable positions and on the largest slide distance in the cluster. This is an
+  independent check of the solver.
+- The other three puzzles each have a vehicle or a planter that the hardest position does not
+  need. The database leaves such puzzles out.
+- The hardest puzzle of the database takes 60 slides (51 without walls). The hardest Normal
+  puzzle takes 30 slides, and the search archive for 6×6 reaches 94 one-cell moves.
+- The database covers 6×6 only, so nothing like it exists for the Hard and Expert levels.
+
+[1] P. Jarušek and R. Pelánek, "What Determines Difficulty of Transport Puzzles?", Proc.
+FLAIRS-24, 2011. <https://cdn.aaai.org/ocs/2518/2518-11200-1-PB.pdf>
+[2] M. Ragni, F. Steffenhagen and A. Fangmeier, "A Structural Complexity Measure for
+Predicting Human Planning Performance", Proc. CogSci 2011. <https://escholarship.org/uc/item/1wr6b29g>
+[3] M. Fogleman, "Solving Rush Hour, the Puzzle", 2018. <https://www.michaelfogleman.com/rush/>
+(read 15 November 2026).
+
 URL options for testing: `?skip=1` starts in play, `&cam=top|low` picks the view,
-`&level=easy|normal|hard|expert` picks the difficulty.
+`&level=easy|normal|hard|expert|auto` picks the difficulty.
 
 ## Connect a real chat
 
@@ -88,7 +173,11 @@ client only needs to call it for each message.
 | `src/main.js` | Game flow, camera moves, animation, HUD wiring. |
 | `src/audio.js` | Synthesised sounds (WebAudio). No audio files. |
 | `tools/evolve.js` | The puzzle generator. |
-| `tools/solver.test.js` | Tests: the solver against a plain search, and every bank entry. |
+| `src/adapt.js` | The Auto level: the next puzzle from the last result. |
+| `tools/range.js` | Draws `docs/expressive-range.svg`. |
+| `tools/fogleman.js` | Compares the 6×6 puzzles with Fogleman's database. |
+| `tools/solver.test.js` | Tests: the solver against a plain search, the walk model, and every bank entry. |
+| `tools/adapt.test.js` | Tests: the Auto level. |
 | `tools/serve.test.js` | Tests: the server's path check, cache validation and compression. |
 | `tools/assets.sh` | Converts the original images and models into `assets/`. |
 | `serve.js` | Static server with compression and cache validation. |

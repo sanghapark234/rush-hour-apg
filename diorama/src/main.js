@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createStage, BASE_H } from './scene.js';
 import { makeVehicle, disposeVehicle } from './vehicles.js';
 import { LEVELS, expand, slide } from './engine.js';
+import { START, ladder, verdict, step, choose } from './adapt.js';
 import * as sfx from './audio.js';
 
 const $ = (id) => document.getElementById(id);
@@ -15,7 +16,10 @@ const { camera, dof } = stage;
 // ---------- puzzle state ----------
 let puzzle = null, pos = [], moves = 0, won = false, busy = false, viewer = 0, lastMove = null;
 let phase = 'welcome'; // welcome | fly | play | won
-let cars = [], boardInfo = null, level = Object.hasOwn(LEVELS, params.get('level')) ? params.get('level') : 'normal';
+let cars = [], boardInfo = null, level = Object.hasOwn(LEVELS, params.get('level')) || params.get('level') === 'auto' ? params.get('level') : 'normal';
+// The Auto level (adapt.js): the place on the ladder, the puzzles played, and the last result.
+let skill = START, rungs = null, outcome = null, hints = 0, tried = false;
+const played = new Set();
 const carGroup = new THREE.Group();
 
 const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
@@ -219,7 +223,7 @@ async function command(raw, name) {
     if (asked !== puzzle || won) return;
     if (!h) return sys('Hint unavailable.', 'error');
     const [i, d] = h.move ?? [0, 1];
-    cars[i].userData.hint = 1; sfx.blip();
+    cars[i].userData.hint = 1; sfx.blip(); hints++; tried = true;
     return sys(h.move ? `Hint: ${puzzle.meta[i].id} ${dirName(i, d)} · ${h.left} moves to go` : 'Hint: red right (exit!)');
   }
   const i = puzzle.meta.findIndex((m) => m.id === a);
@@ -231,11 +235,12 @@ async function command(raw, name) {
   const d = b == 'right' || b == 'down' ? 1 : -1, { done, exit } = slide(puzzle, pos, i, d, count);
   if (exit) { moves += done; return win(); }
   if (!done) { u.bump = 1; u.bumpDir = d; sfx.clack(); return sys('Move blocked!', 'error'); }
-  u.tgt = pos[i]; moves += done; lastMove = [i, d]; sfx.roll();
+  u.tgt = pos[i]; moves += done; lastMove = [i, d]; tried = true; sfx.roll();
   sys(done < count ? `${a} moved ${b} ${done} of ${count}, then it was blocked.` : `${a} moved ${b}${count > 1 ? ' ' + count : ''}.`, 'success'); render();
 }
 function win() {
   won = true; moves++; phase = 'won';
+  outcome ??= { solved: true, moves, best: puzzle.moves, hints }; // the first clear of this puzzle counts
   const u = cars[0].userData; Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
   sfx.roll(); setTimeout(() => { if (won) { sfx.win(); confetti(); } }, 650);
   sys('Success! RED escaped through the exit!', 'success');
@@ -256,9 +261,23 @@ function reset(dropIn = false) {
 async function newPuzzle() {
   if (busy) return;
   const want = level;
+  let note = '';
   busy = true; render();
   try {
-    const made = expand(deal((await bank)[want], want), { flip: Math.random() < 0.5 });
+    const all = await bank;
+    let entry;
+    if (want === 'auto') {
+      rungs ??= ladder(all);
+      // Judge the puzzle that ends now, when it was an Auto puzzle and the audience tried it.
+      const result = puzzle?.auto ? outcome ?? (tried ? { solved: false } : null) : null;
+      if (result) {
+        const v = verdict(result); skill = step(skill, v);
+        note = v > 0 ? 'Auto: you solved that well, so this puzzle is harder.' : v < 0 ? 'Auto: that one was tough, so this puzzle is easier.' : '';
+      }
+      const i = choose(rungs.length, skill, played); played.add(i); entry = rungs[i];
+    } else entry = deal(all[want], want);
+    const made = { ...expand(entry, { flip: Math.random() < 0.5 }), auto: want === 'auto' };
+    outcome = null; hints = 0; tried = false;
     if (!await ask({ type: 'load', puzzle: made })) throw new Error('the puzzle has no solution');
     puzzle = made;
   } finally { busy = false; }
@@ -266,6 +285,7 @@ async function newPuzzle() {
   stage.board.add(carGroup);
   $('info').textContent = `${puzzle.N}×${puzzle.N} lot · shortest solution: ${puzzle.moves} moves`;
   chat.replaceChildren(); sys('Help the red car reach the exit. Type a colour and a direction.');
+  if (note) sys(note);
   legend(); reset(true);
   if (phase === 'play') flyTo(camName, 1.2, () => { controls.enabled = true; });
   else if (phase === 'welcome' && !tween) applyPose(pose('welcome'));
@@ -296,7 +316,8 @@ for (const r of document.querySelectorAll('input[name=level], #level')) r.addEve
 for (const o of document.querySelectorAll('input[name=level]')) o.checked = o.value === level;
 $('level').value = level;
 // Hook for a real chat source (for example tmi.js): apg.command('alice', 'blue right').
-window.apg = { command: (user, text) => command(String(text), String(user)), stage };
+// apg.state() gives a copy of the puzzle and the position, for a bot or a test.
+window.apg = { command: (user, text) => command(String(text), String(user)), state: () => structuredClone({ puzzle, pos, moves, won, level }), stage };
 
 function resize() { stage.resize(innerWidth, innerHeight); }
 addEventListener('resize', resize); resize();

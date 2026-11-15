@@ -105,7 +105,10 @@ test('every puzzle in the bank is inside its level range and matches its record'
         expect(a.solvable).toBe(true);
         expect(a.dist(z.start) + 1).toBe(entry.moves);
         expect(a.count).toBe(entry.states);
+        // The walk model takes seconds on the large boards, so only the easy level is recomputed.
+        if (key === 'easy') expect(Math.round(a.effort(z.start))).toBe(entry.effort);
       }
+      expect(entry.effort).toBeGreaterThanOrEqual(entry.moves);
       expect(entry.moves).toBeGreaterThanOrEqual(level.min);
       expect(entry.moves).toBeLessThanOrEqual(level.max);
       expect(entry.v.length).toBeLessThanOrEqual(13);
@@ -114,3 +117,46 @@ test('every puzzle in the bank is inside its level range and matches its record'
     expect(seen.size).toBe(bank[key].length);
   }
 }, 300000); // every entry is solved twice, which takes some seconds
+
+// The walk model of Jarušek and Pelánek: a neighbour closer to the exit has weight d + 25, any
+// other neighbour has weight d, where d is the distance of the current position.
+test('the walk model of a lone red car matches the closed form of a chain', () => {
+  // Positions 0..4 form a chain. T[d] is the expected time from distance d to distance d - 1.
+  const q = (d) => d / (2 * d + 25), T = [0, 0, 0, 0, 1];
+  for (let d = 3; d >= 1; d--) T[d] = (1 + q(d) * T[d + 1]) / (1 - q(d));
+  const z = { N: 6, meta: [{ axis: 'h', lane: 2, len: 2 }], walls: [] };
+  expect(analyze(z, [0]).effort([0])).toBeCloseTo(T[1] + T[2] + T[3] + T[4] + 1, 6);
+  expect(analyze(z, [0]).effort([4])).toBe(1); // at the exit only the exit move is left
+});
+
+test('the walk model matches a direct solution of its linear equations', () => {
+  // Three vehicles: the red car and two that cross its row.
+  const z = { N: 6, meta: [{ axis: 'h', lane: 2, len: 2 }, { axis: 'v', lane: 3, len: 3 }, { axis: 'v', lane: 5, len: 2 }], walls: [7] }, start = [0, 1, 2];
+  const a = analyze(z, start), states = [start], index = new Map([[start.join(), 0]]), links = [];
+  for (let h = 0; h < states.length; h++) {
+    links.push([]);
+    z.meta.forEach((_, i) => { for (const d of [-1, 1]) {
+      const p = states[h].slice();
+      const moved = slide(z, p, i, d, 1);
+      if (!moved.done || moved.exit) continue;
+      if (!index.has(p.join())) { index.set(p.join(), states.length); states.push(p); }
+      links[h].push(index.get(p.join()));
+    } });
+  }
+  expect(states.length).toBe(a.count);
+  // Row u: E[u] - sum of P(u, v) E[v] = 1, and E = 0 at the exit. Solve by Gauss-Jordan elimination.
+  const n = states.length, dist = states.map((p) => a.dist(p)), M = states.map(() => new Float64Array(n + 1));
+  for (let u = 0; u < n; u++) {
+    M[u][u] = 1;
+    if (!dist[u]) continue;
+    const w = links[u].map((v) => dist[v] < dist[u] ? dist[u] + 25 : dist[u]), sum = w.reduce((x, y) => x + y, 0);
+    links[u].forEach((v, k) => { M[u][v] -= w[k] / sum; }); M[u][n] = 1;
+  }
+  for (let c = 0; c < n; c++) {
+    let best = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[best][c])) best = r;
+    [M[c], M[best]] = [M[best], M[c]];
+    for (let r = 0; r < n; r++) if (r !== c && M[r][c]) { const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; }
+  }
+  expect(n).toBeGreaterThan(30);
+  expect(a.effort(start)).toBeCloseTo(M[0][n] / M[0][0] + 1, 5);
+});

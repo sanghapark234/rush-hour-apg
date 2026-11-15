@@ -92,6 +92,33 @@ export function analyze(z, start, cap = 400000) {
       for (let m = api.next(q); m; m = api.next(q, m)) { out.push(m); q[m[0]] += m[1]; }
       return out;
     },
+    // Expected number of moves of the walk model of Jarušek and Pelánek (2011) from position p,
+    // the exit move included. In each position the model picks a neighbour at random with weight
+    // d + bonus when the neighbour is closer to the exit and weight d otherwise, where d is the
+    // distance of the current position. It walks at random far from the exit and directly near
+    // it, as people do. The paper runs the model many times and takes the mean; this solves the
+    // same mean exactly, by Gauss-Seidel sweeps over the reachable positions.
+    effort(p, bonus = 25) {
+      const from = find(encode(p));
+      if (from < 0 || dist[from] < 0) return -1;
+      // Neighbour lists in one array: nb[off[u] .. off[u + 1]).
+      const off = new Int32Array(count + 1), list = [];
+      for (let u = 0; u < count; u++) { decode(codes[u]); each(codes[u], (c) => list.push(find(c))); off[u + 1] = list.length; }
+      const nb = Int32Array.from(list), order = Int32Array.from({ length: count }, (_, i) => i).sort((x, y) => dist[x] - dist[y]);
+      const e = Float64Array.from(dist.subarray(0, count));
+      for (let sweep = 0; sweep < 200000; sweep++) {
+        let change = 0;
+        for (const u of order) {
+          const d = dist[u]; if (d <= 0) continue;
+          let sum = 0, weight = 0;
+          for (let k = off[u]; k < off[u + 1]; k++) { const v = nb[k], w = dist[v] < d ? d + bonus : d; sum += w * e[v]; weight += w; }
+          const next = 1 + sum / weight;
+          change = Math.max(change, Math.abs(next - e[u]) / next); e[u] = next;
+        }
+        if (change < 1e-9) return e[from] + 1;
+      }
+      throw new Error('the walk model did not converge');
+    },
     // A position with the largest distance; `pick` chooses among ties.
     hardest(pick = () => 0) {
       let max = 0; for (let i = 0; i < count; i++) if (dist[i] > max) max = dist[i];
