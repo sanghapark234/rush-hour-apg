@@ -51,3 +51,9 @@ test('chooses the encoding from Accept-Encoding', async () => {
   // Images and models are not compressed again.
   expect(await (async () => (await get('/public/assets/models/pliers.glb', { 'accept-encoding': 'br' })).headers.get('content-encoding'))()).toBeNull();
 });
+
+test('stops with a message when the folder has no index.html', async () => {
+  const run = Bun.spawn(['bun', new URL('../serve.js', import.meta.url).pathname, '127.0.0.1', String(port + 1), 'tools'], { stdout: 'pipe', stderr: 'pipe' });
+  expect(await run.exited).toBe(1);
+  expect(await new Response(run.stderr).text()).toContain('bun run build');
+});
