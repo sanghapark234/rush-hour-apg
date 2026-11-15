@@ -314,6 +314,8 @@ function frame() {
 }
 frame();
 
+let loaded = 0;
+for (const task of stage.tasks) task.then(() => { $('start').textContent = `Loading ${Math.round(++loaded / stage.tasks.length * 100)}%`; }, () => {});
 Promise.all([stage.ready, newPuzzle()]).then(() => {
   document.body.classList.add('ready');
   $('start').disabled = false; $('start').textContent = 'Start';

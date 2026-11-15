@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { EffectComposer, RenderPass, EffectPass, DepthOfFieldEffect, VignetteEffect, ToneMappingEffect, ToneMappingMode, SMAAEffect, NoiseEffect, BlendFunction } from 'postprocessing';
@@ -72,24 +73,37 @@ export function createStage(canvas) {
 
   // ---- room: 360° photo for the view, HDR for light and reflections ----
   const ready = [];
-  ready.push(new HDRLoader().loadAsync(A + 'artist_workshop_1k.hdr').then((t) => {
+  ready.push(new HDRLoader().loadAsync(A + 'artist_workshop_512.hdr').then((t) => {
     t.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = t;
   }));
   const TABLE_H = 12.4; // about 75 cm
-  ready.push(texLoader.loadAsync(A + 'artist_workshop_8k.jpg').then((t) => {
+  // The backdrop comes in two steps: a small photo that the first frame waits for, then the
+  // sharp one, fetched after everything else and decoded off the main thread.
+  let sky;
+  ready.push(texLoader.loadAsync(A + 'artist_workshop_2k.webp').then((t) => {
     t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-    const sky = new GroundedSkybox(t, 26, 150, 96);
+    sky = new GroundedSkybox(t, 26, 150, 96);
     sky.position.y = 26 - TABLE_H - 0.01;
     sky.material.color.setScalar(1.25);
     scene.add(sky);
   }));
+  const sharpen = () => new THREE.ImageBitmapLoader().setOptions({ imageOrientation: 'flipY' })
+    .loadAsync(A + 'artist_workshop_6k.webp').then((bitmap) => {
+      const t = new THREE.Texture(bitmap);
+      t.flipY = false; // the bitmap is already flipped
+      t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.needsUpdate = true;
+      const small = sky.material.map;
+      sky.material.map = t;
+      small.dispose();
+    });
 
   // ---- workbench and props ----
   const bench = new THREE.Group();
   scene.add(bench);
-  const gltf = new GLTFLoader();
-  const load = (name) => gltf.loadAsync(`${A}models/${name}/${name}.gltf`).then((g) => shadows(g.scene));
+  // One GLB per model: meshopt-compressed geometry and WebP textures (tools/assets.sh).
+  const gltf = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  const load = (name) => gltf.loadAsync(`${A}models/${name}.glb`).then((g) => shadows(g.scene));
   const box = new THREE.Box3(), size = new THREE.Vector3();
   // Put a model on the table: scale, turn, then rest its lowest point on y.
   function put(o, { s = REAL, x = 0, z = 0, y = 0, ry = 0 }) {
@@ -141,7 +155,7 @@ export function createStage(canvas) {
   scene.add(board);
   const lampModel = load('street_lamp_01');
   const M = {
-    ply: new THREE.MeshStandardMaterial({ map: tex('plywood_diff_1k.jpg', 1, true), roughness: 0.7 }),
+    ply: new THREE.MeshStandardMaterial({ map: tex('plywood_diff_1k.webp', 1, true), roughness: 0.7 }),
     edge: new THREE.MeshStandardMaterial({ color: 0x15130f, roughness: 0.45 }),
     kerb: new THREE.MeshStandardMaterial({ color: 0xb9b5ab, roughness: 0.85 }),
     grass: new THREE.MeshStandardMaterial({
@@ -155,7 +169,7 @@ export function createStage(canvas) {
     brass: new THREE.MeshStandardMaterial({ color: 0xc8a052, roughness: 0.3, metalness: 1 }),
   };
   M.grass.map.wrapS = M.grass.map.wrapT = THREE.RepeatWrapping;
-  const asphaltMaps = { map: tex('asphalt_02_diff_1k.jpg', 1, true), normalMap: tex('asphalt_02_nor_gl_1k.jpg', 1), roughnessMap: tex('asphalt_02_arm_1k.jpg', 1) };
+  const asphaltMaps = { map: tex('asphalt_02_diff_1k.webp', 1, true), normalMap: tex('asphalt_02_nor_gl_1k.webp', 1), roughnessMap: tex('asphalt_02_arm_1k.webp', 1) };
   let gate = null;
 
   function markings(N, exitRow) {
@@ -273,7 +287,8 @@ export function createStage(canvas) {
 
   return {
     renderer, scene, camera, composer, dof, ao, sun, board, resize, buildBoard,
-    ready: Promise.all(ready),
+    tasks: ready, // one promise per file the first frame needs
+    ready: Promise.all(ready).then(() => { sharpen().catch((err) => console.warn('Sharp backdrop not loaded:', err)); }),
     get gate() { return gate; },
   };
 }

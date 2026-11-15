@@ -8,16 +8,20 @@ hobby workbench. Chat commands slide die-cast cars until the red car reaches the
 
 ## Run
 
-The page loads ES modules, an HDR image and glTF models, so it needs an HTTP server.
+The page loads ES modules, images and models, so it needs an HTTP server.
 Opening `index.html` from the file system does not work.
 
 ```sh
 cd diorama
-bunx serve .        # or: python3 -m http.server 8000
+bun serve.js                 # http://127.0.0.1:8000/
+bun serve.js 0.0.0.0 8000    # reachable from other machines
 ```
 
 Open the printed address in a desktop browser. No build step and no network access are needed:
-three.js 0.187.0, postprocessing 6.39.6 and n8ao 2.0.2 are in `vendor/`.
+three.js 0.187.0, postprocessing 6.39.6 and n8ao 2.0.2 are in `vendor/`, minified.
+
+Any static server works, but use `serve.js` to show the game to other people: it compresses
+the text files and lets the browser reuse its cached copies (see Load time).
 
 ## Play
 
@@ -85,12 +89,33 @@ client only needs to call it for each message.
 | `src/audio.js` | Synthesised sounds (WebAudio). No audio files. |
 | `tools/evolve.js` | The puzzle generator. |
 | `tools/solver.test.js` | Tests: the solver against a plain search, and every bank entry. |
+| `tools/assets.sh` | Converts the original images and models into `assets/`. |
+| `serve.js` | Static server with compression and cache validation. |
 | `garage.html` | Developer page that shows every vehicle model. |
+
+## Load time
+
+A first visit transfers about 6.3 MB in 37 requests; the first frame needs 4.7 MB of it.
+Before this work it was 27.9 MB in 70 requests. A repeat visit transfers almost nothing: the browser checks each file and the server answers "304 Not Modified".
+
+- **Images** are WebP. The backdrop loads in two steps: a 2k photo for the first frame, then
+  the 6k photo, which replaces it without a pause.
+- **Models** are one `.glb` file each, with Meshopt-compressed geometry and WebP textures.
+- **Lighting** uses a 512 × 256 HDR map. Lighting is blurred, so a larger map adds nothing.
+- **Code** is minified in `vendor/`. `index.html` lists every module in a `modulepreload` link,
+  so the browser fetches all of them at once and not one import level at a time.
+- **Server**: `serve.js` sends text and the HDR map as Brotli or gzip, and gives every file an
+  `ETag` with `Cache-Control: no-cache`. File names carry no version, so the browser must
+  check each file, but it never downloads an unchanged file twice.
+
+`tools/assets.sh` rebuilds `assets/` from the original Poly Haven downloads.
+To update a library, copy its ES module build and run
+`bun build <file> --no-bundle --minify --target browser --outfile <file>`.
 
 ## Credits
 
 All third-party assets are CC0 from [Poly Haven](https://polyhaven.com): the `artist_workshop`
-HDRI; the `asphalt_02` and `plywood` textures; and the models
+HDRI and its backdrop photo; the `asphalt_02` and `plywood` textures; and the models
 `wooden_table_02`, `desk_lamp_arm_01`, `spray_paint_bottles`, `pliers`, `screwdrivers_02`,
 `measuring_tape_01`, `potted_plant_04` and `street_lamp_01`.
 
