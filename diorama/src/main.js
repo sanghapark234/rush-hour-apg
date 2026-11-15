@@ -314,8 +314,8 @@ function frame() {
 }
 frame();
 
-let loaded = 0;
-for (const task of stage.tasks) task.then(() => { $('start').textContent = `Loading ${Math.round(++loaded / stage.tasks.length * 100)}%`; }, () => {});
+let loaded = 0, failed = false;
+for (const task of stage.tasks) task.then(() => { if (!failed) $('start').textContent = `Loading ${Math.round(++loaded / stage.tasks.length * 100)}%`; }, () => {});
 Promise.all([stage.ready, newPuzzle()]).then(() => {
   document.body.classList.add('ready');
   $('start').disabled = false; $('start').textContent = 'Start';
@@ -326,4 +326,4 @@ Promise.all([stage.ready, newPuzzle()]).then(() => {
     for (const g of cars) Object.assign(g.userData, { wait: 0, y: 0, landed: true });
     setCam(camName); tween = null; controls.enabled = true; render();
   }
-}, (err) => { $('start').textContent = 'Could not load'; sys('Loading failed: ' + err.message, 'error'); throw err; });
+}, (err) => { failed = true; $('start').textContent = 'Could not load'; sys('Loading failed: ' + err.message, 'error'); throw err; });

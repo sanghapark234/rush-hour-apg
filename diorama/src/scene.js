@@ -14,12 +14,6 @@ const A = 'assets/';
 export const BASE_H = 0.55; // height of the board surface above the table
 
 const texLoader = new THREE.TextureLoader();
-function tex(file, rep, srgb = false) {
-  const t = texLoader.load(A + file);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); t.anisotropy = 8;
-  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
-  return t;
-}
 function canvasTex(w, h, draw) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   draw(c.getContext('2d'), w, h);
@@ -73,6 +67,14 @@ export function createStage(canvas) {
 
   // ---- room: 360° photo for the view, HDR for light and reflections ----
   const ready = [];
+  // A tiling texture. The material can use it at once; `ready` waits for its image.
+  function tex(file, rep, srgb = false) {
+    let t;
+    ready.push(new Promise((done, fail) => { t = texLoader.load(A + file, done, undefined, fail); }));
+    t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); t.anisotropy = 8;
+    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
   ready.push(new HDRLoader().loadAsync(A + 'artist_workshop_512.hdr').then((t) => {
     t.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = t;
@@ -154,6 +156,7 @@ export function createStage(canvas) {
   const board = new THREE.Group();
   scene.add(board);
   const lampModel = load('street_lamp_01');
+  ready.push(lampModel);
   const M = {
     ply: new THREE.MeshStandardMaterial({ map: tex('plywood_diff_1k.webp', 1, true), roughness: 0.7 }),
     edge: new THREE.MeshStandardMaterial({ color: 0x15130f, roughness: 0.45 }),

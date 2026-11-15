@@ -19,8 +19,8 @@ const encoders = {
 const packed = new Map(); // "path|etag|encoding" -> Promise<Buffer>; a changed file gets a new key
 
 function encodingFor(req) {
-  const accepted = (req.headers.get('accept-encoding') ?? '').split(',').map((s) => s.trim().split(';'));
-  const ok = (name) => accepted.some(([n, q]) => n === name && q?.trim() !== 'q=0');
+  const accepted = (req.headers.get('accept-encoding') ?? '').split(',').map((s) => s.trim().toLowerCase().split(';').map((x) => x.trim()));
+  const ok = (name) => accepted.some(([n, q]) => n === name && !(q?.startsWith('q=') && Number(q.slice(2)) === 0)); // "q=0" refuses it
   return ok('br') ? 'br' : ok('gzip') ? 'gzip' : null;
 }
 
@@ -48,7 +48,9 @@ Bun.serve({
     const key = `${file}|${etag}`;
     if (!packed.has(key)) {
       for (const old of packed.keys()) if (old.startsWith(`${file}|`) && old.endsWith(`-${encoding}"`)) packed.delete(old);
-      packed.set(key, Bun.file(file).arrayBuffer().then((b) => encoders[encoding](Buffer.from(b))));
+      const body = Bun.file(file).arrayBuffer().then((b) => encoders[encoding](Buffer.from(b)));
+      packed.set(key, body);
+      body.catch(() => packed.delete(key)); // a failed read is tried again on the next request
     }
     const body = await packed.get(key);
     return new Response(req.method === 'HEAD' ? null : body, { headers: { ...headers, 'content-encoding': encoding, 'content-length': String(body.length) } });

@@ -25,9 +25,10 @@ cwebp -quiet -q 85 "$src/asphalt_02_nor_gl_1k.jpg" -o "$out/asphalt_02_nor_gl_1k
 cwebp -quiet -q 82 "$src/plywood_diff_1k.jpg" -o "$out/plywood_diff_1k.webp"
 
 # Models: one binary file each, Meshopt-compressed geometry, WebP textures.
-# The scene code finds parts by name, so nothing is joined, flattened or simplified.
+# Nothing is simplified, joined or flattened, so each model keeps its shape and structure.
+# The version is fixed: another version can produce different files.
 for name in desk_lamp_arm_01 measuring_tape_01 pliers potted_plant_04 screwdrivers_02 spray_paint_bottles street_lamp_01 wooden_table_02; do
-  bunx @gltf-transform/cli@latest optimize "$src/models/$name/$name.gltf" "$out/models/$name.glb" \
+  bunx @gltf-transform/cli@4.5.1 optimize "$src/models/$name/$name.gltf" "$out/models/$name.glb" \
     --compress meshopt --texture-compress webp --texture-size 1024 \
     --simplify false --palette false --flatten false --join false --instance false
 done

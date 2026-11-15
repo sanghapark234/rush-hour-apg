@@ -89,6 +89,7 @@ client only needs to call it for each message.
 | `src/audio.js` | Synthesised sounds (WebAudio). No audio files. |
 | `tools/evolve.js` | The puzzle generator. |
 | `tools/solver.test.js` | Tests: the solver against a plain search, and every bank entry. |
+| `tools/serve.test.js` | Tests: the server's path check, cache validation and compression. |
 | `tools/assets.sh` | Converts the original images and models into `assets/`. |
 | `serve.js` | Static server with compression and cache validation. |
 | `garage.html` | Developer page that shows every vehicle model. |
@@ -101,8 +102,9 @@ Before this work it was 27.9 MB in 70 requests. A repeat visit transfers almost 
 - **Images** are WebP. The backdrop loads in two steps: a 2k photo for the first frame, then
   the 6k photo, which replaces it without a pause.
 - **Models** are one `.glb` file each, with Meshopt-compressed geometry and WebP textures.
-- **Lighting** uses a 512 × 256 HDR map. Lighting is blurred, so a larger map adds nothing.
-- **Code** is minified in `vendor/`. `index.html` lists every module in a `modulepreload` link,
+- **Lighting** uses a 512 × 256 HDR map. A close-up of the cars lit by the 1024 × 512 map
+  showed no visible difference.
+- **Code** in `vendor/` is minified, the three.js add-ons included. `index.html` lists every module in a `modulepreload` link,
   so the browser fetches all of them at once and not one import level at a time.
 - **Server**: `serve.js` sends text and the HDR map as Brotli or gzip, and gives every file an
   `ETag` with `Cache-Control: no-cache`. File names carry no version, so the browser must
