@@ -18,7 +18,8 @@ let puzzle = null, pos = [], moves = 0, won = false, busy = false, viewer = 0, l
 let phase = 'welcome'; // welcome | fly | play | won
 let cars = [], boardInfo = null, level = Object.hasOwn(LEVELS, params.get('level')) || params.get('level') === 'auto' ? params.get('level') : 'normal';
 // The Auto level (adapt.js): the place on the ladder, the puzzles played, and the last result.
-let skill = START, rungs = null, outcome = null, hints = 0, tried = false;
+// `spent` holds the moves made before a Reset, so a Reset does not hide them from the result.
+let skill = START, rungs = null, outcome = null, hints = 0, tried = false, spent = 0;
 const played = new Set();
 const carGroup = new THREE.Group();
 
@@ -240,7 +241,7 @@ async function command(raw, name) {
 }
 function win() {
   won = true; moves++; phase = 'won';
-  outcome ??= { solved: true, moves, best: puzzle.moves, hints }; // the first clear of this puzzle counts
+  outcome ??= { solved: true, moves: spent + moves, best: puzzle.moves, hints }; // the first clear of this puzzle counts
   const u = cars[0].userData; Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
   sfx.roll(); setTimeout(() => { if (won) { sfx.win(); confetti(); } }, 650);
   sys('Success! RED escaped through the exit!', 'success');
@@ -255,6 +256,7 @@ function backToPlay() {
   if (phase === 'won') { phase = 'play'; flyTo(camName, 2.2, () => { controls.enabled = true; }); }
 }
 function reset(dropIn = false) {
+  spent += moves;
   pos = puzzle.start.slice(); moves = 0; won = false; lastMove = null;
   backToPlay(); buildCars(dropIn); render();
 }
@@ -270,14 +272,12 @@ async function newPuzzle() {
       rungs ??= ladder(all);
       // Judge the puzzle that ends now, when it was an Auto puzzle and the audience tried it.
       const result = puzzle?.auto ? outcome ?? (tried ? { solved: false } : null) : null;
-      if (result) {
-        const v = verdict(result); skill = step(skill, v);
-        note = v > 0 ? 'Auto: you solved that well, so this puzzle is harder.' : v < 0 ? 'Auto: that one was tough, so this puzzle is easier.' : '';
-      }
+      if (result) skill = step(skill, verdict(result));
       const i = choose(rungs.length, skill, played); played.add(i); entry = rungs[i];
+      // The note states what the audience gets: at an end of the ladder the puzzle may not change.
+      if (result) note = entry.moves > puzzle.moves ? 'Auto: you solved that well, so this puzzle is harder.' : entry.moves < puzzle.moves ? 'Auto: that one was tough, so this puzzle is easier.' : '';
     } else entry = deal(all[want], want);
     const made = { ...expand(entry, { flip: Math.random() < 0.5 }), auto: want === 'auto' };
-    outcome = null; hints = 0; tried = false;
     if (!await ask({ type: 'load', puzzle: made })) throw new Error('the puzzle has no solution');
     puzzle = made;
   } finally { busy = false; }
@@ -287,6 +287,7 @@ async function newPuzzle() {
   chat.replaceChildren(); sys('Help the red car reach the exit. Type a colour and a direction.');
   if (note) sys(note);
   legend(); reset(true);
+  outcome = null; hints = 0; tried = false; spent = 0; // after the load: a late hint reply belongs to the old puzzle
   if (phase === 'play') flyTo(camName, 1.2, () => { controls.enabled = true; });
   else if (phase === 'welcome' && !tween) applyPose(pose('welcome'));
   if (want !== level) return newPuzzle(); // the level changed while this puzzle loaded

@@ -105,8 +105,8 @@ test('every puzzle in the bank is inside its level range and matches its record'
         expect(a.solvable).toBe(true);
         expect(a.dist(z.start) + 1).toBe(entry.moves);
         expect(a.count).toBe(entry.states);
-        // The walk model takes seconds on the large boards, so only the easy level is recomputed.
-        if (key === 'easy') expect(Math.round(a.effort(z.start))).toBe(entry.effort);
+        // The walk model takes seconds on the 7×7 and 8×8 boards, so only the 6×6 levels are recomputed.
+        if (level.N === 6 && !flip) expect(Math.round(a.effort(z.start))).toBe(entry.effort);
       }
       expect(entry.effort).toBeGreaterThanOrEqual(entry.moves);
       expect(entry.moves).toBeGreaterThanOrEqual(level.min);

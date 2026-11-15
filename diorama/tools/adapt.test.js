@@ -27,14 +27,16 @@ test('the skill moves one step and stays between 0 and 1', () => {
   expect(step(0.97, 1)).toBe(1);
 });
 
-test('the choice is near the skill and does not repeat until all were played', () => {
+test('the choice is near the skill and repeats only when no near puzzle is left', () => {
   const count = 143, played = new Set(), seen = [];
-  for (let k = 0; k < count; k++) { const i = choose(count, 0.5, played); expect(played.has(i)).toBe(false); played.add(i); seen.push(i); }
-  expect(new Set(seen).size).toBe(count);
+  // 17 entries are within 8 places of place 71: all of them come once before any repeat.
+  for (let k = 0; k < 17; k++) { const i = choose(count, 0.5, played); expect(played.has(i)).toBe(false); played.add(i); seen.push(i); }
   expect(Math.abs(seen[0] - 71)).toBeLessThanOrEqual(2); // one of the 5 nearest
-  for (const i of seen.slice(0, 5)) expect(Math.abs(i - 71)).toBeLessThanOrEqual(6);
-  expect(choose(count, 0, played, () => 0)).toBe(0); // the set was full, so it starts again
+  expect(seen.toSorted((a, b) => a - b)).toEqual(Array.from({ length: 17 }, (_, k) => 63 + k));
+  expect(Math.abs(choose(count, 0.5, played) - 71)).toBeLessThanOrEqual(2); // it starts again
   expect(played.size).toBe(0);
+  // At the bottom of the ladder the choice stays near the bottom: it repeats, and does not climb.
+  for (let k = 0; k < 60; k++) { const i = choose(count, 0, played); played.add(i); expect(i).toBeLessThanOrEqual(8); }
   expect(choose(count, 1, new Set(), () => 0)).toBe(count - 1);
 });
 

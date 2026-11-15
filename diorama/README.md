@@ -57,8 +57,10 @@ With **Auto**, the game chooses each puzzle from how the audience played the las
 | Not solved: chat moved or asked for a hint, then took a new puzzle | Easier: 8% down the ladder |
 | Any other result, or a puzzle that nobody touched | The same place on the ladder |
 
-The first Auto puzzle is 10% up the ladder, and the game picks at random among the five nearest
-puzzles that were not played. The place on the ladder lasts until the page reloads. This is
+The first Auto puzzle is 10% up the ladder. The game picks at random among the five nearest
+puzzles that were not played, at most 8 places away; when none is left there, those puzzles
+come again. Moves made before a Reset count in the result. The place on the ladder lasts until
+the page reloads. This is
 experience-driven procedural content generation (Yannakakis and Togelius, *Artificial
 Intelligence and Games*, 2nd edition, section 7.2.3): a model of the player, here three numbers
 from the last puzzle, selects the content. The aim is the flow channel between boredom and

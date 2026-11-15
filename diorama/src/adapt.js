@@ -21,12 +21,15 @@ export function verdict({ solved, moves, best, hints }) {
 
 export const step = (skill, v) => Math.min(1, Math.max(0, skill + v * STEP));
 
-// The index of the next puzzle: a random one of the `spread` unplayed entries nearest to the
-// place of `skill` on the ladder. `played` is a set of indexes; it empties when all were played.
-export function choose(count, skill, played, random = Math.random, spread = 5) {
-  if (played.size >= count) played.clear();
-  const target = skill * (count - 1), open = [];
-  for (let i = 0; i < count; i++) if (!played.has(i)) open.push(i);
-  open.sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b);
-  return open[Math.floor(random() * Math.min(spread, open.length))];
+// The index of the next puzzle: a random one of the `spread` nearest unplayed entries, all
+// within `reach` places of the place of `skill` on the ladder. `played` is a set of indexes.
+// It empties when no such entry is left, so the choice never drifts away from the skill: an
+// audience at the bottom of the ladder plays the easiest puzzles again.
+export function choose(count, skill, played, random = Math.random, spread = 5, reach = 8) {
+  const target = skill * (count - 1), near = (i) => Math.abs(i - target);
+  const open = () => Array.from({ length: count }, (_, i) => i).filter((i) => !played.has(i) && near(i) <= reach);
+  let list = open();
+  if (!list.length) { played.clear(); list = open(); }
+  list.sort((a, b) => near(a) - near(b) || a - b);
+  return list[Math.floor(random() * Math.min(spread, list.length))];
 }

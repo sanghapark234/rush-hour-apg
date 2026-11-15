@@ -13,8 +13,9 @@ import { expand, grid, free } from '../src/engine.js';
 const N = 6, file = process.argv[2];
 if (!file) { console.log('usage: bun tools/fogleman.js path/to/rush.txt'); process.exit(1); }
 
-// The layout without positions: every piece as "axis lane length", the walls, both in a fixed order.
-const signature = (pieces, walls) => pieces.map((p) => p.axis + p.lane + p.len).sort().join(' ') + '|' + walls.slice().sort((a, b) => a - b).join(',');
+// The layout without positions: every piece as "axis lane length" in lane order, and the walls.
+// Pieces in one lane keep their order in every position of a cluster, so the cluster has one signature.
+const signature = (pieces, walls) => ordered(pieces).map((p) => p.axis + p.lane + p.len).join(' ') + '|' + walls.slice().sort((a, b) => a - b).join(',');
 // The pieces of a 36-character board: o is empty, x a wall, A the red car.
 function parse(board) {
   const cells = new Map(), walls = [];
