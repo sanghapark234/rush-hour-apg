@@ -20,6 +20,7 @@ These two are settled for Tiny Gridlock (15 November 2026). The team can reopen 
   a Twitch account that may write in the channel, and its login token.
 - **Giving up.** Viewers cannot start the solution replay. The streamer starts it, after asking
   the audience. The `solve` command from Twitch chat does nothing.
+  Not decided with it: today any viewer can end a running replay with `stop` (see decision 5).
 
 ## 1. How many players act at once
 
@@ -53,11 +54,14 @@ the README and the slides must match the game.
 | The exit input counts a move | no                                | yes                     | yes                             |
 | `hint`                       | no                                | yes                     | yes                             |
 | Several cells, `blue right 3` | no                                | no                      | yes, 1 to 7, each cell one move |
-| Levels                       | Normal 6×6, Hard 8×8              | made in the browser     | Easy, Normal, Hard, Expert, Auto |
+| Levels                       | Normal 6×6, Hard 8×8              | Easy, Normal, Hard, Expert | Easy, Normal, Hard, Expert, Auto |
+| Shortest solution, in moves  | not set                           | Easy 4-10, Normal 11-25, Hard 26-45, Expert 46-99 | Easy 12-20, Normal 28-44, Hard 55-85, Expert 100-160 |
+| Board size                   | 6×6 and 8×8                       | Easy and Normal 6×6, Hard and Expert 8×8 | Easy and Normal 6×6, Hard 7×7, Expert 8×8 |
 | Colour names                 | Hard uses teal, navy, gold, coral | 12 names                | the same 12 names as the 3D demo |
 
 - **Recommendation:** the rules of the 3D demo and Tiny Gridlock: `red right` to exit, `hint`
-  allowed. Decide `blue right 3` separately: it saves messages, and with a vote (decision 1)
+  allowed. The level names are the same in both, but the puzzle lengths and the Hard board
+  differ: state the numbers of the version that is played. Decide `blue right 3` separately: it saves messages, and with a vote (decision 1)
   it splits the votes between `blue right` and `blue right 3`.
 
 ## 4. Who may ask for a hint
@@ -74,10 +78,11 @@ the README and the slides must match the game.
 
 - **Today in Tiny Gridlock:** only the streamer can reset, take a new puzzle or change the level
   (buttons). Any viewer can change the camera for everyone with `cam top`, `cam low` or
-  `cam angle`.
+  `cam angle`. Any viewer can end a running solution replay with `stop`.
 - **Options:**
   - **A. Keep it.**
-  - **B. Camera for the streamer only.** A viewer cannot disturb the view of the others.
+  - **B. Camera and `stop` for the streamer only.** A viewer cannot disturb the view of the
+    others or end the replay that the streamer started.
   - **C. Let chat vote** on a reset or a new puzzle.
 - **Recommendation:** B.
 
@@ -119,19 +124,24 @@ the README and the slides must match the game.
 - **Today:** Tiny Gridlock runs from a local server on the streamer's laptop. GitHub Pages
   publishes the `main` branch without a build step, so it cannot serve Tiny Gridlock as it is.
 - **Options:**
-  - **A. The streamer's laptop only.** Nothing to set up. Only that laptop can show the game.
+  - **A. The streamer's laptop only.** Nothing to set up. Other machines on the same network
+    can open the game from that laptop (`bun serve.js 0.0.0.0 8000`), but not people elsewhere.
   - **B. GitHub Pages too.** Everyone can open the game. It needs a build step in the repository,
     and the Twitch token must stay out of the published page.
 - **Recommendation:** A for the presentation. B only if people must open the game on their own.
 
 ## 10. Message format
 
-- **Today:** a command is the whole message, without a prefix: `blue right`. Every other message
-  gets "Invalid command".
+- **Today:** a command is the whole message, without a prefix: `blue right`. A message that is no
+  command gets "Invalid command". After a win, and during or after a solution replay, every
+  message gets a reply such as "Already cleared. Reset or start a new puzzle." The reply rule of
+  decision 7 must cover these replies too.
 - **Options:**
   - **A. No prefix.** Short to type. Normal talk in chat counts as invalid commands.
   - **B. A prefix**, `!blue right`, the common form for Twitch commands. Talk is ignored without
     an error. One more character for each move.
   - **C. No prefix, and ignore silently** every message that does not start with a colour name
-    or a command word.
+    or a command word. A typing error such as `bleu right` gets no reply, so the player does not
+    know that the move was dropped. Talk that starts with a colour name, such as "red is stuck",
+    still gets an error.
 - **Recommendation:** C.

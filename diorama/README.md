@@ -186,6 +186,9 @@ URL options for testing: `?skip=1` starts in play, `&cam=top|low` picks the view
 `window.apg.command(user, text)` feeds one chat message into the game. A tmi.js or EventSub
 client only needs to call it for each message.
 
+The choices that the team must take before an audience plays through Twitch chat are in
+[docs/team-decisions.md](docs/team-decisions.md).
+
 ## Files
 
 | File                       | Purpose                                                                                     |
