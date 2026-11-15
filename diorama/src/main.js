@@ -474,7 +474,7 @@ async function newPuzzle() {
   }
   boardInfo = stage.buildBoard(puzzle.N, puzzle.exitRow, puzzle.walls);
   stage.board.add(carGroup);
-  $('info').textContent = `${puzzle.N}×${puzzle.N} lot · shortest solution: ${puzzle.moves} moves`;
+  $('info').textContent = `${puzzle.N}×${puzzle.N} lot`;
   chat.replaceChildren();
   sys('Help the red car reach the exit. Type a colour and a direction.');
   if (note) sys(note);
