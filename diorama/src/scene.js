@@ -186,7 +186,8 @@ export function createStage(canvas) {
     });
   }
 
-  function buildBoard(N, exitRow) {
+  // walls: cells that hold a planter, which no vehicle can enter.
+  function buildBoard(N, exitRow, walls = []) {
     board.clear();
     const h = N / 2, pad = 1.15, road = 2;
     const W = N + pad * 2 + road, D = N + pad * 2, cx = road / 2;
@@ -243,6 +244,17 @@ export function createStage(canvas) {
       for (let i = 0; i < p.count; i++) { const n = 1 + (Math.sin(p.getX(i) * 31 + p.getY(i) * 17) + Math.sin(p.getZ(i) * 23)) * 0.07; p.setXYZ(i, p.getX(i) * n, p.getY(i) * n * 0.9, p.getZ(i) * n); }
       g.computeVertexNormals();
       add(g, leaf, x, BASE_H + 0.72 * s, z);
+    }
+    // Planters: concrete tubs with a clipped shrub.
+    const tub = new RoundedBoxGeometry(0.8, 0.34, 0.8, 3, 0.05), soil = new THREE.MeshStandardMaterial({ color: 0x2b2019, roughness: 1 });
+    for (const c of walls) {
+      const x = c % N + 0.5 - h, z = Math.floor(c / N) + 0.5 - h, s = 0.9 + (c * 7 % 5) * 0.05;
+      add(tub, M.kerb, x, BASE_H + 0.19, z);
+      add(new THREE.BoxGeometry(0.66, 0.02, 0.66), soil, x, BASE_H + 0.365, z, false);
+      const g = new THREE.IcosahedronGeometry(0.3, 3), p = g.attributes.position;
+      for (let i = 0; i < p.count; i++) { const n = 1 + (Math.sin(p.getX(i) * 29 + p.getY(i) * 19 + c) + Math.sin(p.getZ(i) * 23 + c)) * 0.06; p.setXYZ(i, p.getX(i) * n, p.getY(i) * n * 0.82, p.getZ(i) * n); }
+      g.computeVertexNormals();
+      add(g, leaf, x, BASE_H + 0.36 + 0.21 * s, z).scale.setScalar(s);
     }
     board.position.x = -cx; // centre the whole base on the table
     return { offsetX: -cx, exitZ, roadEnd: h + rl - 0.9 };

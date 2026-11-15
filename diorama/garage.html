@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tiny Gridlock: vehicle viewer</title>
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/build/three.module.js",
+  "three/addons/": "./vendor/three/examples/jsm/",
+  "three/examples/jsm/": "./vendor/three/examples/jsm/",
+  "postprocessing": "./vendor/postprocessing/index.js",
+  "n8ao": "./vendor/n8ao/N8AO.js"
+} }
+</script>
+<style>html, body { margin: 0; height: 100%; background: #14110d; } canvas { display: block; width: 100%; height: 100%; }</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<script type="module">
+// Developer page: every vehicle model on the board, for close inspection.
+// Drag to orbit. URL: ?p=x,y,z&t=x,y,z sets the camera position and target.
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { createStage, BASE_H } from './src/scene.js';
+import { makeVehicle } from './src/vehicles.js';
+import { NAMES, RED } from './src/engine.js';
+
+const params = new URLSearchParams(location.search), vec = (k, d) => (params.get(k)?.split(',').map(Number) ?? d);
+const stage = createStage(document.getElementById('stage')), { camera, dof } = stage;
+window.stage = stage; // for checks from the console
+stage.buildBoard(8, 3, [0, 7, 63]);
+// index picks the model: lengths 2, 3 and 4 have four, three and three models.
+// [length, model index, x, z]
+const park = [[2, 0, -3, -3.5], [2, 0, -1, -3.5], [2, 1, 1, -3.5], [2, 2, 3, -3.5], [2, 3, -3, -2.5],
+  [3, 0, 0.5, -2.5], [3, 1, -2.5, -1.5], [3, 2, 1.5, -1.5], [4, 0, -2, -0.5], [4, 1, 2, -0.5], [4, 2, -2, 0.5]];
+park.forEach(([len, index, x, z], n) => {
+  const [id, color] = n ? NAMES[(n - 1) % NAMES.length] : ['red', RED];
+  const g = makeVehicle({ id, color, len, axis: 'h', lane: 0 }, index);
+  g.position.set(x, BASE_H + 0.02, z);
+  stage.board.add(g);
+});
+camera.position.fromArray(vec('p', [3, 5, 9])); camera.fov = 30;
+const controls = new OrbitControls(camera, document.getElementById('stage'));
+controls.target.fromArray(vec('t', [-1, BASE_H, 0])); dof.target = controls.target;
+dof.cocMaterial.focusRange = Number(params.get('range') ?? 4); dof.bokehScale = 1.5;
+const resize = () => stage.resize(innerWidth, innerHeight); addEventListener('resize', resize); resize();
+const timer = new THREE.Timer();
+(function frame() { requestAnimationFrame(frame); timer.update(); controls.update(); camera.updateProjectionMatrix(); stage.composer.render(timer.getDelta()); })();
+stage.ready.then(() => document.body.classList.add('ready'));
+</script>
+</body>
+</html>

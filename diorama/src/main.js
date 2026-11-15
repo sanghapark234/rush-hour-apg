@@ -2,8 +2,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createStage, BASE_H } from './scene.js';
-import { makeVehicle } from './vehicles.js';
-import { LV, grid, free, slides } from './engine.js';
+import { makeVehicle, disposeVehicle } from './vehicles.js';
+import { LEVELS, expand, grid, free } from './engine.js';
 import * as sfx from './audio.js';
 
 const $ = (id) => document.getElementById(id);
@@ -13,15 +13,28 @@ const stage = createStage($('stage'));
 const { camera, dof } = stage;
 
 // ---------- puzzle state ----------
-let puzzle = null, pos = [], moves = 0, won = false, busy = false, viewer = 0;
+let puzzle = null, pos = [], moves = 0, won = false, busy = false, viewer = 0, lastMove = null;
 let phase = 'welcome'; // welcome | fly | play | won
-let cars = [], boardInfo = null, level = params.get('level') in LV ? params.get('level') : 'normal';
+let cars = [], boardInfo = null, level = params.get('level') in LEVELS ? params.get('level') : 'normal';
 const carGroup = new THREE.Group();
 
 const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
 const waiting = new Map(); let reqId = 0;
 worker.onmessage = ({ data }) => { waiting.get(data.id)(data.result); waiting.delete(data.id); };
 const ask = (msg) => new Promise((res) => { const id = ++reqId; waiting.set(id, res); worker.postMessage({ ...msg, id }); });
+
+// The bank of generated puzzles (tools/evolve.js). Each level deals its entries in a random
+// order and starts again only when all of them were played.
+const bank = fetch(new URL('./puzzles.json', import.meta.url)).then((r) => { if (!r.ok) throw new Error('puzzles.json: HTTP ' + r.status); return r.json(); });
+const decks = {};
+function deal(entries, key) {
+  if (!decks[key]?.length) {
+    const d = entries.map((_, i) => i);
+    for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; }
+    decks[key] = d;
+  }
+  return entries[decks[key].pop()];
+}
 
 // ---------- chat log ----------
 const chat = $('chat');
@@ -44,7 +57,7 @@ const look = { range: 14, bokeh: 1.4, shift: 0 };
 let tween = null, camName = 'angle';
 
 function pose(name) {
-  const N = puzzle?.N ?? 6, d = (N === 6 ? 20.5 : 25.5) * Math.max(1, 1.25 / Math.max(camera.aspect, 0.5));
+  const N = puzzle?.N ?? 6, d = (2.5 * N + 5.5) * Math.max(1, 1.25 / Math.max(camera.aspect, 0.5));
   const t = [-0.2, BASE_H, 0];
   const at = (deg, dist, az = 0) => { const a = deg * Math.PI / 180; return [t[0] + Math.sin(az) * Math.cos(a) * dist, t[1] + Math.sin(a) * dist, Math.cos(az) * Math.cos(a) * dist]; };
   switch (name) {
@@ -97,6 +110,7 @@ function setCam(name) {
 // ---------- vehicles ----------
 const worldOf = (m, p) => [(m.axis == 'h' ? p + m.len / 2 : m.lane + .5) - puzzle.N / 2, (m.axis == 'h' ? m.lane + .5 : p + m.len / 2) - puzzle.N / 2];
 function buildCars(dropIn) {
+  for (const g of cars) disposeVehicle(g);
   carGroup.clear();
   cars = puzzle.meta.map((m, i) => {
     const g = makeVehicle(m, i), u = g.userData;
@@ -127,7 +141,7 @@ function stepCars(dt, time) {
     u.chassis.rotation.z = u.pitch + Math.sin(time * 46) * 0.02 * u.bump;
     u.hint = Math.max(0, u.hint - dt * 0.42);
     const pulse = u.hint > 0 ? 0.5 + 0.5 * Math.sin(time * 11) : 0;
-    u.paint.emissiveIntensity = pulse * 0.55 * Math.min(1, u.hint * 3);
+    for (const p of u.paints) p.emissiveIntensity = pulse * 0.55 * Math.min(1, u.hint * 3);
     u.lamps.emissiveIntensity = 0.35 + pulse * 5 * Math.min(1, u.hint * 3);
   });
   const gate = stage.gate;
@@ -184,36 +198,44 @@ async function command(raw, name) {
   raw = raw.trim().toLowerCase().replace(/\s+/g, ' ');
   if (!raw || busy || phase === 'welcome' || phase === 'fly') return;
   log(name || 'viewer' + (++viewer), raw);
-  const [a, b, ...extra] = raw.split(' ');
-  if (a === 'cam' && !extra.length) {
+  const [a, b, c, ...extra] = raw.split(' ');
+  if (a === 'cam' && c === undefined) {
     const name2 = { top: 'top', angle: 'angle', low: 'low', reset: 'angle' }[b];
     if (!name2) return sys('Camera views: cam angle, cam top, cam low.', 'error');
     setCam(name2); return sys('Camera: ' + name2 + '.');
   }
   if (won) return sys('Already cleared. Reset or start a new puzzle.');
   if (raw === 'hint') {
-    const at = pos.slice(), p = await ask({ type: 'hint', puzzle, pos: at });
-    if (!p) return sys('Hint unavailable.', 'error');
-    const [i, d] = p[0] ?? [0, 1];
+    const asked = puzzle, h = await ask({ type: 'hint', pos: pos.slice(), last: lastMove });
+    if (asked !== puzzle || won) return;
+    if (!h) return sys('Hint unavailable.', 'error');
+    const [i, d] = h.move ?? [0, 1];
     cars[i].userData.hint = 1; sfx.blip();
-    return sys(p.length ? `Hint: ${puzzle.meta[i].id} ${dirName(i, d)}` : 'Hint: red right (exit!)');
+    return sys(h.move ? `Hint: ${puzzle.meta[i].id} ${dirName(i, d)} · ${h.left} moves to go` : 'Hint: red right (exit!)');
   }
   const i = puzzle.meta.findIndex((m) => m.id === a);
-  if (i < 0 || extra.length || !['left', 'right', 'up', 'down'].includes(b)) return sys('Invalid command. Try: blue right', 'error');
+  // An optional count moves a vehicle several cells: "blue right 3". Each cell is one move.
+  const count = c === undefined ? 1 : /^[1-7]$/.test(c) ? Number(c) : 0;
+  if (i < 0 || extra.length || !count || !['left', 'right', 'up', 'down'].includes(b)) return sys('Invalid command. Try: blue right, or blue right 3', 'error');
   const m = puzzle.meta[i], u = cars[i].userData, horiz = b == 'left' || b == 'right';
   if (horiz !== (m.axis == 'h')) return sys(`${a} cannot move ${b}.`, 'error');
-  const d = b == 'right' || b == 'down' ? 1 : -1, at = d > 0 ? pos[i] + m.len : pos[i] - 1;
-  if (i === 0 && d > 0 && pos[0] + m.len === puzzle.N) return win();
-  if (!free(puzzle, grid(puzzle, pos), m, at)) { u.bump = 1; u.bumpDir = d; sfx.clack(); return sys('Move blocked!', 'error'); }
-  pos[i] += d; u.tgt = pos[i]; moves++; sfx.roll();
-  sys(`${a} moved ${b}.`, 'success'); render();
+  const d = b == 'right' || b == 'down' ? 1 : -1, g = grid(puzzle, pos);
+  let done = 0;
+  while (done < count) {
+    if (i === 0 && d > 0 && pos[0] + m.len === puzzle.N) { moves += done; return win(); }
+    if (!free(puzzle, g, m, d > 0 ? pos[i] + m.len : pos[i] - 1)) break;
+    pos[i] += d; done++; // the cells behind the vehicle stay marked: it only moves away from them
+  }
+  if (!done) { u.bump = 1; u.bumpDir = d; sfx.clack(); return sys('Move blocked!', 'error'); }
+  u.tgt = pos[i]; moves += done; lastMove = [i, d]; sfx.roll();
+  sys(done < count ? `${a} moved ${b} ${done} of ${count}, then it was blocked.` : `${a} moved ${b}${count > 1 ? ' ' + count : ''}.`, 'success'); render();
 }
 function win() {
   won = true; moves++; phase = 'won';
   const u = cars[0].userData; Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
   sfx.roll(); setTimeout(() => { sfx.win(); confetti(); }, 650);
   sys('Success! RED escaped through the exit!', 'success');
-  const best = puzzle.path.length + 1;
+  const best = puzzle.moves;
   $('win-moves').textContent = moves;
   $('win-note').textContent = moves <= best ? 'A perfect run. That is the shortest solution.' : `The shortest solution takes ${best}.`;
   flyTo('won', 3.6); render();
@@ -224,18 +246,20 @@ function backToPlay() {
   if (phase === 'won') { phase = 'play'; flyTo(camName, 2.2, () => { controls.enabled = true; }); }
 }
 function reset(dropIn = false) {
-  pos = puzzle.start.slice(); moves = 0; won = false;
+  pos = puzzle.start.slice(); moves = 0; won = false; lastMove = null;
   backToPlay(); buildCars(dropIn); render();
 }
 async function newPuzzle() {
   if (busy) return;
   busy = true; render();
-  const key = level, made = await ask({ type: 'generate', key });
-  puzzle = made; busy = false;
-  boardInfo = stage.buildBoard(puzzle.N, puzzle.exitRow);
+  try {
+    const made = expand(deal((await bank)[level], level), { flip: Math.random() < 0.5 });
+    if (!await ask({ type: 'load', puzzle: made })) throw new Error('the puzzle has no solution');
+    puzzle = made;
+  } finally { busy = false; }
+  boardInfo = stage.buildBoard(puzzle.N, puzzle.exitRow, puzzle.walls);
   stage.board.add(carGroup);
-  const c = LV[key], n = puzzle.path.length + 1;
-  $('info').textContent = `Shortest: ${n} moves (${slides(puzzle.path) + 1} slides) · ${puzzle.states.toLocaleString()} reachable positions` + (puzzle.inRange ? '' : ` · closest to ${c.min}–${c.max}`);
+  $('info').textContent = `${puzzle.N}×${puzzle.N} lot · shortest solution: ${puzzle.moves} moves in ${puzzle.slides} slides · ${puzzle.states.toLocaleString()} reachable positions`;
   chat.replaceChildren(); sys('Help the red car reach the exit. Type a colour and a direction.');
   legend(); reset(true);
   if (phase === 'play') flyTo(camName, 1.2, () => { controls.enabled = true; });
@@ -252,15 +276,16 @@ $('form').addEventListener('submit', (e) => { e.preventDefault(); command($('com
 $('start').addEventListener('click', start);
 $('hint').addEventListener('click', () => command('hint'));
 $('reset').addEventListener('click', () => { if (!busy && puzzle) reset(true); });
-$('new').addEventListener('click', newPuzzle);
-$('again').addEventListener('click', newPuzzle);
+const fresh = () => newPuzzle().catch((err) => { render(); sys('Could not load a puzzle: ' + err.message, 'error'); });
+$('new').addEventListener('click', fresh);
+$('again').addEventListener('click', fresh);
 $('replay').addEventListener('click', () => reset(true));
 $('sound').addEventListener('click', (e) => { sfx.init(); sfx.setMuted(!sfx.muted); e.currentTarget.setAttribute('aria-pressed', !sfx.muted); e.currentTarget.textContent = sfx.muted ? 'Sound off' : 'Sound on'; });
 for (const b of document.querySelectorAll('[data-cam]')) b.addEventListener('click', () => setCam(b.dataset.cam));
 for (const r of document.querySelectorAll('input[name=level], #level')) r.addEventListener('change', (e) => {
   level = e.target.value;
   for (const o of document.querySelectorAll('input[name=level]')) o.checked = o.value === level;
-  $('level').value = level; newPuzzle();
+  $('level').value = level; fresh();
 });
 for (const o of document.querySelectorAll('input[name=level]')) o.checked = o.value === level;
 $('level').value = level;
