@@ -13,6 +13,7 @@ const STREAMER_ONLY = new Set(['hint', 'solve', 'stop', 'cam']);
 // Twitch lets a normal account send 20 messages in 30 seconds (https://dev.twitch.tv/docs/chat/,
 // read 15 November 2026). The bridge stays below that, and keeps the last messages for a win.
 export const LIMIT = { messages: 15, forWin: 3, period: 30000 };
+const GAP = 1500; // Twitch drops a message that follows another of the same account too fast
 const NOTICE = 10000; // a player gets at most one refusal or error reply in this time
 const JOIN_WAIT = 8000; // Twitch sends no error for an unknown channel, only no answer
 const MAX = 80; // characters of one command
@@ -40,8 +41,8 @@ export function parseLine(line) {
 }
 
 // play(user, text) applies one command and returns {lines: [{msg, kind}], won, moves}: the lines
-// that the game answered. onState(kind, text) reports connecting, connected, closed, error and
-// notice. `open`, `now` and `later` exist so a test can run without a network or a clock.
+// that the game answered. onState(kind, text) reports connecting, connected, closed, error, login
+// (Twitch refused the login) and notice. `open`, `now` and `later` exist so a test can run without a network or a clock.
 export function createBridge({
   channel,
   login = null,
@@ -56,17 +57,28 @@ export function createBridge({
   let socket = null,
     joined = false,
     ended = false, // no more connection attempts
-    retry = 2000;
+    retry = 2000,
+    lastText = '',
+    lastAt = -Infinity; // the last reply and its time
   const turn = new Map(), // player -> the time of the last command
     told = new Map(), // player -> the time of the last refusal or error reply
     sent = []; // the times of the replies in the last LIMIT.period
 
-  function say(text, spare = LIMIT.forWin) {
+  // Sends one reply, or drops it. A reply that `must` go out, the win, waits for the gap instead.
+  function say(text, must = false) {
     if (!token || !joined) return false;
     const t = now();
     while (sent.length && t - sent[0] >= LIMIT.period) sent.shift();
-    if (sent.length >= LIMIT.messages - spare) return false;
+    if (sent.length >= LIMIT.messages - (must ? 0 : LIMIT.forWin)) return false;
+    if (t - lastAt < GAP) {
+      if (must) later(() => say(text, true), GAP - (t - lastAt));
+      return false;
+    }
+    // Twitch also drops a message that repeats the last one of the account within 30 seconds.
+    if (text === lastText && t - lastAt < LIMIT.period) return false;
     sent.push(t);
+    lastAt = t;
+    lastText = text;
     socket.send(`PRIVMSG #${channel} :${text}`);
     return true;
   }
@@ -86,8 +98,10 @@ export function createBridge({
     const { lines, won, moves } = play(name, body);
     if (!lines.length) return; // the game is not in play
     turn.set(key, t);
-    if (!lines.some((l) => l.kind === 'success')) return tell(key, name, lines[0].msg);
-    if (won) say(`${name} drove RED out. Cleared in ${moves} moves.`, 0);
+    // An error of the game goes back as it is. Its other answers (the puzzle is cleared, a replay
+    // runs) name controls of the page, so a viewer gets a text of their own.
+    if (!lines.some((l) => l.kind === 'success')) return tell(key, name, lines[0].kind === 'error' ? lines[0].msg : 'No moves now. Wait for the next puzzle.');
+    if (won) say(`${name} drove RED out. Cleared in ${moves} moves.`, true);
   }
   function handle(m) {
     if (m.command === 'PING') return socket.send('PONG :' + m.text);
@@ -100,8 +114,8 @@ export function createBridge({
     }
     if (m.command === 'NOTICE') {
       if (/authentication failed|improperly formatted auth/i.test(m.text)) {
-        ended = true;
-        return onState('error', 'Twitch refused the login. Log in again.');
+        token = null; // Twitch closes the connection; the next one reads without a login
+        return onState('login', 'Twitch refused the login. Replies in Twitch chat are off.');
       }
       return onState('notice', m.text);
     }
@@ -112,13 +126,14 @@ export function createBridge({
     joined = false;
     onState('connecting');
     const mine = (socket = open());
+    let shut = false;
     mine.onopen = () => {
       mine.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
       if (token) mine.send('PASS oauth:' + token);
       mine.send('NICK ' + (token ? login : 'justinfan' + (10000 + Math.floor(Math.random() * 80000))));
       mine.send('JOIN #' + channel);
       later(() => {
-        if (socket !== mine || joined || ended) return;
+        if (shut || socket !== mine || joined || ended) return;
         ended = true;
         onState('error', `No answer from #${channel}. Check the channel name.`);
         mine.close();
@@ -128,6 +143,7 @@ export function createBridge({
       for (const line of String(e.data).split('\r\n')) if (line) handle(parseLine(line));
     };
     mine.onclose = () => {
+      shut = true;
       if (socket !== mine || ended) return;
       joined = false;
       onState('closed');
@@ -146,29 +162,30 @@ export function createBridge({
 
 // ---------- the page ----------
 const TOKEN = 'tg-twitch-token',
-  RETURN = 'tg-twitch-return';
+  RETURN = 'tg-twitch-return',
+  SAID = 'tg-twitch-said';
 
-// Twitch sends the browser back with "#access_token=…" after a login. The token goes into the
-// storage of this browser, and the page loads again at the address the login started from.
-function takeToken() {
-  const hash = new URLSearchParams(location.hash.slice(1)),
-    token = hash.get('access_token');
-  if (!token) return false;
+// Twitch sends the browser back after a login: with "#access_token=…&state=…" (main.js takes that
+// out of the address and passes it here as `hash`), or with "?error=…&state=…" when the user
+// refused. Only an answer to the login that this page started counts: its `state` must match.
+// The token goes into the storage of this browser, and the page loads again at the address that
+// the login started from.
+export function comeBack(hash) {
   const from = JSON.parse(sessionStorage.getItem(RETURN) ?? 'null');
   sessionStorage.removeItem(RETURN);
-  // A login that this page started carries its own `state`. An address typed by hand has none.
-  if (hash.has('state') && hash.get('state') !== from?.state) {
-    history.replaceState(null, '', location.pathname + location.search);
-    return false;
-  }
-  localStorage.setItem(TOKEN, token);
-  location.replace(location.pathname + (from?.search ?? location.search));
-  return true;
+  const got = new URLSearchParams(hash || location.search);
+  if (!from || got.get('state') !== from.state) return;
+  const token = got.get('access_token');
+  if (token) localStorage.setItem(TOKEN, token);
+  else sessionStorage.setItem(SAID, 'The Twitch login was cancelled. Replies in Twitch chat are off.');
+  location.replace(location.pathname + from.search);
 }
 
 // Asks Twitch whose token this is. Returns the login name, or null with the reason shown.
 async function checkToken(token, sys) {
-  const res = await fetch('https://id.twitch.tv/oauth2/validate', { headers: { Authorization: 'OAuth ' + token } }).catch(() => null);
+  const res = await fetch('https://id.twitch.tv/oauth2/validate', { headers: { Authorization: 'OAuth ' + token }, signal: AbortSignal.timeout(8000) }).catch(
+    () => null,
+  );
   if (res?.status === 401) {
     localStorage.removeItem(TOKEN);
     sys('The Twitch login expired. Log in again for replies in Twitch chat.', 'error');
@@ -178,8 +195,8 @@ async function checkToken(token, sys) {
     sys('Could not check the Twitch login. Replies in Twitch chat are off.', 'error');
     return null;
   }
-  const who = await res.json();
-  if (!who.scopes?.includes('chat:edit')) {
+  const who = await res.json().catch(() => null);
+  if (!who?.scopes?.includes('chat:edit')) {
     sys('The Twitch login may not write in chat. Replies in Twitch chat are off.', 'error');
     return null;
   }
@@ -188,19 +205,23 @@ async function checkToken(token, sys) {
 
 // params: the URLSearchParams of the address. note(text) sets the short state in the panel head.
 export async function start({ params, sys, note, play, button }) {
-  if (takeToken() || !params.has('channel')) return;
   const channel = params.get('channel').trim().toLowerCase().replace(/^#/, '');
   if (!/^[a-z0-9_]{1,25}$/.test(channel)) {
     note('Twitch: off');
     return sys('The channel in the address is not a Twitch channel name.', 'error');
   }
   note('Twitch: connecting');
-  let token = localStorage.getItem(TOKEN);
-  const login = token ? await checkToken(token, sys) : null;
+  const said = sessionStorage.getItem(SAID);
+  sessionStorage.removeItem(SAID);
+  if (said) sys(said, 'error');
+  let token = localStorage.getItem(TOKEN),
+    login = token ? await checkToken(token, sys) : null;
   if (!login) token = null;
-  const client = params.get('client') ?? '';
-  if (!token && /^[a-z0-9]{10,40}$/.test(client)) {
-    button.hidden = false;
+  // The login button shows when the address names a Twitch application and no login works.
+  const client = params.get('client') ?? '',
+    known = /^[a-z0-9]{10,40}$/.test(client);
+  button.hidden = !known || !!token;
+  if (known) {
     button.addEventListener('click', () => {
       const state = crypto.randomUUID();
       sessionStorage.setItem(RETURN, JSON.stringify({ state, search: location.search }));
@@ -233,6 +254,11 @@ export async function start({ params, sys, note, play, button }) {
         sys('Twitch chat is disconnected. The game tries again.', 'error');
       } else if (kind === 'error') {
         note('Twitch: off');
+        sys(text, 'error');
+      } else if (kind === 'login') {
+        localStorage.removeItem(TOKEN);
+        login = null;
+        button.hidden = !known;
         sys(text, 'error');
       } else sys('Twitch: ' + text, 'error');
     },

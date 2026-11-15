@@ -9,6 +9,9 @@ import * as sfx from './audio.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// After a Twitch login the address holds the login token. It leaves the address at once.
+const back = location.hash.includes('access_token=') ? location.hash.slice(1) : '';
+if (back) history.replaceState(null, '', location.pathname + location.search);
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const stage = createStage($('stage'));
 const { camera, dof } = stage;
@@ -659,26 +662,33 @@ $('level').value = level;
 window.apg = { command: (user, text) => command(String(text), String(user)), state: () => structuredClone({ puzzle, pos, moves, won, level, demo }), stage };
 
 // Twitch chat (twitch.js) joins the channel that the address names: ?channel=name. The module
-// loads only then, or when the browser comes back from the Twitch login. It starts after the
-// first puzzle, which clears the chat panel.
+// loads only then, or when the browser comes back from the Twitch login. The chat starts after
+// the first puzzle, which clears the chat panel.
+const twitchFailed = (err) => {
+  $('source').textContent = 'Twitch: off';
+  sys('Twitch chat did not start: ' + err.message, 'error');
+};
+if (back || params.has('error')) import('./twitch.js').then((twitch) => twitch.comeBack(back)).catch(twitchFailed);
 const twitch = () =>
-  (params.has('channel') || location.hash.includes('access_token=')) &&
-  import('./twitch.js').then((twitch) =>
-    twitch.start({
-      params,
-      sys,
-      note: (text) => ($('source').textContent = text),
-      button: $('login'),
-      // Every command that the bridge passes on answers before command() returns: only a hint waits.
-      play(user, text) {
-        heard = [];
-        command(text, user);
-        const lines = heard;
-        heard = null;
-        return { lines, won, moves };
-      },
-    }),
-  );
+  params.has('channel') &&
+  import('./twitch.js')
+    .then((twitch) =>
+      twitch.start({
+        params,
+        sys,
+        note: (text) => ($('source').textContent = text),
+        button: $('login'),
+        // Every command that the bridge passes on answers before command() returns: only a hint waits.
+        play(user, text) {
+          heard = [];
+          command(text, user);
+          const lines = heard;
+          heard = null;
+          return { lines, won, moves };
+        },
+      }),
+    )
+    .catch(twitchFailed);
 
 function resize() {
   stage.resize(innerWidth, innerHeight);
