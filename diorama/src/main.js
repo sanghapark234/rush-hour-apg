@@ -205,7 +205,7 @@ function setCam(name) {
 // ---------- vehicles ----------
 const worldOf = (m, p) => [(m.axis == 'h' ? p + m.len / 2 : m.lane + 0.5) - puzzle.N / 2, (m.axis == 'h' ? m.lane + 0.5 : p + m.len / 2) - puzzle.N / 2];
 function buildCars(dropIn) {
-  performance.mark("tg-cars0");
+  performance.mark('tg-cars0');
   for (const g of cars) disposeVehicle(g);
   carGroup.clear();
   cars = puzzle.meta.map((m, i) => {
@@ -526,9 +526,9 @@ async function newPuzzle() {
   demo = null; // a replay ends here, also when the load fails
   render();
   try {
-    performance.mark("tg-np0");
+    performance.mark('tg-np0');
     const all = await bank;
-    performance.mark("tg-bank");
+    performance.mark('tg-bank');
     let entry;
     if (want === 'auto') {
       rungs ??= ladder(all);
@@ -664,9 +664,9 @@ for (const task of stage.tasks)
     },
     () => {},
   );
-performance.mark("tg-script");
-stage.ready.then(() => performance.mark("tg-assets"));
-stage.tasks.forEach((p, i) => p.then(() => performance.mark("tg-task" + i)));
+performance.mark('tg-script');
+stage.ready.then(() => performance.mark('tg-assets'));
+stage.tasks.forEach((p, i) => p.then(() => performance.mark('tg-task' + i)));
 Promise.all([stage.ready, newPuzzle()]).then(
   () => {
     performance.mark('tg-ready');
