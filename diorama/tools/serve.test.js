@@ -16,7 +16,8 @@ test('serves files and refuses paths outside the folder', async () => {
   expect((await get('/')).headers.get('content-type')).toStartWith('text/html');
   expect((await get('/src/none.js')).status).toBe(404);
   expect((await get('/public/assets/')).status).toBe(404);
-  for (const path of ['/..%2fREADME.md', '/%2e%2e/%2e%2e/etc/passwd', '/src/..%2f..%2f..%2fetc%2fpasswd']) expect([400, 404]).toContain((await get(path)).status);
+  for (const path of ['/..%2fREADME.md', '/%2e%2e/%2e%2e/etc/passwd', '/src/..%2f..%2f..%2fetc%2fpasswd'])
+    expect([400, 404]).toContain((await get(path)).status);
   expect((await get('/%zz')).status).toBe(400);
   expect((await get('/', {}, 'POST')).status).toBe(405);
 });
@@ -42,7 +43,8 @@ test('chooses the encoding from Accept-Encoding', async () => {
   expect(await enc('br;q=0.0, gzip;q=0.000')).toBeNull();
   expect(await enc('identity')).toBeNull();
   // Each encoding has its own ETag, and the compressed bodies decode to the file.
-  const br = await get('/src/engine.js', { 'accept-encoding': 'br' }), gz = await get('/src/engine.js', { 'accept-encoding': 'gzip' });
+  const br = await get('/src/engine.js', { 'accept-encoding': 'br' }),
+    gz = await get('/src/engine.js', { 'accept-encoding': 'gzip' });
   expect(br.headers.get('etag')).not.toBe(gz.headers.get('etag'));
   expect(new TextDecoder().decode(Bun.gunzipSync(new Uint8Array(await gz.arrayBuffer())))).toBe(plain);
   expect(await (await fetch(base + '/src/engine.js')).text()).toBe(plain);

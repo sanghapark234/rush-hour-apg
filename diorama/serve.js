@@ -9,7 +9,10 @@ import { promisify } from 'node:util';
 import { brotliCompress, gzip, constants as zlib } from 'node:zlib';
 
 const root = resolve(import.meta.dir, process.argv[4] ?? 'dist');
-if (!(await stat(root + sep + 'index.html').catch(() => null))?.isFile()) { console.error(`${root} has no index.html. Run "bun run build" first.`); process.exit(1); }
+if (!(await stat(root + sep + 'index.html').catch(() => null))?.isFile()) {
+  console.error(`${root} has no index.html. Run "bun run build" first.`);
+  process.exit(1);
+}
 const hostname = process.argv[2] ?? '127.0.0.1';
 const port = Number(process.argv[3] ?? 8000);
 
@@ -21,17 +24,28 @@ const encoders = {
 const packed = new Map(); // "path|etag|encoding" -> Promise<Buffer>; a changed file gets a new key
 
 function encodingFor(req) {
-  const accepted = (req.headers.get('accept-encoding') ?? '').split(',').map((s) => s.trim().toLowerCase().split(';').map((x) => x.trim()));
+  const accepted = (req.headers.get('accept-encoding') ?? '').split(',').map((s) =>
+    s
+      .trim()
+      .toLowerCase()
+      .split(';')
+      .map((x) => x.trim()),
+  );
   const ok = (name) => accepted.some(([n, q]) => n === name && !(q?.startsWith('q=') && Number(q.slice(2)) === 0)); // "q=0" refuses it
   return ok('br') ? 'br' : ok('gzip') ? 'gzip' : null;
 }
 
 Bun.serve({
-  port, hostname,
+  port,
+  hostname,
   async fetch(req) {
     if (req.method !== 'GET' && req.method !== 'HEAD') return new Response('method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } });
     let path;
-    try { path = decodeURIComponent(new URL(req.url).pathname); } catch { return new Response('bad path', { status: 400 }); }
+    try {
+      path = decodeURIComponent(new URL(req.url).pathname);
+    } catch {
+      return new Response('bad path', { status: 400 });
+    }
     if (path.endsWith('/')) path += 'index.html';
     const file = resolve(root + path);
     if (!file.startsWith(root + sep)) return new Response('bad path', { status: 400 });
@@ -50,7 +64,9 @@ Bun.serve({
     const key = `${file}|${etag}`;
     if (!packed.has(key)) {
       for (const old of packed.keys()) if (old.startsWith(`${file}|`) && old.endsWith(`-${encoding}"`)) packed.delete(old);
-      const body = Bun.file(file).arrayBuffer().then((b) => encoders[encoding](Buffer.from(b)));
+      const body = Bun.file(file)
+        .arrayBuffer()
+        .then((b) => encoders[encoding](Buffer.from(b)));
       packed.set(key, body);
       body.catch(() => packed.delete(key)); // a failed read is tried again on the next request
     }

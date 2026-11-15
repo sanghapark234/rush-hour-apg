@@ -53,12 +53,12 @@ bun test                     # solver, bank, Auto level and server tests
 The colour name is printed on each roof, and the panel lists the colours in the puzzle.
 Planters are fixed obstacles: no vehicle can pass them.
 
-| Level | Lot | Shortest solution |
-| --- | --- | --- |
-| Easy | 6×6 | 12 to 20 moves |
-| Normal | 6×6 | 28 to 44 moves |
-| Hard | 7×7 | 55 to 85 moves |
-| Expert | 8×8 | 100 to 160 moves |
+| Level  | Lot | Shortest solution |
+| ------ | --- | ----------------- |
+| Easy   | 6×6 | 12 to 20 moves    |
+| Normal | 6×6 | 28 to 44 moves    |
+| Hard   | 7×7 | 55 to 85 moves    |
+| Expert | 8×8 | 100 to 160 moves  |
 
 One move is one cell. The game deals 40 puzzles per level without repeats, with random colours
 and a random top-bottom mirror.
@@ -68,19 +68,19 @@ and a random top-bottom mirror.
 With **Auto**, the game chooses each puzzle from how the audience played the last one
 (`src/adapt.js`). All 160 puzzles form one ladder, ordered by shortest solution.
 
-| Last puzzle | Next puzzle |
-| --- | --- |
-| Solved in at most 1.5 × the shortest solution, with hints for at most 10% of its moves | Harder: 8% up the ladder |
-| Solved in more than 2.5 × the shortest solution, or with hints for more than 30% of its moves | Easier: 8% down the ladder |
-| Not solved: chat moved or asked for a hint, then took a new puzzle | Easier: 8% down the ladder |
-| Any other result, or a puzzle that nobody touched | The same place on the ladder |
+| Last puzzle                                                                                   | Next puzzle                  |
+| --------------------------------------------------------------------------------------------- | ---------------------------- |
+| Solved in at most 1.5 × the shortest solution, with hints for at most 10% of its moves        | Harder: 8% up the ladder     |
+| Solved in more than 2.5 × the shortest solution, or with hints for more than 30% of its moves | Easier: 8% down the ladder   |
+| Not solved: chat moved or asked for a hint, then took a new puzzle                            | Easier: 8% down the ladder   |
+| Any other result, or a puzzle that nobody touched                                             | The same place on the ladder |
 
 The first Auto puzzle is 10% up the ladder. The game picks at random among the five nearest
 puzzles that were not played, at most 8 places away; when none is left there, those puzzles
 come again. Moves made before a Reset count in the result. The place on the ladder lasts until
 the page reloads. This is
-experience-driven procedural content generation (Yannakakis and Togelius, *Artificial
-Intelligence and Games*, 2nd edition, section 7.2.3): a model of the player, here three numbers
+experience-driven procedural content generation (Yannakakis and Togelius, _Artificial
+Intelligence and Games_, 2nd edition, section 7.2.3): a model of the player, here three numbers
 from the last puzzle, selects the content. The aim is the flow channel between boredom and
 anxiety (the same book, p. 329). The thresholds are design values. They are not fitted to
 player data.
@@ -149,11 +149,11 @@ and counts a move as one slide of any length. `bun tools/fogleman.js path/to/rus
 each 6×6 bank puzzle in it. The database is not in this repository, because its page states
 no licence for it.
 
-| | Easy | Normal |
-| --- | --- | --- |
-| Bank puzzles found in the database | 38 of 40 | 39 of 40 |
-| Shortest solution in one-cell moves | 12 to 20 | 29 to 44 |
-| Shortest solution in slides | 6 to 14 (median 10) | 15 to 30 (median 22) |
+|                                                  | Easy                         | Normal                        |
+| ------------------------------------------------ | ---------------------------- | ----------------------------- |
+| Bank puzzles found in the database               | 38 of 40                     | 39 of 40                      |
+| Shortest solution in one-cell moves              | 12 to 20                     | 29 to 44                      |
+| Shortest solution in slides                      | 6 to 14 (median 10)          | 15 to 30 (median 22)          |
 | Share of all clusters that are easier, in slides | 0.5% to 64.8% (median 22.8%) | 71.8% to 99.6% (median 95.6%) |
 
 - For all 77 puzzles that were found, this solver and the database agree on the number of
@@ -182,29 +182,29 @@ client only needs to call it for each message.
 
 ## Files
 
-| File | Purpose |
-| --- | --- |
-| `src/engine.js` | Puzzle rules, levels, colours, and expansion of a bank entry into a puzzle. |
-| `src/solver.js` | Exact breadth-first solver over all reachable positions. |
-| `src/puzzles.json` | The generated puzzle bank. |
-| `src/worker.js` | Solves the dealt puzzle off the main thread and answers hints. |
-| `src/vehicles.js` | Vehicles modelled in code: lofted bodies, panel lines, glass, mirrors, wheels, roof labels. |
-| `src/scene.js` | Room, workbench, props, board, lights and post-processing. |
-| `src/main.js` | Game flow, camera moves, animation, HUD wiring. |
-| `src/audio.js` | Synthesised sounds (WebAudio). No audio files. |
-| `tools/evolve.js` | The puzzle generator. |
-| `src/adapt.js` | The Auto level: the next puzzle from the last result. |
-| `tools/range.js` | Draws `docs/expressive-range.svg`. |
-| `tools/fogleman.js` | Compares the 6×6 puzzles with Fogleman's database. |
-| `tools/solver.test.js` | Tests: the solver against a plain search, the walk model, and every bank entry. |
-| `tools/adapt.test.js` | Tests: the Auto level. |
-| `tools/serve.test.js` | Tests: the server's path check, cache validation and compression. |
-| `tools/assets.sh` | Converts the original images and models into `public/assets/`. |
-| `public/assets/` | Images and models. The build copies them to `dist/assets/` unchanged. |
-| `package.json`, `bun.lock` | The libraries, the tools and the commands. |
-| `vite.config.ts` | Build, lint and format settings (Vite+). |
-| `serve.js` | Static server for `dist/` with compression and cache validation. |
-| `garage.html` | Developer page that shows every vehicle model. |
+| File                       | Purpose                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| `src/engine.js`            | Puzzle rules, levels, colours, and expansion of a bank entry into a puzzle.                 |
+| `src/solver.js`            | Exact breadth-first solver over all reachable positions.                                    |
+| `src/puzzles.json`         | The generated puzzle bank.                                                                  |
+| `src/worker.js`            | Solves the dealt puzzle off the main thread and answers hints.                              |
+| `src/vehicles.js`          | Vehicles modelled in code: lofted bodies, panel lines, glass, mirrors, wheels, roof labels. |
+| `src/scene.js`             | Room, workbench, props, board, lights and post-processing.                                  |
+| `src/main.js`              | Game flow, camera moves, animation, HUD wiring.                                             |
+| `src/audio.js`             | Synthesised sounds (WebAudio). No audio files.                                              |
+| `tools/evolve.js`          | The puzzle generator.                                                                       |
+| `src/adapt.js`             | The Auto level: the next puzzle from the last result.                                       |
+| `tools/range.js`           | Draws `docs/expressive-range.svg`.                                                          |
+| `tools/fogleman.js`        | Compares the 6×6 puzzles with Fogleman's database.                                          |
+| `tools/solver.test.js`     | Tests: the solver against a plain search, the walk model, and every bank entry.             |
+| `tools/adapt.test.js`      | Tests: the Auto level.                                                                      |
+| `tools/serve.test.js`      | Tests: the server's path check, cache validation and compression.                           |
+| `tools/assets.sh`          | Converts the original images and models into `public/assets/`.                              |
+| `public/assets/`           | Images and models. The build copies them to `dist/assets/` unchanged.                       |
+| `package.json`, `bun.lock` | The libraries, the tools and the commands.                                                  |
+| `vite.config.ts`           | Build, lint and format settings (Vite+).                                                    |
+| `serve.js`                 | Static server for `dist/` with compression and cache validation.                            |
+| `garage.html`              | Developer page that shows every vehicle model.                                              |
 
 ## Load time
 

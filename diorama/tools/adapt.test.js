@@ -28,23 +28,41 @@ test('the skill moves one step and stays between 0 and 1', () => {
 });
 
 test('the choice is near the skill and repeats only when no near puzzle is left', () => {
-  const count = 143, played = new Set(), seen = [];
+  const count = 143,
+    played = new Set(),
+    seen = [];
   // 17 entries are within 8 places of place 71: all of them come once before any repeat.
-  for (let k = 0; k < 17; k++) { const i = choose(count, 0.5, played); expect(played.has(i)).toBe(false); played.add(i); seen.push(i); }
+  for (let k = 0; k < 17; k++) {
+    const i = choose(count, 0.5, played);
+    expect(played.has(i)).toBe(false);
+    played.add(i);
+    seen.push(i);
+  }
   expect(Math.abs(seen[0] - 71)).toBeLessThanOrEqual(2); // one of the 5 nearest
   expect(seen.toSorted((a, b) => a - b)).toEqual(Array.from({ length: 17 }, (_, k) => 63 + k));
   expect(Math.abs(choose(count, 0.5, played) - 71)).toBeLessThanOrEqual(2); // it starts again
   expect(played.size).toBe(0);
   // At the bottom of the ladder the choice stays near the bottom: it repeats, and does not climb.
-  for (let k = 0; k < 60; k++) { const i = choose(count, 0, played); played.add(i); expect(i).toBeLessThanOrEqual(8); }
+  for (let k = 0; k < 60; k++) {
+    const i = choose(count, 0, played);
+    played.add(i);
+    expect(i).toBeLessThanOrEqual(8);
+  }
   expect(choose(count, 1, new Set(), () => 0)).toBe(count - 1);
 });
 
 test('a strong audience reaches harder puzzles and a weak one easier puzzles', () => {
   const l = ladder(bank);
   const run = (result) => {
-    let skill = 0.5; const played = new Set(), moves = [];
-    for (let k = 0; k < 6; k++) { const i = choose(l.length, skill, played, () => 0); played.add(i); moves.push(l[i].moves); skill = step(skill, verdict(result(l[i]))); }
+    let skill = 0.5;
+    const played = new Set(),
+      moves = [];
+    for (let k = 0; k < 6; k++) {
+      const i = choose(l.length, skill, played, () => 0);
+      played.add(i);
+      moves.push(l[i].moves);
+      skill = step(skill, verdict(result(l[i])));
+    }
     return moves;
   };
   const up = run((e) => ({ solved: true, moves: e.moves, best: e.moves, hints: 0 }));
