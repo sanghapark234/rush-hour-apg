@@ -116,8 +116,9 @@ function pose(name) {
     const a = (deg * Math.PI) / 180;
     return [t[0] + Math.sin(az) * Math.cos(a) * dist, t[1] + Math.sin(a) * dist, Math.cos(az) * Math.cos(a) * dist];
   };
-  // `range` is the distance from the focus point at which the blur is full. In the play views it
-  // grows with the lot, so every car stays sharp and only the table and the room are soft.
+  // `range` is the distance from the focus point at which the blur is full. In the angled and low
+  // views it grows with the lot, so every car stays sharp; the table is nearly sharp too and the
+  // room stays soft. The top view looks straight down, where all cars are at one distance.
   switch (name) {
     case 'welcome':
       return { p: [-2.5, 7.6, 31], t: [-5.5, 1.9, 0], fov: 30, range: 14, bokeh: 1.6, shift: 0 };
