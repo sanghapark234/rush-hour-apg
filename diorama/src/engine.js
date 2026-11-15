@@ -75,3 +75,10 @@ export function slide(z, p, i, d, count) {
   }
   return { done, exit: false };
 }
+// True when every cell between the red car and the exit is free.
+export function pathOpen(z, p) {
+  const m = z.meta[0],
+    g = grid(z, p);
+  for (let at = p[0] + m.len; at < z.N; at++) if (!free(z, g, m, at)) return false;
+  return true;
+}

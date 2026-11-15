@@ -2,7 +2,7 @@
 import { test, expect } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { analyze, slides } from '../src/solver.js';
-import { LEVELS, expand, slide } from '../src/engine.js';
+import { LEVELS, expand, pathOpen, slide } from '../src/engine.js';
 
 // Plain reference search with string keys, kept simple on purpose.
 function reference(z, start) {
@@ -141,6 +141,20 @@ test('a counted move stops at a vehicle, a planter and the lot edge, and reports
   expect(p[A]).toBe(4);
   expect(slide(z, p, A, 1, 1)).toEqual({ done: 0, exit: true });
   expect(p).toEqual([4, 4, 0]);
+});
+
+test('the way out is open only when no vehicle or planter stands between the red car and the exit', () => {
+  const { z, start } = parse('....B.' + 'AA..B.' + '......' + '......' + '......' + '......');
+  const p = start.slice();
+  expect(pathOpen(z, p)).toBe(false); // B stands in the row
+  slide(z, p, 1, 1, 1);
+  expect(pathOpen(z, p)).toBe(false); // B still covers the row
+  slide(z, p, 1, 1, 1);
+  expect(pathOpen(z, p)).toBe(true);
+  const planter = parse('......' + 'AA...x' + '......' + '......' + '......' + '......');
+  expect(pathOpen(planter.z, planter.start)).toBe(false);
+  const atEdge = parse('......' + '....AA' + '......' + '......' + '......' + '......');
+  expect(pathOpen(atEdge.z, atEdge.start)).toBe(true);
 });
 
 test('every puzzle in the bank is inside its level range and matches its record', () => {

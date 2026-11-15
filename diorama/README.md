@@ -54,7 +54,8 @@ bun test                     # solver, bank, Auto level and server tests
 - After a win with more moves than the shortest solution, **Watch the shortest solution** puts
   the cars back and plays it from the start.
 - `cam angle`, `cam top`, `cam low`: change the camera. Drag to orbit, scroll to zoom.
-- The red car leaves when it is at the exit and chat sends `red right` once more.
+- When a move leaves the way to the exit free, the red car drives out by itself. Each cell of
+  that drive counts as a move, and the exit counts as one more.
 
 The colour name is printed on each roof, and the panel lists the colours in the puzzle.
 Planters are fixed obstacles: no vehicle can pass them.

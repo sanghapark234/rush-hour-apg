@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createStage, BASE_H } from './scene.js';
 import { makeVehicle, disposeVehicle } from './vehicles.js';
-import { LEVELS, expand, slide } from './engine.js';
+import { LEVELS, expand, pathOpen, slide } from './engine.js';
 import { START, ladder, verdict, step, choose } from './adapt.js';
 import * as sfx from './audio.js';
 
@@ -403,6 +403,15 @@ async function command(raw, name) {
   tried = true;
   sfx.roll();
   sys(done < count ? `${a} moved ${b} ${done} of ${count}, then it was blocked.` : `${a} moved ${b}${count > 1 ? ' ' + count : ''}.`, 'success');
+  if (pathOpen(puzzle, pos)) {
+    // The way out is free: the red car drives the rest by itself. Each cell counts as a move,
+    // as it does in the shortest solution, and win() counts the exit move.
+    const rest = puzzle.N - puzzle.meta[0].len - pos[0];
+    pos[0] += rest;
+    moves += rest;
+    sys('The way is open. RED drives out.');
+    return win();
+  }
   render();
 }
 function win() {
