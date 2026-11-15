@@ -90,7 +90,7 @@ client only needs to call it for each message.
 ## Credits
 
 All third-party assets are CC0 from [Poly Haven](https://polyhaven.com): the `artist_workshop`
-HDRI; the `asphalt_02`, `wood_table_worn` and `plywood` textures; and the models
+HDRI; the `asphalt_02` and `plywood` textures; and the models
 `wooden_table_02`, `desk_lamp_arm_01`, `spray_paint_bottles`, `pliers`, `screwdrivers_02`,
 `measuring_tape_01`, `potted_plant_04` and `street_lamp_01`.
 

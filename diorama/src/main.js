@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createStage, BASE_H } from './scene.js';
 import { makeVehicle, disposeVehicle } from './vehicles.js';
-import { LEVELS, expand, grid, free } from './engine.js';
+import { LEVELS, expand, slide } from './engine.js';
 import * as sfx from './audio.js';
 
 const $ = (id) => document.getElementById(id);
@@ -15,13 +15,22 @@ const { camera, dof } = stage;
 // ---------- puzzle state ----------
 let puzzle = null, pos = [], moves = 0, won = false, busy = false, viewer = 0, lastMove = null;
 let phase = 'welcome'; // welcome | fly | play | won
-let cars = [], boardInfo = null, level = params.get('level') in LEVELS ? params.get('level') : 'normal';
+let cars = [], boardInfo = null, level = Object.hasOwn(LEVELS, params.get('level')) ? params.get('level') : 'normal';
 const carGroup = new THREE.Group();
 
 const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
 const waiting = new Map(); let reqId = 0;
-worker.onmessage = ({ data }) => { waiting.get(data.id)(data.result); waiting.delete(data.id); };
-const ask = (msg) => new Promise((res) => { const id = ++reqId; waiting.set(id, res); worker.postMessage({ ...msg, id }); });
+let workerDown = null; // set when the worker failed: every request then rejects at once
+worker.onmessage = ({ data }) => { waiting.get(data.id).res(data.result); waiting.delete(data.id); };
+worker.onerror = worker.onmessageerror = (e) => {
+  workerDown = new Error('the solver stopped' + (e.message ? ': ' + e.message : ''));
+  for (const w of waiting.values()) w.rej(workerDown);
+  waiting.clear();
+};
+const ask = (msg) => new Promise((res, rej) => {
+  if (workerDown) return rej(workerDown);
+  const id = ++reqId; waiting.set(id, { res, rej }); worker.postMessage({ ...msg, id });
+});
 
 // The bank of generated puzzles (tools/evolve.js). Each level deals its entries in a random
 // order and starts again only when all of them were played.
@@ -206,7 +215,7 @@ async function command(raw, name) {
   }
   if (won) return sys('Already cleared. Reset or start a new puzzle.');
   if (raw === 'hint') {
-    const asked = puzzle, h = await ask({ type: 'hint', pos: pos.slice(), last: lastMove });
+    const asked = puzzle, h = await ask({ type: 'hint', pos: pos.slice(), last: lastMove }).catch(() => null); // a stopped solver gives no hint
     if (asked !== puzzle || won) return;
     if (!h) return sys('Hint unavailable.', 'error');
     const [i, d] = h.move ?? [0, 1];
@@ -219,13 +228,8 @@ async function command(raw, name) {
   if (i < 0 || extra.length || !count || !['left', 'right', 'up', 'down'].includes(b)) return sys('Invalid command. Try: blue right, or blue right 3', 'error');
   const m = puzzle.meta[i], u = cars[i].userData, horiz = b == 'left' || b == 'right';
   if (horiz !== (m.axis == 'h')) return sys(`${a} cannot move ${b}.`, 'error');
-  const d = b == 'right' || b == 'down' ? 1 : -1, g = grid(puzzle, pos);
-  let done = 0;
-  while (done < count) {
-    if (i === 0 && d > 0 && pos[0] + m.len === puzzle.N) { moves += done; return win(); }
-    if (!free(puzzle, g, m, d > 0 ? pos[i] + m.len : pos[i] - 1)) break;
-    pos[i] += d; done++; // the cells behind the vehicle stay marked: it only moves away from them
-  }
+  const d = b == 'right' || b == 'down' ? 1 : -1, { done, exit } = slide(puzzle, pos, i, d, count);
+  if (exit) { moves += done; return win(); }
   if (!done) { u.bump = 1; u.bumpDir = d; sfx.clack(); return sys('Move blocked!', 'error'); }
   u.tgt = pos[i]; moves += done; lastMove = [i, d]; sfx.roll();
   sys(done < count ? `${a} moved ${b} ${done} of ${count}, then it was blocked.` : `${a} moved ${b}${count > 1 ? ' ' + count : ''}.`, 'success'); render();
@@ -233,7 +237,7 @@ async function command(raw, name) {
 function win() {
   won = true; moves++; phase = 'won';
   const u = cars[0].userData; Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
-  sfx.roll(); setTimeout(() => { sfx.win(); confetti(); }, 650);
+  sfx.roll(); setTimeout(() => { if (won) { sfx.win(); confetti(); } }, 650);
   sys('Success! RED escaped through the exit!', 'success');
   const best = puzzle.moves;
   $('win-moves').textContent = moves;
@@ -251,9 +255,10 @@ function reset(dropIn = false) {
 }
 async function newPuzzle() {
   if (busy) return;
+  const want = level;
   busy = true; render();
   try {
-    const made = expand(deal((await bank)[level], level), { flip: Math.random() < 0.5 });
+    const made = expand(deal((await bank)[want], want), { flip: Math.random() < 0.5 });
     if (!await ask({ type: 'load', puzzle: made })) throw new Error('the puzzle has no solution');
     puzzle = made;
   } finally { busy = false; }
@@ -264,6 +269,7 @@ async function newPuzzle() {
   legend(); reset(true);
   if (phase === 'play') flyTo(camName, 1.2, () => { controls.enabled = true; });
   else if (phase === 'welcome' && !tween) applyPose(pose('welcome'));
+  if (want !== level) return newPuzzle(); // the level changed while this puzzle loaded
 }
 function start() {
   if (phase !== 'welcome' || !puzzle) return;

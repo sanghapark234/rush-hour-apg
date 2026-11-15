@@ -41,3 +41,16 @@ export function free(z, g, m, at) {
   if (at < 0 || at >= z.N) return false;
   return g[m.axis === 'h' ? m.lane * z.N + at : at * z.N + m.lane] === -1;
 }
+// Move vehicle i up to count cells in direction d (+1 or -1). Changes p in place.
+// done is the number of cells moved. exit is true when the red car met the exit: it leaves
+// with one more move, which the caller counts.
+export function slide(z, p, i, d, count) {
+  const m = z.meta[i], g = grid(z, p);
+  let done = 0;
+  while (done < count) {
+    if (i === 0 && d > 0 && p[0] + m.len === z.N) return { done, exit: true };
+    if (!free(z, g, m, d > 0 ? p[i] + m.len : p[i] - 1)) break;
+    p[i] += d; done++; // the cells behind the vehicle stay marked: it only moves away from them
+  }
+  return { done, exit: false };
+}

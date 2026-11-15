@@ -559,7 +559,9 @@ export function makeVehicle(m, index) {
   root.userData = v;
   return root;
 }
-// Free the materials and textures that one vehicle owns. Shared geometry stays cached.
+// Free what one vehicle owns: its materials and textures, and each geometry that is not cached.
 export function disposeVehicle(root) {
   for (const o of root.userData.owned) o.dispose();
+  const kept = new Set(cache.values());
+  root.traverse((o) => { if (o.geometry && !kept.has(o.geometry)) o.geometry.dispose(); });
 }

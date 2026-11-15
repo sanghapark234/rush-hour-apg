@@ -96,8 +96,9 @@ function evaluate(g, random) {
   const a = analyze(z, g.cars.map((v) => v.at), CAP);
   if (!a || !a.solvable) return null;
   const far = a.hardest(random), path = a.path(far.pos);
+  // The path ends with a red move to the right, so the exit move adds a move but no slide.
   const used = new Set(path.map(([i]) => i)).size, stuck = g.cars.filter((_, i) => a.lo[i] === a.hi[i]).length;
-  const n = g.cars.length, s = slides(path) + 1, moves = far.dist + 1;
+  const n = g.cars.length, s = slides(path), moves = far.dist + 1;
   // Quality inside one archive cell: many vehicles take part, many separate decisions,
   // few vehicles that can never move, few walls.
   const quality = used / n + 0.6 * s / moves - 0.5 * stuck / n - 0.04 * g.walls.length;

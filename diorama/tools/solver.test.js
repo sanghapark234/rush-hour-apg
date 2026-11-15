@@ -2,7 +2,7 @@
 import { test, expect } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { analyze, slides } from '../src/solver.js';
-import { LEVELS, expand } from '../src/engine.js';
+import { LEVELS, expand, slide } from '../src/engine.js';
 
 // Plain reference search with string keys, kept simple on purpose.
 function reference(z, start) {
@@ -73,6 +73,24 @@ test('the solver agrees with a plain search on random boards', () => {
     else { solved++; expect(a.path(start).length).toBe(r.dist); }
   }
   expect(solved).toBeGreaterThan(50);
+});
+
+test('a counted move stops at a vehicle, a planter and the lot edge, and reports the exit', () => {
+  // A is the red car in row 1. B is vertical in column 4. C is vertical in column 0 over a planter.
+  const { z, start } = parse('C...B.' + 'CAA.B.' + 'x.....' + '......' + '......' + '......');
+  const [A, B, C] = [0, 1, 2];
+  let p = start.slice();
+  expect(slide(z, p, A, 1, 5)).toEqual({ done: 1, exit: false }); // stops at B
+  expect(p[A]).toBe(2);
+  expect(slide(z, p, A, -1, 7)).toEqual({ done: 1, exit: false }); // stops at C
+  expect(slide(z, p, C, 1, 1)).toEqual({ done: 0, exit: false }); // the planter blocks C
+  expect(slide(z, p, C, -1, 1)).toEqual({ done: 0, exit: false }); // the lot edge blocks C
+  expect(slide(z, p, B, 1, 7)).toEqual({ done: 4, exit: false }); // B runs to the far edge
+  expect(p[B]).toBe(4);
+  expect(slide(z, p, A, 1, 7)).toEqual({ done: 3, exit: true }); // three cells to the exit, then out
+  expect(p[A]).toBe(4);
+  expect(slide(z, p, A, 1, 1)).toEqual({ done: 0, exit: true });
+  expect(p).toEqual([4, 4, 0]);
 });
 
 test('every puzzle in the bank is inside its level range and matches its record', () => {

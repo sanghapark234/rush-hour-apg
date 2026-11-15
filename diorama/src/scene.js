@@ -187,11 +187,21 @@ export function createStage(canvas) {
   }
 
   // walls: cells that hold a planter, which no vehicle can enter.
+  const shared = new Set(Object.values(M));
+  let built = [], buildId = 0;
   function buildBoard(N, exitRow, walls = []) {
+    // Free what the previous board made. Shared materials, loaded textures and the lamp model stay.
+    const gone = new Set();
+    for (const o of built) {
+      gone.add(o.geometry);
+      if (!shared.has(o.material)) { gone.add(o.material); if (o.material.map?.isCanvasTexture) gone.add(o.material.map); }
+    }
+    for (const r of gone) r.dispose();
+    built = []; const id = ++buildId;
     board.clear();
     const h = N / 2, pad = 1.15, road = 2;
     const W = N + pad * 2 + road, D = N + pad * 2, cx = road / 2;
-    const add = (geo, m, x, y, z, cast = true) => { const o = new THREE.Mesh(geo, m); o.position.set(x, y, z); o.castShadow = cast; o.receiveShadow = true; board.add(o); return o; };
+    const add = (geo, m, x, y, z, cast = true) => { const o = new THREE.Mesh(geo, m); o.position.set(x, y, z); o.castShadow = cast; o.receiveShadow = true; board.add(o); built.push(o); return o; };
     // Plywood slab with a dark stained edge and brass corner pins.
     add(new RoundedBoxGeometry(W + 0.5, BASE_H - 0.08, D + 0.5, 3, 0.05), M.edge, cx, (BASE_H - 0.08) / 2, 0);
     add(new THREE.BoxGeometry(W + 0.3, 0.06, D + 0.3), M.ply, cx, BASE_H - 0.05, 0);
@@ -225,10 +235,11 @@ export function createStage(canvas) {
       roughness: 0.45,
       map: canvasTex(256, 32, (g) => { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? '#f3f0e8' : '#d1262b'; g.fillRect(i * 32, 0, 32, 32); } }),
     }));
-    arm.position.z = -0.71; arm.castShadow = true; gate.add(arm);
+    arm.position.z = -0.71; arm.castShadow = true; gate.add(arm); built.push(arm);
     board.add(gate);
     // Street lamps at two corners, model scale.
     lampModel.then((src) => {
+      if (id !== buildId) return; // a newer board replaced this one while the model loaded
       box.setFromObject(src).getSize(size);
       for (const [x, z, ry] of [[-h - 0.75, -h - 0.75, 0.8], [h + 0.75, h + 0.75, -2.3]]) {
         const l = src.clone(true); l.scale.setScalar(3.1 / size.y); l.rotation.y = ry; l.updateMatrixWorld(true);
