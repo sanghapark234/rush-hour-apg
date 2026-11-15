@@ -38,7 +38,7 @@ Oxlint checks the code and Oxfmt formats it.
 ```sh
 bun run check                # format check and lint
 bun run fix                  # apply the format and the lint fixes
-bun test                     # solver, bank, Auto level and server tests
+bun test                     # solver, bank, Auto level, server and Twitch bridge tests
 bun run test:flow            # builds the game, then plays it in a headless browser
 ```
 
@@ -186,10 +186,50 @@ Predicting Human Planning Performance", Proc. CogSci 2011. <https://escholarship
 URL options for testing: `?skip=1` starts in play, `&cam=top|low` picks the view,
 `&level=easy|normal|hard|expert|auto` picks the difficulty.
 
-## Connect a real chat
+## Play through Twitch chat
 
-`window.apg.command(user, text)` feeds one chat message into the game. A tmi.js or EventSub
-client only needs to call it for each message.
+Add the channel to the address: `http://localhost:4680/?channel=name`. The game then reads the
+chat of that Twitch channel. Reading needs no login. Without `channel`, the game makes no
+request to Twitch.
+
+- A command in Twitch chat starts with `!`: `!blue right`, `!blue right 3`. A message without
+  `!` is talk, and the game ignores it.
+- Each player gets one command in 3 seconds. `&cooldown=5` sets another number of seconds, from 0
+  to 60.
+- `!hint`, `!solve`, `!stop` and `!cam` do nothing from Twitch chat. The streamers use the
+  buttons and the chat box on the page.
+- The panel head shows the state: `Twitch: #name`, `Twitch: connecting`, `Twitch: reconnecting`
+  or `Twitch: off`. An error, such as a channel that does not answer, appears in the chat panel.
+- Messages that arrive before **Start** are dropped.
+
+### Replies in Twitch chat
+
+The game replies in Twitch chat only after a login to Twitch. It replies to a win, and to a
+command that it refused or did not understand. A player gets at most one such reply in 10
+seconds. The game sends at most 15 replies in 30 seconds, because Twitch allows a normal account
+20 messages in 30 seconds
+([Twitch developer documentation](https://dev.twitch.tv/docs/chat/), read 15 November 2026).
+
+The steps for the presenter, once for each laptop:
+
+1. Log in to Twitch in the browser with the account that sends the replies.
+2. In the [Twitch developer console](https://dev.twitch.tv/console/apps), register an
+   application. Set the OAuth redirect URL to the address of the game without options, for
+   example `http://localhost:4680/`. Open the game at that same address: the examples of Twitch use
+   `http` with `localhost`, and this project did not test another host.
+3. Copy the client ID of the application. It is not a secret.
+4. Open `http://localhost:4680/?channel=name&client=<client ID>` and select **Log in to
+   Twitch** in the panel. Twitch asks for permission to read and write chat, then returns to the
+   game.
+
+The login token stays in the storage of that browser. It is never in the repository, and the
+game never sends it to the game server. To log out, clear the site data of the game in the
+browser. When Twitch no longer accepts the token, the game says so and offers the login again.
+
+### Other chat sources
+
+`window.apg.command(user, text)` feeds one chat message into the game. Another chat client only
+needs to call it for each message.
 
 The choices for play through Twitch chat, with the decisions taken so far, are in
 [docs/team-decisions.md](docs/team-decisions.md).
@@ -213,6 +253,8 @@ The choices for play through Twitch chat, with the decisions taken so far, are i
 | `tools/solver.test.js`     | Tests: the solver against a plain search, the walk model, and every bank entry.             |
 | `tools/adapt.test.js`      | Tests: the Auto level.                                                                      |
 | `tools/serve.test.js`      | Tests: the server's path check, cache validation and compression.                           |
+| `src/twitch.js`            | The Twitch chat bridge: reads a channel's chat and replies in it.                           |
+| `tools/twitch.test.js`     | Tests: the Twitch chat bridge, with a fake connection.                                      |
 | `tools/flow.js`            | Tests: the game flow in a headless browser (`bun run test:flow`).                           |
 | `tools/assets.sh`          | Converts the original images and models into `public/assets/`.                              |
 | `public/assets/`           | Images and models. The build copies them to `dist/assets/` unchanged.                       |

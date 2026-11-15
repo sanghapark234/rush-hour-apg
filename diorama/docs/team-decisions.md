@@ -11,9 +11,10 @@
     Fair with a large audience. Slow: a 20-move puzzle with 8-second rounds takes about 3 minutes
     at the least. A vote needs a timer and a tally on the screen.
 - **Recommendation:** B for a class-sized audience. C only for a large audience.
-- **Decided (15 November 2026):** B, a cooldown per player. Not set yet: the length of the
-  cooldown, and whether a move of several cells (`!blue right 3`) counts as one turn. The team
-  can reopen this.
+- **Decided (15 November 2026):** B, a cooldown per player. The team can reopen this.
+- **Built, and easy to change:** one command for each player in 3 seconds (`&cooldown=` in the
+  address sets another length). A move of several cells (`!blue right 3`) counts as one turn. A
+  command that the game refuses, such as a blocked move, also uses the turn.
 
 ## 2. Who may ask for a hint or give up
 
@@ -41,12 +42,16 @@
   - Which account sends the replies: the streamer's account or a separate bot account. The token
     of that account stays on the streamer's laptop and never goes into the repository.
   - Which messages get a reply. This includes a message with the prefix that the game refuses,
-    such as `!hint` from a viewer or a typing error (`!bleu right`). Twitch limits the messages an account may send in a period;
-    check the current limit in the Twitch developer documentation before the presentation. A
-    reply to every invalid command can reach the limit in a busy chat.
+    such as `!hint` from a viewer or a typing error (`!bleu right`). Twitch lets an account send 20 messages in 30 seconds, or 100 when the account is the broadcaster, a moderator or a VIP of
+    the channel ([Twitch developer documentation](https://dev.twitch.tv/docs/chat/), read 15
+    November 2026). A reply to every invalid command can reach the limit in a busy chat.
 - **Recommendation:** a separate bot account, with moderator rights in the channel. Reply to the
   win, and to the refused or invalid commands of a player at most once in some seconds; show the
   rest only on the screen.
+- **Built:** the game works with either account, and without one it plays with no replies. It
+  replies to a win, and to the refused or invalid commands of a player at most once in 10
+  seconds, with at most 15 replies in 30 seconds. The steps are in the
+  [README](../README.md#replies-in-twitch-chat).
 
 ## 4. Message format
 

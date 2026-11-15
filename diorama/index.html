@@ -521,7 +521,7 @@
     </main>
 
     <aside id="panel" aria-label="Game panel">
-      <div class="head"><strong>Tiny Gridlock</strong><span>Chat plays</span></div>
+      <div class="head"><strong>Tiny Gridlock</strong><span id="source">Chat plays</span></div>
       <div class="stats">
         <div class="n" id="moves">0</div>
         <div class="l">Moves</div>
@@ -543,6 +543,7 @@
         <button id="solve" type="button" title="Give up: the game plays the shortest solution from here">Show solution</button>
         <button id="reset" type="button">Reset</button>
         <button id="new" type="button">New puzzle</button>
+        <button id="login" type="button" hidden title="Lets the game reply in Twitch chat">Log in to Twitch</button>
         <select id="level" aria-label="Difficulty">
           <option value="easy">Easy</option>
           <option value="normal">Normal</option>

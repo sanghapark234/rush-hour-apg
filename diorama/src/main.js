@@ -92,7 +92,12 @@ function log(name, msg, kind = 'user') {
   while (chat.children.length > 120) chat.firstChild.remove();
   chat.scrollTop = chat.scrollHeight;
 }
-const sys = (msg, kind = 'system') => log('BOARD', msg, kind);
+// `heard` collects the game's answers to one command, for the reply in Twitch chat.
+let heard = null;
+const sys = (msg, kind = 'system') => {
+  heard?.push({ msg, kind });
+  log('BOARD', msg, kind);
+};
 
 // ---------- camera ----------
 const controls = new OrbitControls(camera, $('stage'));
@@ -351,7 +356,7 @@ function legend() {
   );
 }
 async function command(raw, name) {
-  raw = raw.trim().toLowerCase().replace(/\s+/g, ' ');
+  raw = raw.slice(0, 400).trim().toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
   if (!raw || busy || phase === 'welcome' || phase === 'fly') return;
   log(name || 'viewer' + ++viewer, raw);
   const [a, b, c, ...extra] = raw.split(' ');
@@ -649,9 +654,31 @@ for (const r of document.querySelectorAll('input[name=level], #level'))
   });
 for (const o of document.querySelectorAll('input[name=level]')) o.checked = o.value === level;
 $('level').value = level;
-// Hook for a real chat source (for example tmi.js): apg.command('alice', 'blue right').
+// Hook for a chat source or a test: apg.command('alice', 'blue right').
 // apg.state() gives a copy of the puzzle and the position, for a bot or a test.
 window.apg = { command: (user, text) => command(String(text), String(user)), state: () => structuredClone({ puzzle, pos, moves, won, level, demo }), stage };
+
+// Twitch chat (twitch.js) joins the channel that the address names: ?channel=name. The module
+// loads only then, or when the browser comes back from the Twitch login. It starts after the
+// first puzzle, which clears the chat panel.
+const twitch = () =>
+  (params.has('channel') || location.hash.includes('access_token=')) &&
+  import('./twitch.js').then((twitch) =>
+    twitch.start({
+      params,
+      sys,
+      note: (text) => ($('source').textContent = text),
+      button: $('login'),
+      // Every command that the bridge passes on answers before command() returns: only a hint waits.
+      play(user, text) {
+        heard = [];
+        command(text, user);
+        const lines = heard;
+        heard = null;
+        return { lines, won, moves };
+      },
+    }),
+  );
 
 function resize() {
   stage.resize(innerWidth, innerHeight);
@@ -690,6 +717,7 @@ for (const task of stage.tasks)
 Promise.all([stage.ready, newPuzzle()]).then(
   () => {
     document.body.classList.add('ready');
+    twitch();
     $('start').disabled = false;
     $('start').textContent = 'Start';
     if (params.has('skip')) {
