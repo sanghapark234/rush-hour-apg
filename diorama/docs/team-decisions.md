@@ -4,14 +4,6 @@ Open choices to take before an audience plays the game through Twitch chat.
 Each entry gives the behaviour today, the options with their consequences, and a recommendation.
 "Today" describes the code on 15 November 2026. The recommendations are proposals, not decisions.
 
-The repository holds three versions of the game:
-
-- **2D game**: `index.html` at the root.
-- **3D demo**: `261113Demo.html` at the root.
-- **Tiny Gridlock**: the folder `diorama/`.
-
-None of them connects to Twitch today. Each takes commands only from the chat box on its page.
-
 ## Already decided
 
 These two are settled for Tiny Gridlock (15 November 2026). The team can reopen them.
@@ -36,7 +28,8 @@ These two are settled for Tiny Gridlock (15 November 2026). The team can reopen 
 
 ## 2. Which version the audience plays
 
-- **Today:** three versions with different rules (see decision 3).
+- **Today:** three versions with different rules (see decision 3): the 2D game (`index.html`),
+  the 3D demo (`261113Demo.html`) and Tiny Gridlock (`diorama/`).
 - **Options:**
   - **A. One version for the presentation.** The audience learns one set of commands.
   - **B. Several versions**, for example to show the development. Each one needs the Twitch
