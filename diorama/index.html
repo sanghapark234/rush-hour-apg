@@ -387,6 +387,11 @@
       .tools select:hover {
         border-color: var(--ink);
       }
+      .tools button:disabled {
+        opacity: 0.45;
+        cursor: default;
+        border-color: var(--rule);
+      }
       .tools button[aria-pressed='true'] {
         background: var(--ink);
         color: var(--paper);

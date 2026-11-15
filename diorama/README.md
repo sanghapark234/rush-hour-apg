@@ -48,8 +48,9 @@ bun test                     # solver, bank, Auto level and server tests
 - `hint`: the next move of a shortest solution, and the number of moves that remain.
   The vehicle flashes its headlights.
 - `solve`, or the **Show solution** button: chat gives up, and the game plays a shortest solution
-  from the current position. **Stop** ends the replay, and chat goes on from that position.
-  A replay is not a solve: the Auto level counts the puzzle as not solved.
+  from the current position. `stop`, or the **Stop** button, ends the replay, and chat goes on
+  from that position. A replay is not a solve: the Auto level counts a replay that reaches the
+  exit as not solved, and each move of a stopped replay as a hint.
 - After a win with more moves than the shortest solution, **Watch the shortest solution** puts
   the cars back and plays it from the start.
 - `cam angle`, `cam top`, `cam low`: change the camera. Drag to orbit, scroll to zoom.
@@ -77,7 +78,7 @@ With **Auto**, the game chooses each puzzle from how the audience played the las
 | --------------------------------------------------------------------------------------------- | ---------------------------- |
 | Solved in at most 1.5 × the shortest solution, with hints for at most 10% of its moves        | Harder: 8% up the ladder     |
 | Solved in more than 2.5 × the shortest solution, or with hints for more than 30% of its moves | Easier: 8% down the ladder   |
-| Not solved: chat moved or asked for a hint, then took a new puzzle                            | Easier: 8% down the ladder   |
+| Not solved: chat moved, asked for a hint or the solution, then took a new puzzle              | Easier: 8% down the ladder   |
 | Any other result, or a puzzle that nobody touched                                             | The same place on the ladder |
 
 The first Auto puzzle is 10% up the ladder. The game picks at random among the five nearest

@@ -24,7 +24,8 @@ let puzzle = null,
 let phase = 'welcome'; // welcome | fly | play | won
 // The replay of the shortest solution: null, or {done}. `done` is true when the red car left.
 // A new object marks each replay, so a replay that was stopped or replaced ends its loop.
-let demo = null;
+let demo = null,
+  shown = 0; // the moves that a replay made since the last Reset
 let cars = [],
   boardInfo = null,
   level = Object.hasOwn(LEVELS, params.get('level')) || params.get('level') === 'auto' ? params.get('level') : 'normal';
@@ -361,12 +362,13 @@ async function command(raw, name) {
     return sys('Camera: ' + name2 + '.');
   }
   if (won) return sys('Already cleared. Reset or start a new puzzle.');
-  if (demo) return sys(demo.done ? 'The solution was shown. Reset or start a new puzzle.' : 'The solution is playing. Press Stop to end it.');
-  if (raw === 'solve') return showSolution(false);
+  if (demo && !demo.done && raw === 'stop') return stopSolution();
+  if (demo) return sys(demo.done ? 'The solution was shown. Reset or start a new puzzle.' : 'The solution is playing. Type stop to end it.');
+  if (raw === 'solve') return void showSolution(false); // the caller does not wait for the replay
   if (raw === 'hint') {
     const asked = puzzle,
       h = await ask({ type: 'hint', pos: pos.slice(), last: lastMove }).catch(() => null); // a stopped solver gives no hint
-    if (asked !== puzzle || won) return;
+    if (asked !== puzzle || won || demo) return; // a replay started meanwhile
     if (!h) return sys('Hint unavailable.', 'error');
     const [i, d] = h.move ?? [0, 1];
     cars[i].userData.hint = 1;
@@ -420,7 +422,11 @@ function win() {
   sys('Success! RED escaped through the exit!', 'success');
   const best = puzzle.moves;
   $('win-moves').textContent = moves;
-  $('win-note').textContent = moves <= best ? 'A perfect run. That is the shortest solution.' : `The shortest solution takes ${best}.`;
+  $('win-note').textContent = shown
+    ? `The game played ${shown} of them. The shortest solution takes ${best}.`
+    : moves <= best
+      ? 'A perfect run. That is the shortest solution.'
+      : `The shortest solution takes ${best}.`;
   $('watch').hidden = moves <= best;
   flyTo('won', 3.6);
   render();
@@ -433,12 +439,12 @@ function win() {
 }
 // Plays the shortest solution: from the start of the puzzle after a win, or from the current
 // position when the audience gives up. Each step is one hint lookup, so the route is shortest
-// from wherever the cars are. It is not a solve: the Auto level counts a give-up as not solved.
+// from wherever the cars are. It is not a solve: the Auto level counts a give-up that reaches the
+// exit as not solved, and each move of a stopped give-up as a hint.
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 async function showSolution(fromStart) {
   if (busy || !puzzle || (demo && !demo.done) || (fromStart ? phase !== 'won' : phase !== 'play' || won || demo)) return;
   if (fromStart) reset(false);
-  else outcome ??= { solved: false };
   const run = (demo = { done: false }),
     first = moves;
   sys(fromStart ? 'The shortest solution, from the start:' : 'The shortest solution from here:');
@@ -457,14 +463,26 @@ async function showSolution(fromStart) {
     await pause(i === car ? 260 : 620); // a short stop when another vehicle starts
     if (demo !== run) return;
     car = i;
-    const { exit } = slide(puzzle, pos, i, d, 1),
-      u = cars[i].userData;
+    const { done, exit } = cars[i] ? slide(puzzle, pos, i, d, 1) : {},
+      u = cars[i]?.userData;
+    if (!done && !exit) {
+      // the route does not fit this lot
+      demo = null;
+      render();
+      return sys('The solution is unavailable.', 'error');
+    }
     moves++;
+    shown++;
+    if (!fromStart) {
+      hints++; // a move that the game made is a hint that chat did not have to play
+      tried = true;
+    }
     lastMove = [i, d];
     sfx.roll();
     if (exit) {
       Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
       run.done = true;
+      if (!fromStart) outcome ??= { solved: false };
       render();
       return sys(`Red is out in ${moves - first} moves${fromStart ? '' : ' from there'}. Reset to try again, or start a new puzzle.`, 'success');
     }
@@ -494,6 +512,7 @@ function reset(dropIn = false) {
   won = false;
   lastMove = null;
   demo = null;
+  shown = 0;
   backToPlay();
   buildCars(dropIn);
   render();
@@ -503,6 +522,7 @@ async function newPuzzle() {
   const want = level;
   let note = '';
   busy = true;
+  demo = null; // a replay ends here, also when the load fails
   render();
   try {
     const all = await bank;
