@@ -11,8 +11,9 @@
     Fair with a large audience. Slow: a 20-move puzzle with 8-second rounds takes about 3 minutes
     at the least. A vote needs a timer and a tally on the screen.
 - **Recommendation:** B for a class-sized audience. C only for a large audience.
-- **Decided (15 November 2026):** B, a cooldown per player. The length of the cooldown is not
-  set yet. The team can reopen this.
+- **Decided (15 November 2026):** B, a cooldown per player. Not set yet: the length of the
+  cooldown, and whether a move of several cells (`!blue right 3`) counts as one turn. The team
+  can reopen this.
 
 ## 2. Who may ask for a hint or give up
 
@@ -30,7 +31,7 @@
   from Twitch chat do nothing. The team can reopen this.
 - **Why not a Twitch poll (D):** Twitch allows polls only on Partner and Affiliate channels
   ([Twitch developer documentation](https://dev.twitch.tv/docs/api/polls/), read 15 November
-  2026). A new channel is neither.
+  2026). A new channel is neither, so a poll works only if the channel of decision 4 is one.
 
 ## 3. Who controls the puzzle and the camera
 
@@ -53,12 +54,13 @@
   - Whose Twitch channel the audience writes in.
   - Which account sends the replies: the streamer's account or a separate bot account. The token
     of that account stays on the streamer's laptop and never goes into the repository.
-  - Which messages get a reply. Twitch limits the messages an account may send in a period;
+  - Which messages get a reply. This includes a message with the prefix that the game refuses,
+    such as `!hint` from a viewer or a typing error (`!bleu right`). Twitch limits the messages an account may send in a period;
     check the current limit in the Twitch developer documentation before the presentation. A
     reply to every invalid command can reach the limit in a busy chat.
-- **Recommendation:** a separate bot account, with moderator rights in the channel. Reply to hints,
-  to the win and to errors of a player at most once in some seconds; show the rest only on the
-  screen.
+- **Recommendation:** a separate bot account, with moderator rights in the channel. Reply to the
+  win, and to the refused or invalid commands of a player at most once in some seconds; show the
+  rest only on the screen.
 
 ## 5. Message format
 
