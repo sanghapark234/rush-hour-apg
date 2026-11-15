@@ -410,18 +410,28 @@ async function command(raw, name) {
     pos[0] += rest;
     moves += rest;
     sys('The way is open. RED drives out.');
-    return win();
+    return win(LEAVE);
   }
   render();
 }
-function win() {
+// The red car starts its last drive after `delay` ms, so the vehicle that just left its way is clear.
+const LEAVE = 350;
+function driveOut(delay, still) {
+  const go = () => {
+    if (!still()) return;
+    Object.assign(cars[0].userData, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
+    sfx.roll();
+  };
+  if (delay) setTimeout(go, delay);
+  else go();
+}
+function win(delay = 0) {
   won = true;
   moves++;
   phase = 'won';
   outcome ??= { solved: true, moves: spent + moves, best: puzzle.moves, hints }; // the first clear of this puzzle counts
-  const u = cars[0].userData;
-  Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
-  sfx.roll();
+  const now = puzzle;
+  driveOut(delay, () => won && puzzle === now);
   setTimeout(() => {
     if (won) {
       sfx.win();
@@ -487,15 +497,25 @@ async function showSolution(fromStart) {
       tried = true;
     }
     lastMove = [i, d];
-    sfx.roll();
-    if (exit) {
-      Object.assign(u, { tgt: puzzle.N + 0.85, k: 16, c: 7.5 });
+    let rest = -1; // the cells that the red car drives by itself, when the move opened its way
+    if (!exit) {
+      u.tgt = pos[i];
+      sfx.roll();
+      if (pathOpen(puzzle, pos)) {
+        rest = puzzle.N - puzzle.meta[0].len - pos[0];
+        pos[0] += rest;
+        moves += rest + 1; // each cell, then the exit
+        shown += rest + 1;
+        if (!fromStart) hints += rest + 1;
+      }
+    }
+    if (exit || rest >= 0) {
+      driveOut(exit ? 0 : LEAVE, () => demo === run);
       run.done = true;
       if (!fromStart) outcome ??= { solved: false };
       render();
       return sys(`Red is out in ${moves - first} moves${fromStart ? '' : ' from there'}. Reset to try again, or start a new puzzle.`, 'success');
     }
-    u.tgt = pos[i];
     render();
   }
 }
