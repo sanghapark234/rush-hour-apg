@@ -315,7 +315,11 @@ function frame() {
 frame();
 
 let loaded = 0, failed = false;
-for (const task of stage.tasks) task.then(() => { if (!failed) $('start').textContent = `Loading ${Math.round(++loaded / stage.tasks.length * 100)}%`; }, () => {});
+for (const task of stage.tasks) task.then(() => {
+  if (failed) return;
+  const percent = Math.round(++loaded / stage.tasks.length * 100) + '%';
+  $('start').textContent = 'Loading ' + percent; $('start').style.setProperty('--loaded', percent); // the button fills up
+}, () => {});
 Promise.all([stage.ready, newPuzzle()]).then(() => {
   document.body.classList.add('ready');
   $('start').disabled = false; $('start').textContent = 'Start';
