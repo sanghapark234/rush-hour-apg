@@ -277,6 +277,7 @@ The choices for play through Twitch chat, with the decisions taken so far, are i
 | `tools/engine.test.js`     | Tests: the rules of a move, with random positions.                                          |
 | `tools/page.test.js`       | Tests: the page, the levels, the bank and this README name the same things.                 |
 | `tools/audio.test.js`      | Tests: the sounds, with a fake audio device.                                                |
+| `tools/worker.test.js`     | Tests: the solver worker's answers, also after a load that fails.                           |
 | `tools/assets.sh`          | Converts the original images and models into `public/assets/`.                              |
 | `public/assets/`           | Images and models. The build copies them to `dist/assets/` unchanged.                       |
 | `package.json`, `bun.lock` | The libraries, the tools and the commands.                                                  |

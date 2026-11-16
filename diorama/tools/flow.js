@@ -271,6 +271,25 @@ const tests = {
     check(r.same, 'an invalid message changed the game');
     check(!r.html, 'a message was rendered as HTML');
   },
+  'a hint that chat overtakes with a move is for the position after the move': async () => {
+    const { page } = await open('medium');
+    const s = await state(page),
+      z = s.puzzle,
+      table = analyze(z, z.start),
+      move = route(z)(s.pos);
+    // The hint waits for the solver; the move does not, so it lands first.
+    const line = await page.evaluate(async (text) => {
+      const asked = t.send('hint');
+      await t.send(text);
+      await asked;
+      return t.last();
+    }, move.text);
+    const m = line.match(/Hint: (\w+ \w+)/);
+    check(m, 'no hint after the move: ' + line);
+    const next = movesOf(z, move.p).find((x) => x.text === m[1]);
+    check(next && (next.exit || table.dist(next.p) < table.dist(move.p)), `after ${move.text} the hint was ${m[1]}, which is not a shortest move`);
+    check((await state(page)).moves === 1, 'the hint moved a vehicle');
+  },
   'giving up plays the shortest solution from the position, and it is not a win': async () => {
     const { page } = await open('medium');
     const r = await page.evaluate(async () => {

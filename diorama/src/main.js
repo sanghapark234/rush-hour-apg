@@ -46,10 +46,12 @@ const carGroup = new THREE.Group();
 const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
 const waiting = new Map();
 let reqId = 0;
-let workerDown = null; // set when the worker failed: every request then rejects at once
+let workerDown = null; // set when the worker did not load or broke: every request then rejects at once
 worker.onmessage = ({ data }) => {
-  waiting.get(data.id).res(data.result);
+  const w = waiting.get(data.id);
   waiting.delete(data.id);
+  if ('error' in data) w.rej(new Error('the solver failed: ' + data.error)); // only this request
+  else w.res(data.result);
 };
 worker.onerror = worker.onmessageerror = (e) => {
   workerDown = new Error('the solver stopped' + (e.message ? ': ' + e.message : ''));
@@ -374,9 +376,15 @@ async function command(raw, name) {
   if (demo) return sys(demo.done ? 'The solution was shown. Reset or start a new puzzle.' : 'The solution is playing. Type stop to end it.');
   if (raw === 'solve') return void showSolution(false); // the caller does not wait for the replay
   if (raw === 'hint') {
-    const asked = puzzle,
+    // The answer comes later. When chat moved a vehicle meanwhile, the game asks again, so the
+    // hint is always for the position on the lot.
+    const asked = puzzle;
+    let h, at;
+    do {
+      at = pos.join();
       h = await ask({ type: 'hint', pos: pos.slice(), last: lastMove }).catch(() => null); // a stopped solver gives no hint
-    if (asked !== puzzle || won || demo) return; // a replay started meanwhile
+      if (asked !== puzzle || won || demo) return; // a new puzzle, a win or a replay came meanwhile
+    } while (at !== pos.join());
     if (!h) return sys('Hint unavailable.', 'error');
     const [i, d] = h.move ?? [0, 1];
     cars[i].userData.hint = 1;
@@ -603,6 +611,7 @@ async function newPuzzle() {
     flyTo(camName, 1.2, () => {
       controls.enabled = true;
     });
+  else if (phase === 'fly' && tween) tween.b = pose(camName); // the flight ends at the new lot, which can have another size
   else if (phase === 'welcome' && !tween) applyPose(pose('welcome'));
   if (want !== level) return newPuzzle(); // the level changed while this puzzle loaded
 }
@@ -638,7 +647,9 @@ const fresh = () =>
   });
 $('new').addEventListener('click', fresh);
 $('again').addEventListener('click', fresh);
-$('replay').addEventListener('click', () => reset(true));
+$('replay').addEventListener('click', () => {
+  if (!busy) reset(true);
+});
 $('watch').addEventListener('click', () => showSolution(true));
 $('solve').addEventListener('click', () => (demo && !demo.done ? stopSolution() : showSolution(false)));
 $('sound').addEventListener('click', (e) => {
@@ -668,10 +679,13 @@ const twitchFailed = (err) => {
   $('source').textContent = 'Twitch: off';
   sys('Twitch chat did not start: ' + err.message, 'error');
 };
-if (back || params.has('error')) import('./twitch.js').then((twitch) => twitch.comeBack(back)).catch(twitchFailed);
+// The module loads together with the scene, not after it. A failed load shows when the chat starts.
+const twitchModule = back || params.has('error') || params.has('channel') ? import('./twitch.js') : null;
+twitchModule?.catch(() => {});
+if (back || params.has('error')) twitchModule.then((twitch) => twitch.comeBack(back)).catch(twitchFailed);
 const twitch = () =>
   params.has('channel') &&
-  import('./twitch.js')
+  twitchModule
     .then((twitch) =>
       twitch.start({
         params,
