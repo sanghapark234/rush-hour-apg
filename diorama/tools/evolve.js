@@ -2,7 +2,11 @@
 // quality-diversity evolutionary algorithm. No puzzle is written by hand.
 //
 //   bun tools/evolve.js search --n 7 --seconds 300 --seed 1   -> tools/archive/n7-s1.json
+//   bun tools/evolve.js search --n 6 --max 11 --seconds 60 --seed 1  -> tools/archive/n6-max11-s1.json
 //   bun tools/evolve.js bank                                  -> src/puzzles.json
+//
+// With --max the search keeps only layouts whose shortest solution has at most that many moves:
+// the short puzzles of the lowest level, which the search for long solutions leaves thin.
 //
 // A layout (vehicles and walls) is the genome. The exact solver scores it: the start is the
 // position of that layout that is farthest from the exit. The archive keeps the best layout for
@@ -155,7 +159,7 @@ function evaluate(g, random) {
 }
 const cellKey = (e) => Math.floor(e.moves / BUCKET) + ':' + e.cars.length;
 
-function search({ n: N, seconds, seed }) {
+function search({ n: N, seconds, seed, max = 0 }) {
   const random = rng(seed),
     archive = new Map(),
     t0 = performance.now();
@@ -165,15 +169,16 @@ function search({ n: N, seconds, seed }) {
   const offer = (g) => {
     const e = evaluate(g, random);
     evals++;
-    if (!e) return;
-    const k = cellKey(e),
+    if (!e || (max && e.moves > max)) return;
+    // A short search has few move counts, so each count gets its own archive cell.
+    const k = max ? e.moves + ':' + e.cars.length : cellKey(e),
       old = archive.get(k);
     if (!old || e.quality > old.quality) {
       archive.set(k, e);
       kept++;
     }
   };
-  while (archive.size < 40) offer(randomLayout(N, random));
+  while (archive.size < (max ? 12 : 40)) offer(randomLayout(N, random));
   let elites = [...archive.values()],
     top = 0;
   while (performance.now() - t0 < seconds * 1000) {
@@ -183,7 +188,7 @@ function search({ n: N, seconds, seed }) {
     }
     // Half of the parents come from the longer half of the archive, to keep pressure on length.
     let p = elites[Math.floor(random() * elites.length)];
-    if (random() < 0.5) for (let t = 0; t < 4 && p.moves < top * 0.5; t++) p = elites[Math.floor(random() * elites.length)];
+    if (!max && random() < 0.5) for (let t = 0; t < 4 && p.moves < top * 0.5; t++) p = elites[Math.floor(random() * elites.length)];
     const r = random();
     if (r < 0.04) offer(randomLayout(N, random));
     else if (r < 0.2) offer(mutate(cross(p, elites[Math.floor(random() * elites.length)], random), random));
@@ -197,7 +202,7 @@ function search({ n: N, seconds, seed }) {
   }
   mkdirSync(here('./archive/'), { recursive: true });
   const out = [...archive.values()].sort((x, y) => x.moves - y.moves);
-  writeFileSync(here(`./archive/n${N}-s${seed}.json`), JSON.stringify(out));
+  writeFileSync(here(`./archive/n${N}${max ? '-max' + max : ''}-s${seed}.json`), JSON.stringify(out));
   console.log(`n=${N} seed=${seed} done: evals=${evals} kept=${kept} cells=${out.length} longest=${out.at(-1).moves}`);
 }
 
@@ -210,7 +215,9 @@ function bank({ per = 40 }) {
   for (const [key, level] of Object.entries(LEVELS)) {
     const seen = new Set();
     const pool = all
-      .filter((e) => e.N === level.N && e.moves >= level.min && e.moves <= level.max && e.stuck <= 1 && e.used >= Math.min(e.cars.length - 1, 7))
+      .filter(
+        (e) => e.N === level.N && e.moves >= level.min && e.moves <= level.max && e.slides >= 3 && e.stuck <= 1 && e.used >= Math.min(e.cars.length - 1, 7),
+      )
       .filter((e) => {
         const k = JSON.stringify([e.cars.map((v) => [v.axis, v.lane, v.len]), e.walls]);
         return !seen.has(k) && seen.add(k);
@@ -254,4 +261,4 @@ const [cmd, ...rest] = process.argv.slice(2),
 for (let i = 0; i < rest.length; i += 2) opt[rest[i].replace(/^--/, '')] = Number(rest[i + 1]);
 if (cmd === 'search') search({ n: 6, seconds: 60, seed: 1, ...opt });
 else if (cmd === 'bank') bank(opt);
-else console.log('usage: bun tools/evolve.js search --n 6|7|8 --seconds S --seed K | bank [--per 40]');
+else console.log('usage: bun tools/evolve.js search --n 6|7|8 --seconds S --seed K [--max M] | bank [--per 40]');

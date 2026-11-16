@@ -103,10 +103,13 @@ sizes.forEach((N, col) => {
       `<rect x="${r1(x(b * BUCKET) + 0.5)}" y="${r1(y(n + 0.5) + 0.5)}" width="${r1((PW * BUCKET) / xMax - 1)}" height="${r1(PH / yMax - 1)}" fill="${CELL}"><title>${b * BUCKET}-${b * BUCKET + 3} moves, ${n} vehicles</title></rect>`,
     );
   }
-  for (const [key, l] of levels) {
+  for (const [i, [key, l]] of levels.entries()) {
     // the move range of each level, named above the plot
     out.push(`<path d="M${r1(x(l.min))} ${TOP1 - 6}v-5H${r1(x(l.max))}v5" fill="none" stroke="${SECOND}"/>`);
-    text((x(l.min) + x(l.max)) / 2, TOP1 - 15, key, { anchor: 'middle' });
+    // A name wider than its range would run into the next name: the first one then ends at
+    // its range and a later one starts at it.
+    if (x(l.max) - x(l.min) >= key.length * 6.5) text((x(l.min) + x(l.max)) / 2, TOP1 - 15, key, { anchor: 'middle' });
+    else text(i ? x(l.min) + 2 : x(l.max) - 2, TOP1 - 15, key, { anchor: i ? 'start' : 'end' });
   }
   for (const e of picks)
     out.push(

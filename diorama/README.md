@@ -66,10 +66,15 @@ Planters are fixed obstacles: no vehicle can pass them.
 
 | Level  | Lot | Shortest solution |
 | ------ | --- | ----------------- |
-| Easy   | 6×6 | 12 to 20 moves    |
-| Normal | 6×6 | 28 to 44 moves    |
-| Hard   | 7×7 | 55 to 85 moves    |
-| Expert | 8×8 | 100 to 160 moves  |
+| Easy   | 6×6 | 6 to 11 moves     |
+| Medium | 6×6 | 12 to 20 moves    |
+| Hard   | 6×6 | 28 to 44 moves    |
+| Expert | 7×7 | 55 to 85 moves    |
+| Master | 8×8 | 100 to 160 moves  |
+
+The game starts on Easy. Easy is the level for a first game and for a class: a puzzle takes 3
+to 10 slides and has 2 to 9 vehicles. The four levels above it were named Easy, Normal, Hard and Expert until 16
+November 2026; their puzzles did not change.
 
 One move is one cell. The game deals 40 puzzles per level without repeats, with random colours
 and a random top-bottom mirror.
@@ -77,7 +82,7 @@ and a random top-bottom mirror.
 ### Auto level
 
 With **Auto**, the game chooses each puzzle from how the audience played the last one
-(`src/adapt.js`). All 160 puzzles form one ladder, ordered by shortest solution.
+(`src/adapt.js`). All 200 puzzles form one ladder, ordered by shortest solution.
 
 | Last puzzle                                                                                   | Next puzzle                  |
 | --------------------------------------------------------------------------------------------- | ---------------------------- |
@@ -111,6 +116,7 @@ with MAP-Elites, a quality-diversity evolutionary algorithm.
 
 ```sh
 bun tools/evolve.js search --n 8 --seconds 300 --seed 1   # writes tools/archive/n8-s1.json
+bun tools/evolve.js search --n 6 --max 11 --seconds 45 --seed 31   # short puzzles only, for Easy
 bun tools/evolve.js bank                                  # picks src/puzzles.json from all archives
 bun test                                                  # solver and bank checks
 ```
@@ -124,10 +130,11 @@ solver runs in a worker and gives the hints.
 
 `bun tools/range.js` draws this chart. The expressive range of a generator is the set of
 content that it can make, shown over a few measures (the book, section 9.7.3). The top row
-shows each kind of puzzle that the search found, and the 160 puzzles that the bank took.
+shows each kind of puzzle that the search found, and the 200 puzzles that the bank took.
 The search found puzzles up to 94 moves on 6×6, 138 on 7×7 and 160 on 8×8. The bank uses only
 a part of that range: the levels stop at 44 moves on 6×6 and 85 on 7×7, and 142 of the 160 bank
-puzzles have 9 or more vehicles, because the quality score favours busy lots.
+puzzles above Easy have 9 or more vehicles, because the quality score favours busy lots. Easy
+is different: a short solution moves few vehicles, so 39 of its 40 puzzles have fewer than 9.
 
 ### A second difficulty measure
 
@@ -142,9 +149,9 @@ with independent calculations.
   this model predict the solving time equally well: Spearman correlation 0.90 for each. The
   size of the state space does not predict it. So the shortest solution stays the measure
   that defines the levels.
-- In the bank, the two measures agree closely: rank correlation 0.99 over all 160 puzzles, and
-  0.94 (Easy), 0.91 (Normal), 0.89 (Hard) and 0.81 (Expert) inside a level. The values go
-  from 18 to 11,364 expected moves. The bottom row of the chart shows both measures.
+- In the bank, the two measures agree closely: rank correlation 1.00 (rounded) over all 200 puzzles,
+  and 0.97 (Easy), 0.94 (Medium), 0.91 (Hard), 0.89 (Expert) and 0.81 (Master) inside a level.
+  The values go from 7 to 11,364 expected moves. The bottom row of the chart shows both measures.
 - The model's weight of 25 comes from the paper. Nobody has fitted it to this game, where one
   move is one cell, and the paper has no 7×7 or 8×8 puzzles.
 
@@ -160,7 +167,7 @@ and counts a move as one slide of any length. `bun tools/fogleman.js path/to/rus
 each 6×6 bank puzzle in it. The database is not in this repository, because its page states
 no licence for it.
 
-|                                                  | Easy                         | Normal                        |
+|                                                  | Medium                       | Hard                          |
 | ------------------------------------------------ | ---------------------------- | ----------------------------- |
 | Bank puzzles found in the database               | 38 of 40                     | 39 of 40                      |
 | Shortest solution in one-cell moves              | 12 to 20                     | 29 to 44                      |
@@ -172,9 +179,10 @@ no licence for it.
   independent check of the solver.
 - The other three puzzles each have a vehicle or a planter that the hardest position does not
   need. The database leaves such puzzles out.
-- The hardest puzzle of the database takes 60 slides (51 without walls). The hardest Normal
+- The hardest puzzle of the database takes 60 slides (51 without walls). The hardest Hard
   puzzle takes 30 slides, and the search archive for 6×6 reaches 94 one-cell moves.
-- The database covers 6×6 only, so nothing like it exists for the Hard and Expert levels.
+- The database covers 6×6 only, so nothing like it exists for the Expert and Master levels.
+- The Easy level was added on 16 November 2026 and is not compared with the database yet.
 
 [1] P. Jarušek and R. Pelánek, "What Determines Difficulty of Transport Puzzles?", Proc.
 FLAIRS-24, 2011. <https://cdn.aaai.org/ocs/2518/2518-11200-1-PB.pdf>
@@ -184,7 +192,7 @@ Predicting Human Planning Performance", Proc. CogSci 2011. <https://escholarship
 (read 15 November 2026).
 
 URL options for testing: `?skip=1` starts in play, `&cam=top|low` picks the view,
-`&level=easy|normal|hard|expert|auto` picks the difficulty.
+`&level=easy|medium|hard|expert|master|auto` picks the difficulty.
 
 ## Play through Twitch chat
 

@@ -508,10 +508,11 @@
       <p class="lede">Chat drives the cars. Type <code>blue right</code> to slide a car, and work together to get the red one out of the car park.</p>
       <fieldset class="levels">
         <legend>Difficulty</legend>
-        <label><input type="radio" name="level" value="easy" /><span>Easy</span></label>
-        <label><input type="radio" name="level" value="normal" checked /><span>Normal</span></label>
+        <label><input type="radio" name="level" value="easy" checked /><span>Easy</span></label>
+        <label><input type="radio" name="level" value="medium" /><span>Medium</span></label>
         <label><input type="radio" name="level" value="hard" /><span>Hard</span></label>
         <label><input type="radio" name="level" value="expert" /><span>Expert</span></label>
+        <label><input type="radio" name="level" value="master" /><span>Master</span></label>
         <label title="The game picks each puzzle from how you solved the last one"><input type="radio" name="level" value="auto" /><span>Auto</span></label>
       </fieldset>
       <div class="go">
@@ -546,9 +547,10 @@
         <button id="login" type="button" hidden title="Lets the game reply in Twitch chat">Log in to Twitch</button>
         <select id="level" aria-label="Difficulty">
           <option value="easy">Easy</option>
-          <option value="normal">Normal</option>
+          <option value="medium">Medium</option>
           <option value="hard">Hard</option>
           <option value="expert">Expert</option>
+          <option value="master">Master</option>
           <option value="auto">Auto</option>
         </select>
         <span class="sep"></span>

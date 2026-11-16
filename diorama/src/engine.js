@@ -19,10 +19,11 @@ export const NAMES = [
 ];
 // min and max count one-cell moves of the shortest solution, the exit move included.
 export const LEVELS = {
-  easy: { N: 6, min: 12, max: 20 },
-  normal: { N: 6, min: 28, max: 44 },
-  hard: { N: 7, min: 55, max: 85 },
-  expert: { N: 8, min: 100, max: 160 },
+  easy: { N: 6, min: 6, max: 11 },
+  medium: { N: 6, min: 12, max: 20 },
+  hard: { N: 6, min: 28, max: 44 },
+  expert: { N: 7, min: 55, max: 85 },
+  master: { N: 8, min: 100, max: 160 },
 };
 export const WALL = 127;
 

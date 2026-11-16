@@ -31,7 +31,7 @@ let demo = null,
   shown = 0; // the moves that a replay made since the last Reset
 let cars = [],
   boardInfo = null,
-  level = Object.hasOwn(LEVELS, params.get('level')) || params.get('level') === 'auto' ? params.get('level') : 'normal';
+  level = Object.hasOwn(LEVELS, params.get('level')) || params.get('level') === 'auto' ? params.get('level') : 'easy';
 // The Auto level (adapt.js): the place on the ladder, the puzzles played, and the last result.
 // `spent` holds the moves made before a Reset, so a Reset does not hide them from the result.
 let skill = START,
