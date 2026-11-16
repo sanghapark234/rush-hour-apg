@@ -492,9 +492,12 @@
         }
       }
       @media (prefers-reduced-motion: reduce) {
+        /* No transition at all, not a short one: a short one also runs on properties that an
+           element inherits, and the command box then is not visible, and cannot take the focus,
+           in the frame in which the panel appears. */
         *,
         *::before {
-          transition-duration: 0.01s !important;
+          transition-duration: 0s !important;
           animation-duration: 0.01s !important;
         }
       }

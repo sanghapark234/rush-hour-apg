@@ -38,9 +38,17 @@ Oxlint checks the code and Oxfmt formats it.
 ```sh
 bun run check                # format check and lint
 bun run fix                  # apply the format and the lint fixes
-bun test                     # solver, bank, Auto level, server and Twitch bridge tests
+bun test                     # unit tests: solver, bank, rules, Auto level, sound, page, server, Twitch bridge
 bun run test:flow            # builds the game, then plays it in a headless browser
+bun tools/flow.js Twitch     # only the browser tests whose name holds the word (needs a build)
 ```
+
+The browser tests play the built game as a person and as a chat do. They cover each level,
+the welcome screen, the keyboard, the buttons, typed commands, the win card, the camera, the
+sound, the Auto level, random chat, Twitch chat with a fake chat server, the Twitch login
+return, the page at five screen sizes, and a load that fails. A test fails when the page
+reports an error or a request fails. The headless browser draws about 2 frames in a second,
+so the whole run takes some minutes.
 
 The flow tests need the Chromium of Playwright. Install it once with
 `bunx playwright install chromium`.
@@ -266,6 +274,9 @@ The choices for play through Twitch chat, with the decisions taken so far, are i
 | `src/twitch.js`            | The Twitch chat bridge: reads a channel's chat and replies in it.                           |
 | `tools/twitch.test.js`     | Tests: the Twitch chat bridge, with a fake connection.                                      |
 | `tools/flow.js`            | Tests: the game flow in a headless browser (`bun run test:flow`).                           |
+| `tools/engine.test.js`     | Tests: the rules of a move, with random positions.                                          |
+| `tools/page.test.js`       | Tests: the page, the levels, the bank and this README name the same things.                 |
+| `tools/audio.test.js`      | Tests: the sounds, with a fake audio device.                                                |
 | `tools/assets.sh`          | Converts the original images and models into `public/assets/`.                              |
 | `public/assets/`           | Images and models. The build copies them to `dist/assets/` unchanged.                       |
 | `package.json`, `bun.lock` | The libraries, the tools and the commands.                                                  |
