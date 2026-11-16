@@ -879,8 +879,18 @@ const tests = {
     await page.waitForFunction(() => t.last() === 'BOARD The 3D view stopped. Reload the page if it stays black.', null, { timeout: 20000 });
     const lost = await page.evaluate(() => t.paint());
     check(lost.lit < 0.05, `the canvas of a lost context is ${Math.round(lost.lit * 100)}% lit`);
-    await page.evaluate(() => window.lose.restoreContext());
+    // The game itself must draw the lot again: paint() below draws a frame of its own.
+    await page.evaluate(() => {
+      const composer = window.apg.stage.composer,
+        render = composer.render.bind(composer);
+      window.draws = 0;
+      composer.render = (dt) => (window.draws++, render(dt));
+    });
+    await page.waitForTimeout(4000); // a file of the scene that came late was drawn by now
+    const before = await page.evaluate(() => (window.lose.restoreContext(), window.draws));
     await page.waitForFunction(() => t.last() === 'BOARD The 3D view is back.', null, { timeout: 20000 });
+    await page.waitForTimeout(1500);
+    check((await page.evaluate(() => window.draws)) > before, 'the game did not draw the lot after the context returned');
     let p;
     for (let n = 0; n < 30 && !(p?.lit > 0.5); n++) {
       await page.waitForTimeout(500);

@@ -167,7 +167,8 @@ function flyTo(name, dur, done) {
   const b = pose(name);
   const a = { p: camera.position.toArray(), t: focus.toArray(), fov: camera.fov, range: look.range, bokeh: look.bokeh, shift: look.shift };
   controls.enabled = false;
-  tween = { a, b, t: 0, dur: calm ? Math.min(dur, 0.01) : dur, done };
+  // With reduced motion the view jumps in one frame. A frame at rest can be shorter than 10 ms, so the time is far below that.
+  tween = { a, b, t: 0, dur: calm ? Math.min(dur, 1e-4) : dur, done };
 }
 const mix = (x, y, k) => x + (y - x) * k;
 const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2);
@@ -630,6 +631,7 @@ async function newPuzzle() {
   $('info').textContent = `${puzzle.N}×${puzzle.N} lot`;
   chat.replaceChildren();
   sys('Help the red car reach the exit. Type a colour and a direction.');
+  if (viewDown) sys(VIEW_DOWN, 'error'); // the new puzzle cleared the line, and the view is still black
   if (note) sys(note);
   legend();
   reset(true);
@@ -673,8 +675,8 @@ $('start').addEventListener('click', () => {
   $('start').textContent = 'Loading…';
   fresh().then(() => {
     if (!failed) return;
-    $('start').disabled = false;
-    $('start').textContent = 'Try again';
+    $('start').disabled = !!workerDown; // a solver that stopped needs a reload
+    $('start').textContent = workerDown ? 'Could not load' : 'Try again';
   });
 });
 $('hint').addEventListener('click', () => command('hint'));
@@ -750,8 +752,15 @@ const twitch = () =>
 
 // A GPU reset takes the WebGL context away, and the canvas goes black. When the browser gives
 // the context back, three.js builds the scene again by itself.
-$('stage').addEventListener('webglcontextlost', () => sys('The 3D view stopped. Reload the page if it stays black.', 'error'));
+// The welcome view hides the chat, so a new puzzle repeats the line while the context is away.
+const VIEW_DOWN = 'The 3D view stopped. Reload the page if it stays black.';
+let viewDown = false;
+$('stage').addEventListener('webglcontextlost', () => {
+  viewDown = true;
+  sys(VIEW_DOWN, 'error');
+});
 $('stage').addEventListener('webglcontextrestored', () => {
+  viewDown = false;
   stage.touch();
   sys('The 3D view is back.');
 });

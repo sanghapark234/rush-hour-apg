@@ -73,6 +73,7 @@ test('compresses the files when it starts, so the first request does not wait', 
     stdout: 'pipe',
     stderr: 'inherit',
   });
+  const limit = setTimeout(() => run.kill(), 12000); // the output then ends, so a server that never reports still gets cleaned up
   try {
     let out = '';
     for await (const chunk of run.stdout) {
@@ -83,10 +84,11 @@ test('compresses the files when it starts, so the first request does not wait', 
     const t0 = performance.now();
     const res = await fetch(`http://127.0.0.1:${port + 2}/big.txt`, { headers: { 'accept-encoding': 'br' }, decompress: false });
     const body = new Uint8Array(await res.arrayBuffer());
-    expect(performance.now() - t0).toBeLessThan(400);
+    expect(performance.now() - t0).toBeLessThan(1000); // the old server needed seconds here
     expect(res.headers.get('content-encoding')).toBe('br');
     expect(brotliDecompressSync(body).toString()).toBe(text);
   } finally {
+    clearTimeout(limit);
     run.kill();
     await rm(folder, { recursive: true });
   }

@@ -87,12 +87,16 @@ console.log(`Tiny Gridlock: http://${hostname}:${port}/`);
 // libraries and hidden folders are left out: the game does not load them.
 const started = performance.now();
 let count = 0;
-for (const name of await readdir(root, { recursive: true })) {
+// A folder that cannot be read stops the walk, not the server: its files are compressed on their first request.
+const names = await readdir(root, { recursive: true }).catch((err) => (console.error(`The folder was not read to the end: ${err.message}`), []));
+for (const name of names) {
   const file = root + sep + name;
   if (!COMPRESS.has(extname(file)) || name.split(sep).some((part) => part === 'node_modules' || part.startsWith('.'))) continue;
   const info = await stat(file).catch(() => null);
   if (!info?.isFile()) continue;
-  await pack(file, tagOf(info, 'br'), 'br').catch((err) => console.error(`${name} was not compressed: ${err.message}`));
-  count++;
+  await pack(file, tagOf(info, 'br'), 'br').then(
+    () => count++,
+    (err) => console.error(`${name} was not compressed: ${err.message}`),
+  );
 }
 console.log(`Compressed ${count} files in ${((performance.now() - started) / 1000).toFixed(1)} s.`);
