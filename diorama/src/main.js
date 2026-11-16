@@ -49,6 +49,7 @@ let reqId = 0;
 let workerDown = null; // set when the worker did not load or broke: every request then rejects at once
 worker.onmessage = ({ data }) => {
   const w = waiting.get(data.id);
+  if (!w) return; // the worker broke meanwhile, and this request was rejected then
   waiting.delete(data.id);
   if ('error' in data) w.rej(new Error('the solver failed: ' + data.error)); // only this request
   else w.res(data.result);
@@ -611,7 +612,8 @@ async function newPuzzle() {
     flyTo(camName, 1.2, () => {
       controls.enabled = true;
     });
-  else if (phase === 'fly' && tween) tween.b = pose(camName); // the flight ends at the new lot, which can have another size
+  // The lot can have another size now. The flight goes on from where the camera is, to the new lot.
+  else if (phase === 'fly' && tween) flyTo(camName, Math.max(0.6, tween.dur * (1 - tween.t)), tween.done);
   else if (phase === 'welcome' && !tween) applyPose(pose('welcome'));
   if (want !== level) return newPuzzle(); // the level changed while this puzzle loaded
 }

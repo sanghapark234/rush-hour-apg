@@ -31,7 +31,8 @@ test('a puzzle without a solution is refused, and the hints stay those of the pu
   expect(send({ id: 6, type: 'hint', pos: good.start, last: null }).result).toEqual(before.result);
 });
 test('a request that fails answers with an error, and the next request works', () => {
-  const bad = send({ id: 7, type: 'load', puzzle: null });
+  // Without a start the solver fails after it cleared its buffers, which the old table used.
+  const bad = send({ id: 7, type: 'load', puzzle: { ...good, start: null } });
   expect(bad.id).toBe(7);
   expect(typeof bad.error).toBe('string');
   expect(send({ id: 8, type: 'hint', pos: good.start, last: null }).result.left).toBe(good.moves);
