@@ -90,7 +90,20 @@ export function createStage(canvas) {
   composer.addPass(new EffectPass(camera, dof));
   composer.addPass(new EffectPass(camera, new SMAAEffect(), vignette, grain, new ToneMappingEffect({ mode: ToneMappingMode.AGX })));
 
+  // The scene is drawn only when something changed: a draw costs the GPU about as much when
+  // nothing moves. touch() asks for the next two frames; the second one shows the state at rest.
+  let pending = 2;
+  const touch = () => {
+    pending = 2;
+  };
+  function render(dt) {
+    if (!pending) return;
+    pending--;
+    composer.render(dt);
+  }
+
   function resize(w, h) {
+    touch();
     renderer.setSize(w, h, false);
     composer.setSize(w, h);
     camera.aspect = w / h;
@@ -131,6 +144,7 @@ export function createStage(canvas) {
       sky.position.y = 26 - TABLE_H - 0.01;
       sky.material.color.setScalar(1.25);
       scene.add(sky);
+      touch();
     }),
   );
   const sharpen = () =>
@@ -146,6 +160,7 @@ export function createStage(canvas) {
         const small = sky.material.map;
         sky.material.map = t;
         small.dispose();
+        touch();
       });
 
   // ---- workbench and props ----
@@ -339,6 +354,7 @@ export function createStage(canvas) {
     built = [];
     const id = ++buildId;
     board.clear();
+    touch();
     const h = N / 2,
       pad = 1.15,
       road = 2;
@@ -446,6 +462,7 @@ export function createStage(canvas) {
         l.position.set(x - (box.min.x + box.max.x) / 2, BASE_H - box.min.y, z - (box.min.z + box.max.z) / 2);
         board.add(l);
       }
+      touch();
     });
     // A few scale trees: flock spheres on wire trunks.
     const leaf = new THREE.MeshStandardMaterial({ color: 0x34561f, roughness: 1 }),
@@ -500,9 +517,12 @@ export function createStage(canvas) {
     sun,
     board,
     resize,
+    touch,
+    render,
     buildBoard,
     tasks: ready, // one promise per file the first frame needs
     ready: Promise.all(ready).then(() => {
+      touch();
       sharpen().catch((err) => console.warn('Sharp backdrop not loaded:', err));
     }),
     get gate() {

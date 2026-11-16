@@ -69,6 +69,7 @@ const inPage = () => {
             x = c.getContext('2d');
           c.width = 160;
           c.height = 100;
+          window.apg.stage.composer.render(); // the game draws only after a change, and the canvas keeps a frame only until the browser shows it
           x.drawImage(document.getElementById('stage'), 0, 0, 160, 100);
           const d = x.getImageData(0, 0, 160, 100).data,
             seen = new Set();
@@ -781,6 +782,55 @@ const tests = {
       check(await page.evaluate(() => t.inside('#win, #win button')), `${size}: the win card does not fit`);
       await page.context().close();
     }
+  },
+  'a lot at rest is not drawn again, and a move, a hint, a view change and a new window size draw it': async () => {
+    const { page } = await open('medium');
+    await page.evaluate(() => {
+      const composer = window.apg.stage.composer,
+        render = composer.render.bind(composer);
+      window.draws = 0;
+      composer.render = (dt) => (window.draws++, render(dt));
+    });
+    // Waits until the game drew nothing for 20 frames of the page, and gives the number of draws so far.
+    const rest = () =>
+      page.evaluate(async () => {
+        const end = Date.now() + 90000;
+        for (let quiet = 0, at = window.draws; quiet < 20;) {
+          await new Promise(requestAnimationFrame);
+          if (window.draws === at) quiet++;
+          else [quiet, at] = [0, window.draws];
+          if (Date.now() > end) throw new Error('the game still draws when nothing moves');
+        }
+        return window.draws;
+      });
+    const shot = () => page.screenshot({ clip: { x: 0, y: 0, width: 900, height: 800 } });
+    let draws = await rest();
+    // What the browser shows is the last frame: the lot, and the same picture each time.
+    const first = await shot();
+    check(first.length > 100000, 'the picture at rest is nearly empty: a PNG of ' + first.length + ' bytes');
+    check(first.equals(await shot()), 'the picture at rest changes');
+    const s = await state(page),
+      move = movesOf(s.puzzle, s.pos).find((m) => m.i > 0 && m.done > 0 && !pathOpen(s.puzzle, m.p));
+    const steps = {
+      'a move': () => send(page, move.text),
+      'a hint': () => page.locator('#hint').click(),
+      'a view change': () => send(page, 'cam top'),
+      'a new window size': () => page.setViewportSize({ width: 1100, height: 700 }),
+    };
+    for (const [name, step] of Object.entries(steps)) {
+      await step();
+      if (name === 'a hint') await page.waitForFunction(() => t.last().startsWith('BOARD Hint: '));
+      const after = await rest();
+      check(after > draws, name + ' did not draw the lot again');
+      draws = after;
+    }
+    const cars = await page.evaluate(() => t.cars());
+    check(cars[move.i].cur === move.p[move.i], 'the vehicle that moved rests at ' + cars[move.i].cur + ', not at ' + move.p[move.i]);
+    check(
+      cars.every((c) => c.hint === 0),
+      'a hint light is still on at rest',
+    );
+    await page.context().close();
   },
   'a missing solver shows Could not load, and Start stays off': async () => {
     trouble.expected = true;

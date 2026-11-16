@@ -171,7 +171,9 @@ function flyTo(name, dur, done) {
 }
 const mix = (x, y, k) => x + (y - x) * k;
 const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2);
+// Each step function returns true while it changes the picture.
 function stepCamera(dt, time) {
+  let moving = true;
   if (tween) {
     tween.t = Math.min(1, tween.t + dt / tween.dur);
     const k = ease(tween.t),
@@ -193,9 +195,10 @@ function stepCamera(dt, time) {
       done?.();
     }
   } else if (phase === 'play') {
-    controls.update();
+    moving = controls.update(); // true while a drag, a zoom or their damping moves the camera
     focus.copy(controls.target);
   } else {
+    moving = !calm;
     // Slow handheld sway while the room is on show.
     const q = pose(phase === 'won' ? 'won' : 'welcome'),
       s = calm ? 0 : 1;
@@ -211,6 +214,7 @@ function stepCamera(dt, time) {
   const sx = narrow ? 0 : Math.round((look.shift * $('panel').offsetWidth) / 2),
     sy = narrow ? Math.round((look.shift * $('panel').offsetHeight) / 2) : 0;
   camera.setViewOffset(w, h, sx, sy, w, h);
+  return moving;
 }
 function setCam(name) {
   camName = name;
@@ -247,8 +251,10 @@ function buildCars(dropIn) {
     carGroup.add(g);
     return g;
   });
+  stage.touch();
 }
 function stepCars(dt, time) {
+  let moving = false;
   cars.forEach((g, i) => {
     const m = puzzle.meta[i],
       u = g.userData;
@@ -256,6 +262,11 @@ function stepCars(dt, time) {
       before = u.cur;
     u.vel += acc * dt;
     u.cur += u.vel * dt;
+    if (Math.abs(u.tgt - u.cur) < 1e-4 && Math.abs(u.vel) < 1e-3) {
+      // at rest: the spring would creep on for ever
+      u.cur = u.tgt;
+      u.vel = 0;
+    }
     if (u.wait > 0) u.wait -= dt;
     else if (!u.landed) {
       u.vy -= 30 * dt;
@@ -285,9 +296,15 @@ function stepCars(dt, time) {
     const pulse = u.hint > 0 ? 0.5 + 0.5 * Math.sin(time * 11) : 0;
     for (const p of u.paints) p.emissiveIntensity = pulse * 0.55 * Math.min(1, u.hint * 3);
     u.lamps.emissiveIntensity = 0.35 + pulse * 5 * Math.min(1, u.hint * 3);
+    if (u.cur !== u.tgt || u.vel || u.wait > 0 || !u.landed || u.bump || u.hint || Math.abs(u.pitch) > 1e-4) moving = true;
   });
   const gate = stage.gate;
-  if (gate) gate.rotation.x += ((won || demo?.done ? 1.38 : 0) - gate.rotation.x) * Math.min(1, dt * 5);
+  if (gate) {
+    const turn = (won || demo?.done ? 1.38 : 0) - gate.rotation.x;
+    gate.rotation.x += turn * Math.min(1, dt * 5);
+    if (Math.abs(turn) > 1e-3) moving = true;
+  }
+  return moving;
 }
 
 // ---------- confetti: paper punch-outs ----------
@@ -319,9 +336,11 @@ function confetti() {
   paper.instanceColor.needsUpdate = true;
 }
 function stepConfetti(dt) {
-  if (!paper.count) return;
+  if (!paper.count) return false;
+  let moving = false;
   bits.forEach((b, i) => {
     if (!b.rest) {
+      moving = true;
       b.v.y -= 15 * dt;
       b.v.multiplyScalar(1 - 1.6 * dt);
       b.p.addScaledVector(b.v, dt);
@@ -341,6 +360,7 @@ function stepConfetti(dt) {
     paper.setMatrixAt(i, dummy.matrix);
   });
   paper.instanceMatrix.needsUpdate = true;
+  return moving;
 }
 
 // ---------- game flow ----------
@@ -552,6 +572,7 @@ function stopSolution() {
 function backToPlay() {
   $('win').hidden = true;
   paper.count = 0;
+  stage.touch();
   if (phase === 'won') {
     phase = 'play';
     flyTo(camName, 2.2, () => {
@@ -730,7 +751,11 @@ const twitch = () =>
 // A GPU reset takes the WebGL context away, and the canvas goes black. When the browser gives
 // the context back, three.js builds the scene again by itself.
 $('stage').addEventListener('webglcontextlost', () => sys('The 3D view stopped. Reload the page if it stays black.', 'error'));
-$('stage').addEventListener('webglcontextrestored', () => sys('The 3D view is back.'));
+$('stage').addEventListener('webglcontextrestored', () => {
+  stage.touch();
+  sys('The 3D view is back.');
+});
+document.addEventListener('visibilitychange', stage.touch); // a browser can drop the picture of a hidden page
 
 function resize() {
   stage.resize(innerWidth, innerHeight);
@@ -746,11 +771,11 @@ function frame() {
   timer.update();
   const dt = Math.min(timer.getDelta(), 0.05),
     time = timer.getElapsed();
-  if (puzzle) stepCars(dt, time);
-  stepConfetti(dt);
-  stepCamera(dt, time);
+  const rolling = puzzle ? stepCars(dt, time) : false,
+    falling = stepConfetti(dt);
+  if (stepCamera(dt, time) || rolling || falling) stage.touch();
   camera.updateProjectionMatrix();
-  stage.composer.render(dt);
+  stage.render(dt); // nothing is drawn when nothing changed
 }
 frame();
 
@@ -776,6 +801,7 @@ function begin() {
   twitch();
   $('start').disabled = false;
   $('start').textContent = 'Start';
+  stage.touch();
   if (params.has('skip')) {
     camName = { top: 'top', low: 'low' }[params.get('cam')] ?? 'angle';
     phase = 'play';
