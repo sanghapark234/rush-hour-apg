@@ -67,7 +67,7 @@ function check(ok, what) {
 
 const tests = {
   'a run along the hints is a perfect run, and the red car drives out by itself': async () => {
-    const { page, errors } = await open('easy');
+    const { page, errors } = await open('medium');
     const r = await page.evaluate(async () => {
       await t.follow();
       const s = window.apg.state();
@@ -81,7 +81,7 @@ const tests = {
     check(!errors.length, errors.join('; '));
   },
   'invalid messages change nothing': async () => {
-    const { page, errors } = await open('easy');
+    const { page, errors } = await open('medium');
     const r = await page.evaluate(async () => {
       const before = JSON.stringify(window.apg.state());
       for (const text of ['hello', 'blue sideways', 'red right 0', 'red right 8', 'nocolour left', '<b>x</b>', 'blue right 2 3', ' ', 'stop'])
@@ -96,7 +96,7 @@ const tests = {
     check(!errors.length, errors.join('; '));
   },
   'giving up plays the shortest solution from the position, and it is not a win': async () => {
-    const { page, errors } = await open('easy');
+    const { page, errors } = await open('medium');
     const r = await page.evaluate(async () => {
       const first = await t.hint();
       await t.send(first.join(' ')); // one move by chat, then give up
@@ -121,7 +121,7 @@ const tests = {
     check(!errors.length, errors.join('; '));
   },
   'stop ends a replay, and chat can go on to a win that names the replay moves': async () => {
-    const { page, errors } = await open('easy');
+    const { page, errors } = await open('medium');
     const r = await page.evaluate(async () => {
       await t.send('solve');
       await t.until((s) => s.moves >= 2);
@@ -140,7 +140,7 @@ const tests = {
     check(!errors.length, errors.join('; '));
   },
   'after a longer win, the win card replays the shortest solution from the start': async () => {
-    const { page, errors } = await open('easy');
+    const { page, errors } = await open('medium');
     const r = await page.evaluate(async () => {
       const [colour, dir] = await t.hint();
       const back = { left: 'right', right: 'left', up: 'down', down: 'up' }[dir];

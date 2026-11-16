@@ -73,7 +73,7 @@ Planters are fixed obstacles: no vehicle can pass them.
 | Master | 8×8 | 100 to 160 moves  |
 
 The game starts on Easy. Easy is the level for a first game and for a class: a puzzle takes 3
-to 10 slides and has 2 to 9 vehicles. The four levels above it were named Easy, Normal, Hard and Expert until 16
+to 10 slides and has 2 to 10 vehicles. The four levels above it were named Easy, Normal, Hard and Expert until 16
 November 2026; their puzzles did not change.
 
 One move is one cell. The game deals 40 puzzles per level without repeats, with random colours
@@ -132,9 +132,9 @@ solver runs in a worker and gives the hints.
 content that it can make, shown over a few measures (the book, section 9.7.3). The top row
 shows each kind of puzzle that the search found, and the 200 puzzles that the bank took.
 The search found puzzles up to 94 moves on 6×6, 138 on 7×7 and 160 on 8×8. The bank uses only
-a part of that range: the levels stop at 44 moves on 6×6 and 85 on 7×7, and 142 of the 160 bank
+a part of that range: the levels stop at 44 moves on 6×6 and 85 on 7×7, and 143 of the 160 bank
 puzzles above Easy have 9 or more vehicles, because the quality score favours busy lots. Easy
-is different: a short solution moves few vehicles, so 39 of its 40 puzzles have fewer than 9.
+is different: a short solution moves few vehicles, so 38 of its 40 puzzles have fewer than 9.
 
 ### A second difficulty measure
 
@@ -150,7 +150,7 @@ with independent calculations.
   size of the state space does not predict it. So the shortest solution stays the measure
   that defines the levels.
 - In the bank, the two measures agree closely: rank correlation 1.00 (rounded) over all 200 puzzles,
-  and 0.97 (Easy), 0.94 (Medium), 0.91 (Hard), 0.89 (Expert) and 0.81 (Master) inside a level.
+  and 0.97 (Easy), 0.92 (Medium), 0.91 (Hard), 0.89 (Expert) and 0.81 (Master) inside a level.
   The values go from 7 to 11,364 expected moves. The bottom row of the chart shows both measures.
 - The model's weight of 25 comes from the paper. Nobody has fitted it to this game, where one
   move is one cell, and the paper has no 7×7 or 8×8 puzzles.
@@ -182,7 +182,9 @@ no licence for it.
 - The hardest puzzle of the database takes 60 slides (51 without walls). The hardest Hard
   puzzle takes 30 slides, and the search archive for 6×6 reaches 94 one-cell moves.
 - The database covers 6×6 only, so nothing like it exists for the Expert and Master levels.
-- The Easy level was added on 16 November 2026 and is not compared with the database yet.
+- The Easy level was added on 16 November 2026 and is not in the table. The database holds 21 of
+  its 40 puzzles, and the solver agrees with it on each. The other 19 have a vehicle or a planter
+  that the hardest position does not need.
 
 [1] P. Jarušek and R. Pelánek, "What Determines Difficulty of Transport Puzzles?", Proc.
 FLAIRS-24, 2011. <https://cdn.aaai.org/ocs/2518/2518-11200-1-PB.pdf>

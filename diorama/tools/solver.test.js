@@ -177,7 +177,8 @@ test('every puzzle in the bank is inside its level range and matches its record'
       expect(entry.moves).toBeGreaterThanOrEqual(level.min);
       expect(entry.moves).toBeLessThanOrEqual(level.max);
       expect(entry.v.length).toBeLessThanOrEqual(13);
-      seen.add(JSON.stringify([entry.v, entry.w]));
+      // The key of the bank picker: a layout counts once, in any vehicle order and from any start.
+      seen.add(JSON.stringify([entry.v.map((v) => v.slice(0, 3).join()).sort(), entry.w]));
     }
     expect(seen.size).toBe(bank[key].length);
   }

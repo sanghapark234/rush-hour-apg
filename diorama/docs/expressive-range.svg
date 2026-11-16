@@ -215,9 +215,9 @@
 <circle cx="76.8" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 6 vehicles</title></circle>
 <circle cx="76.8" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 5 vehicles</title></circle>
 <circle cx="76.8" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 5 vehicles</title></circle>
-<circle cx="76.8" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 5 vehicles</title></circle>
 <circle cx="76.8" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 6 vehicles</title></circle>
 <circle cx="76.8" cy="280.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 2 vehicles</title></circle>
+<circle cx="76.8" cy="253.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 4 vehicles</title></circle>
 <circle cx="76.8" cy="253.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, 4 vehicles</title></circle>
 <circle cx="79.4" cy="253.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>8 moves, 4 vehicles</title></circle>
 <circle cx="79.4" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>8 moves, 7 vehicles</title></circle>
@@ -226,18 +226,18 @@
 <circle cx="82.1" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, 6 vehicles</title></circle>
 <circle cx="82.1" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, 5 vehicles</title></circle>
 <circle cx="82.1" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, 6 vehicles</title></circle>
-<circle cx="82.1" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, 5 vehicles</title></circle>
 <circle cx="82.1" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, 6 vehicles</title></circle>
 <circle cx="84.8" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, 7 vehicles</title></circle>
 <circle cx="84.8" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, 7 vehicles</title></circle>
-<circle cx="84.8" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, 7 vehicles</title></circle>
-<circle cx="84.8" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, 5 vehicles</title></circle>
 <circle cx="84.8" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, 5 vehicles</title></circle>
 <circle cx="84.8" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, 7 vehicles</title></circle>
 <circle cx="87.5" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 8 vehicles</title></circle>
 <circle cx="87.5" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 9 vehicles</title></circle>
 <circle cx="87.5" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 8 vehicles</title></circle>
 <circle cx="87.5" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 6 vehicles</title></circle>
+<circle cx="87.5" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 5 vehicles</title></circle>
+<circle cx="87.5" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 10 vehicles</title></circle>
+<circle cx="87.5" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 7 vehicles</title></circle>
 <circle cx="87.5" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, 5 vehicles</title></circle>
 <circle cx="90.2" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, 9 vehicles</title></circle>
 <circle cx="90.2" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, 6 vehicles</title></circle>
@@ -273,15 +273,16 @@
 <circle cx="111.6" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 9 vehicles</title></circle>
 <circle cx="111.6" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 7 vehicles</title></circle>
 <circle cx="111.6" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 7 vehicles</title></circle>
-<circle cx="111.6" cy="213" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 7 vehicles</title></circle>
 <circle cx="111.6" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 6 vehicles</title></circle>
 <circle cx="111.6" cy="226.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 6 vehicles</title></circle>
 <circle cx="111.6" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 5 vehicles</title></circle>
 <circle cx="111.6" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 5 vehicles</title></circle>
 <circle cx="111.6" cy="240.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 5 vehicles</title></circle>
+<circle cx="111.6" cy="253.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, 4 vehicles</title></circle>
 <circle cx="135.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, 10 vehicles</title></circle>
 <circle cx="135.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, 10 vehicles</title></circle>
 <circle cx="135.7" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, 10 vehicles</title></circle>
+<circle cx="135.7" cy="185.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, 9 vehicles</title></circle>
 <circle cx="138.4" cy="145.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, 12 vehicles</title></circle>
 <circle cx="138.4" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, 11 vehicles</title></circle>
 <circle cx="138.4" cy="131.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, 13 vehicles</title></circle>
@@ -318,7 +319,6 @@
 <circle cx="175.9" cy="158.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 11 vehicles</title></circle>
 <circle cx="175.9" cy="172.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 10 vehicles</title></circle>
 <circle cx="175.9" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 8 vehicles</title></circle>
-<circle cx="175.9" cy="199.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, 8 vehicles</title></circle>
 <line x1="58" y1="308" x2="326" y2="308" stroke="#898781"/>
 <text x="58" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>
 <text x="165.2" y="324" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">40</text>
@@ -348,8 +348,8 @@
 <circle cx="76.8" cy="590" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, walk model 10</title></circle>
 <circle cx="76.8" cy="592.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, walk model 9</title></circle>
 <circle cx="76.8" cy="592.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, walk model 9</title></circle>
-<circle cx="76.8" cy="592.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, walk model 9</title></circle>
 <circle cx="76.8" cy="595.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, walk model 8</title></circle>
+<circle cx="76.8" cy="590" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, walk model 10</title></circle>
 <circle cx="76.8" cy="590" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>7 moves, walk model 10</title></circle>
 <circle cx="79.4" cy="585.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>8 moves, walk model 12</title></circle>
 <circle cx="79.4" cy="587.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>8 moves, walk model 11</title></circle>
@@ -358,10 +358,7 @@
 <circle cx="82.1" cy="585.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, walk model 12</title></circle>
 <circle cx="82.1" cy="579.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, walk model 15</title></circle>
 <circle cx="82.1" cy="583.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, walk model 13</title></circle>
-<circle cx="82.1" cy="581.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, walk model 14</title></circle>
 <circle cx="82.1" cy="585.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>9 moves, walk model 12</title></circle>
-<circle cx="84.8" cy="581.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, walk model 14</title></circle>
-<circle cx="84.8" cy="579.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, walk model 15</title></circle>
 <circle cx="84.8" cy="581.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, walk model 14</title></circle>
 <circle cx="84.8" cy="579.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, walk model 15</title></circle>
 <circle cx="84.8" cy="579.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>10 moves, walk model 15</title></circle>
@@ -371,6 +368,9 @@
 <circle cx="87.5" cy="574.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, walk model 18</title></circle>
 <circle cx="87.5" cy="573.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, walk model 19</title></circle>
 <circle cx="87.5" cy="572.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, walk model 20</title></circle>
+<circle cx="87.5" cy="577.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, walk model 16</title></circle>
+<circle cx="87.5" cy="576.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, walk model 17</title></circle>
+<circle cx="87.5" cy="576.3" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>11 moves, walk model 17</title></circle>
 <circle cx="90.2" cy="573.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, walk model 19</title></circle>
 <circle cx="90.2" cy="574.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>12 moves, walk model 18</title></circle>
 <circle cx="92.8" cy="569.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>13 moves, walk model 22</title></circle>
@@ -405,15 +405,16 @@
 <circle cx="111.6" cy="554.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 39</title></circle>
 <circle cx="111.6" cy="548.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 50</title></circle>
 <circle cx="111.6" cy="546.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 54</title></circle>
-<circle cx="111.6" cy="548.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 50</title></circle>
 <circle cx="111.6" cy="550.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 47</title></circle>
 <circle cx="111.6" cy="551.2" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 45</title></circle>
 <circle cx="111.6" cy="549" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 49</title></circle>
 <circle cx="111.6" cy="553" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 42</title></circle>
 <circle cx="111.6" cy="552.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 43</title></circle>
+<circle cx="111.6" cy="555.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>20 moves, walk model 38</title></circle>
 <circle cx="135.7" cy="531.4" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, walk model 97</title></circle>
 <circle cx="135.7" cy="530.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, walk model 102</title></circle>
 <circle cx="135.7" cy="527.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, walk model 111</title></circle>
+<circle cx="135.7" cy="530.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>29 moves, walk model 102</title></circle>
 <circle cx="138.4" cy="526.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, walk model 119</title></circle>
 <circle cx="138.4" cy="529.9" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, walk model 103</title></circle>
 <circle cx="138.4" cy="531.1" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>30 moves, walk model 98</title></circle>
@@ -449,7 +450,6 @@
 <circle cx="175.9" cy="506.5" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 255</title></circle>
 <circle cx="175.9" cy="507.8" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 242</title></circle>
 <circle cx="175.9" cy="503.7" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 284</title></circle>
-<circle cx="175.9" cy="504.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 274</title></circle>
 <circle cx="175.9" cy="504.6" r="3.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1"><title>44 moves, walk model 274</title></circle>
 <line x1="58" y1="590" x2="326" y2="590" stroke="#898781"/>
 <text x="58" y="606" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text>

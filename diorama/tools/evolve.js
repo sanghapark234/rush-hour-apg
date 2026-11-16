@@ -219,7 +219,8 @@ function bank({ per = 40 }) {
         (e) => e.N === level.N && e.moves >= level.min && e.moves <= level.max && e.slides >= 3 && e.stuck <= 1 && e.used >= Math.min(e.cars.length - 1, 7),
       )
       .filter((e) => {
-        const k = JSON.stringify([e.cars.map((v) => [v.axis, v.lane, v.len]), e.walls]);
+        // One puzzle per layout: the key ignores the start positions and the order of the vehicles.
+        const k = JSON.stringify([e.cars.map((v) => [v.axis, v.lane, v.len].join()).sort(), e.walls]);
         return !seen.has(k) && seen.add(k);
       })
       .sort((x, y) => y.quality - x.quality);
