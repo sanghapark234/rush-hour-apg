@@ -114,7 +114,10 @@ async function openAt(query, { viewport = { width: 1280, height: 800 }, motion =
 }
 const open = (level) => openAt(`?skip&level=${level}`);
 function check(ok, what) {
-  if (!ok) throw new Error(what);
+  if (ok) return;
+  const err = new Error(what);
+  Error.captureStackTrace(err, check); // the stack starts at the step of the scenario
+  throw err;
 }
 const state = (page) => page.evaluate(() => window.apg.state());
 const send = (page, text, user = 'tester') => page.evaluate(([u, x]) => window.apg.command(u, x), [user, text]);
@@ -133,28 +136,32 @@ function movesOf(z, pos, count = 1) {
 }
 // A player that needs no hint: this file's own copy of the solver gives the next move of a
 // shortest solution. The Auto level counts hints, so its tests play with this.
-function player(z) {
+function route(z) {
   const table = analyze(z, z.start);
   return (pos) => {
     const here = table.dist(pos),
       m = movesOf(z, pos).find((m) => m.exit || (m.done && table.dist(m.p) < here));
     if (!m) throw new Error('no move leads closer to the exit');
-    return m.text;
+    return m;
   };
 }
+// The same as text: "blue right".
+const player = (z) =>
+  (
+    (next) => (pos) =>
+      next(pos).text
+  )(route(z));
 // Plays a shortest solution to the end. The page gets all the moves in one call: a call for
 // each move waits for a frame of the 3D scene, and the long levels need more than 100 moves.
 async function playOut(page, user = 'bot') {
   const s = await state(page),
     z = s.puzzle,
-    table = analyze(z, z.start),
+    next = route(z),
     list = [];
-  for (let pos = s.pos, open = s.won; !open;) {
-    const here = table.dist(pos),
-      m = movesOf(z, pos).find((m) => m.exit || (m.done && table.dist(m.p) < here));
-    if (!m) throw new Error('no move leads closer to the exit');
+  for (let pos = s.pos, out = s.won; !out;) {
+    const m = next(pos);
     list.push(m.text);
-    open = m.exit || pathOpen(z, m.p);
+    out = m.exit || pathOpen(z, m.p);
     pos = m.p;
   }
   await page.evaluate(
@@ -182,10 +189,12 @@ async function fakeTwitch(page, channel = 'room') {
   irc.replies = () => irc.got.filter((l) => l.startsWith('PRIVMSG'));
   return irc;
 }
-const connected = (page) => page.waitForFunction(() => document.getElementById('source').textContent === 'Twitch: #room', null, { timeout: 20000 });
+const connected = (page) => page.waitForFunction(() => document.getElementById('source').textContent === 'Twitch: #room', null, { timeout: 90000 });
 // Twitch answers the token check. The page asks from another origin, so the answer allows it.
-const fakeLogin = (page, login = 'gridbot') =>
-  page.route('https://id.twitch.tv/oauth2/validate', (route) =>
+// The game gives the check 8 s. A first page of the slow headless browser can need more, so the limit is off here.
+const fakeLogin = async (page, login = 'gridbot') => {
+  await page.addInitScript(() => (AbortSignal.timeout = () => new AbortController().signal));
+  await page.route('https://id.twitch.tv/oauth2/validate', (route) =>
     route.fulfill({
       status: route.request().method() === 'OPTIONS' ? 204 : 200,
       headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' },
@@ -193,6 +202,7 @@ const fakeLogin = (page, login = 'gridbot') =>
       body: JSON.stringify({ login, scopes: ['chat:read', 'chat:edit'] }),
     }),
   );
+};
 // A small random generator with a seed, so a failed run can be repeated.
 function seeded(seed) {
   let s = seed >>> 0;
@@ -622,7 +632,7 @@ const tests = {
   },
   'Twitch: with a login the game answers a blocked move in chat and names the viewer who drove out': async () => {
     const twitch = {};
-    const { page } = await openAt('?skip&level=easy&channel=room&cooldown=0', {
+    const { page } = await openAt('?skip&level=easy&channel=room&cooldown=0&client=abcdefghij0123456789', {
       before: async (page) => {
         twitch.irc = await fakeTwitch(page);
         await fakeLogin(page);
@@ -650,6 +660,7 @@ const tests = {
     await page.waitForFunction(() => true); // one turn of the page, then the fake server has the reply
     for (let n = 0; n < 40 && !win.test(irc.replies().at(-1)); n++) await page.waitForTimeout(100);
     check(win.test(irc.replies().at(-1)), 'no win message in chat: ' + irc.replies().join(' / '));
+    await page.waitForTimeout(1600); // the game drops a reply that follows another in less than 1.5 s
     irc.say('Dave', '!red right');
     for (let n = 0; n < 40 && irc.replies().length < 3; n++) await page.waitForTimeout(100);
     check(irc.replies().at(-1) === 'PRIVMSG #room :@Dave No moves now. Wait for the next puzzle.', 'reply after the win: ' + irc.replies().at(-1));
@@ -660,7 +671,7 @@ const tests = {
     const { irc } = twitch;
     await connected(page);
     await irc.sockets[0].close();
-    await page.waitForFunction(() => document.getElementById('source').textContent === 'Twitch: reconnecting');
+    await page.waitForFunction(() => t.lines().includes('BOARD Twitch chat is disconnected. The game tries again.'));
     await connected(page);
     check(irc.sockets.length === 2, 'connections: ' + irc.sockets.length);
     const s = await state(page);
@@ -685,7 +696,7 @@ const tests = {
     };
     // The answer of another login: nothing is kept.
     const other = await openAt('?skip&level=easy#access_token=stolen-token&state=theirs', { before: before('mine') });
-    await other.page.waitForTimeout(300);
+    await other.page.waitForFunction(() => sessionStorage.getItem('tg-twitch-return') === null, null, { timeout: 90000 }); // the game read the answer
     check(!other.page.url().includes('access_token'), 'the token stays in the address');
     check((await other.page.evaluate(() => localStorage.getItem('tg-twitch-token'))) === null, 'a token of another login was kept');
     await other.page.context().close();
@@ -772,6 +783,11 @@ const tests = {
 
 const only = process.argv[2],
   chosen = Object.entries(tests).filter(([name]) => !only || name.includes(only));
+if (!chosen.length) {
+  console.error(`No test has "${only}" in its name. The match is case-sensitive.`);
+  server.kill();
+  process.exit(1);
+}
 let failed = 0;
 try {
   browser = await chromium.launch();
