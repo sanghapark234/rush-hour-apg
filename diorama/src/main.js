@@ -68,11 +68,19 @@ const ask = (msg) =>
   });
 
 // The bank of generated puzzles (tools/evolve.js). Each level deals its entries in a random
-// order and starts again only when all of them were played.
-const bank = fetch(new URL('./puzzles.json', import.meta.url)).then((r) => {
-  if (!r.ok) throw new Error('puzzles.json: HTTP ' + r.status);
-  return r.json();
-});
+// order and starts again only when all of them were played. A load that failed is not kept: the
+// next puzzle asks for the file again.
+let bank = null;
+const loadBank = () =>
+  (bank ??= fetch(new URL('./puzzles.json', import.meta.url))
+    .then((r) => {
+      if (!r.ok) throw new Error('puzzles.json: HTTP ' + r.status);
+      return r.json();
+    })
+    .catch((err) => {
+      bank = null;
+      throw err;
+    }));
 const decks = {};
 function deal(entries, key) {
   if (!decks[key]?.length) {
@@ -571,7 +579,7 @@ async function newPuzzle() {
   demo = null; // a replay ends here, also when the load fails
   render();
   try {
-    const all = await bank;
+    const all = await loadBank();
     let entry;
     if (want === 'auto') {
       rungs ??= ladder(all);
@@ -637,16 +645,29 @@ $('form').addEventListener('submit', (e) => {
   command($('command').value);
   $('command').value = '';
 });
-$('start').addEventListener('click', start);
+// After a first load that failed for the puzzle file only, the button says "Try again".
+$('start').addEventListener('click', () => {
+  if (!failed) return start();
+  $('start').disabled = true;
+  $('start').textContent = 'Loading…';
+  fresh().then(() => {
+    if (!failed) return;
+    $('start').disabled = false;
+    $('start').textContent = 'Try again';
+  });
+});
 $('hint').addEventListener('click', () => command('hint'));
 $('reset').addEventListener('click', () => {
   if (!busy && puzzle) reset(true);
 });
 const fresh = () =>
-  newPuzzle().catch((err) => {
-    render();
-    sys('Could not load a puzzle: ' + err.message, 'error');
-  });
+  newPuzzle().then(
+    () => failed && stage.ready.then(begin, () => {}), // the first puzzle came late: the game opens now
+    (err) => {
+      render();
+      sys('Could not load a puzzle: ' + err.message, 'error');
+    },
+  );
 $('new').addEventListener('click', fresh);
 $('again').addEventListener('click', fresh);
 $('replay').addEventListener('click', () => {
@@ -706,6 +727,11 @@ const twitch = () =>
     )
     .catch(twitchFailed);
 
+// A GPU reset takes the WebGL context away, and the canvas goes black. When the browser gives
+// the context back, three.js builds the scene again by itself.
+$('stage').addEventListener('webglcontextlost', () => sys('The 3D view stopped. Reload the page if it stays black.', 'error'));
+$('stage').addEventListener('webglcontextrestored', () => sys('The 3D view is back.'));
+
 function resize() {
   stage.resize(innerWidth, innerHeight);
 }
@@ -729,7 +755,8 @@ function frame() {
 frame();
 
 let loaded = 0,
-  failed = false;
+  failed = false,
+  begun = false;
 for (const task of stage.tasks)
   task.then(
     () => {
@@ -740,32 +767,44 @@ for (const task of stage.tasks)
     },
     () => {},
   );
-Promise.all([stage.ready, newPuzzle()]).then(
-  () => {
-    document.body.classList.add('ready');
-    twitch();
-    $('start').disabled = false;
-    $('start').textContent = 'Start';
-    if (params.has('skip')) {
-      camName = { top: 'top', low: 'low' }[params.get('cam')] ?? 'angle';
-      phase = 'play';
-      applyPose(pose(camName));
-      camera.lookAt(focus);
-      controls.target.copy(focus);
-      controls.update();
-      controls.enabled = true;
-      for (const g of cars) Object.assign(g.userData, { wait: 0, y: 0, landed: true });
-      setCam(camName);
-      tween = null;
-      controls.enabled = true;
-      render();
-    }
-  },
-  (err) => {
-    failed = true;
-    $('start').textContent = 'Could not load';
-    $('start').style.setProperty('--loaded', '0%');
-    sys('Loading failed: ' + err.message, 'error');
-    throw err;
-  },
-);
+// Opens the game: the scene is loaded and the first puzzle is on the lot.
+function begin() {
+  if (begun || !puzzle) return;
+  begun = true;
+  failed = false;
+  document.body.classList.add('ready');
+  twitch();
+  $('start').disabled = false;
+  $('start').textContent = 'Start';
+  if (params.has('skip')) {
+    camName = { top: 'top', low: 'low' }[params.get('cam')] ?? 'angle';
+    phase = 'play';
+    applyPose(pose(camName));
+    camera.lookAt(focus);
+    controls.target.copy(focus);
+    controls.update();
+    controls.enabled = true;
+    for (const g of cars) Object.assign(g.userData, { wait: 0, y: 0, landed: true });
+    setCam(camName);
+    tween = null;
+    controls.enabled = true;
+    render();
+  }
+}
+Promise.all([stage.ready, newPuzzle()]).then(begin, (err) => {
+  failed = true;
+  $('start').textContent = 'Could not load';
+  $('start').style.setProperty('--loaded', '0%');
+  sys('Loading failed: ' + err.message, 'error');
+  // Only a puzzle is missing: Start asks for one again. A scene or a solver that failed needs a reload.
+  if (!puzzle && !workerDown)
+    stage.ready.then(
+      () => {
+        if (!failed || workerDown) return;
+        $('start').textContent = 'Try again';
+        $('start').disabled = false;
+      },
+      () => {},
+    );
+  throw err;
+});

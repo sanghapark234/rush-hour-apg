@@ -1,5 +1,8 @@
 // Tests for serve.js, which serves the project folder here, so the tests need no build: the path check, cache validation and the choice of encoding.
 import { test, expect, beforeAll, afterAll } from 'bun:test';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { brotliDecompressSync } from 'node:zlib';
 
 const port = 20000 + Math.floor(Math.random() * 20000);
 const base = `http://127.0.0.1:${port}`;
@@ -57,3 +60,34 @@ test('stops with a message when the folder has no index.html', async () => {
   expect(await run.exited).toBe(1);
   expect(await new Response(run.stderr).text()).toContain('bun run build');
 });
+
+test('compresses the files when it starts, so the first request does not wait', async () => {
+  // A text that Brotli quality 11 needs more than a second for.
+  let seed = 7;
+  const word = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0), seed.toString(36));
+  const text = Array.from({ length: 300000 }, word).join(' ');
+  const folder = await mkdtemp(tmpdir() + '/tiny-gridlock-');
+  await writeFile(folder + '/index.html', '<!doctype html><title>t</title>');
+  await writeFile(folder + '/big.txt', text);
+  const run = Bun.spawn(['bun', new URL('../serve.js', import.meta.url).pathname, '127.0.0.1', String(port + 2), folder], {
+    stdout: 'pipe',
+    stderr: 'inherit',
+  });
+  try {
+    let out = '';
+    for await (const chunk of run.stdout) {
+      out += new TextDecoder().decode(chunk);
+      if (out.includes('Compressed')) break;
+    }
+    expect(out).toContain('Compressed 2 files');
+    const t0 = performance.now();
+    const res = await fetch(`http://127.0.0.1:${port + 2}/big.txt`, { headers: { 'accept-encoding': 'br' }, decompress: false });
+    const body = new Uint8Array(await res.arrayBuffer());
+    expect(performance.now() - t0).toBeLessThan(400);
+    expect(res.headers.get('content-encoding')).toBe('br');
+    expect(brotliDecompressSync(body).toString()).toBe(text);
+  } finally {
+    run.kill();
+    await rm(folder, { recursive: true });
+  }
+}, 15000);

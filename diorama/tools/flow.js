@@ -782,21 +782,63 @@ const tests = {
       await page.context().close();
     }
   },
-  'a missing puzzle file or solver shows Could not load, and Start stays off': async () => {
+  'a missing solver shows Could not load, and Start stays off': async () => {
     trouble.expected = true;
-    const failed = () => document.getElementById('start').textContent === 'Could not load';
-    for (const [file, message] of [
-      ['**/puzzles*.json', 'BOARD Loading failed: puzzles.json: HTTP 500'],
-      ['**/worker*.js', 'BOARD Loading failed: the solver stopped'],
-    ]) {
-      const { page } = await openAt('', { before: (page) => page.route(file, (route) => route.fulfill({ status: 500, body: 'no' })), wait: failed });
-      check(await page.locator('#start').isDisabled(), file + ': Start is active');
-      check(
-        (await lines(page)).some((l) => l.startsWith(message)),
-        `${file}: the panel says: ${(await lines(page)).join(' / ')}`,
-      );
-      await page.context().close();
+    const { page } = await openAt('', {
+      before: (page) => page.route('**/worker*.js', (route) => route.fulfill({ status: 500, body: 'no' })),
+      wait: () => document.getElementById('start').textContent === 'Could not load',
+    });
+    await page.waitForFunction(() => window.apg.stage.ready.then(() => true)); // the scene is loaded: the button has its last state
+    check((await page.locator('#start').textContent()) === 'Could not load', 'Start says: ' + (await page.locator('#start').textContent()));
+    check(await page.locator('#start').isDisabled(), 'Start is active');
+    check(
+      (await lines(page)).some((l) => l.startsWith('BOARD Loading failed: the solver stopped')),
+      'the panel says: ' + (await lines(page)).join(' / '),
+    );
+    await page.context().close();
+  },
+  'a puzzle file that fails to load: Start says Try again, and the next try loads a puzzle': async () => {
+    trouble.expected = true;
+    let requests = 0;
+    const again = () => document.getElementById('start').textContent === 'Try again';
+    const { page } = await openAt('', {
+      before: (page) => page.route('**/puzzles*.json', (route) => (++requests > 2 ? route.continue() : route.fulfill({ status: 500, body: 'no' }))),
+      wait: again,
+    });
+    check(!(await page.locator('#start').isDisabled()), 'Start is off after a puzzle file that failed');
+    check((await lines(page)).includes('BOARD Loading failed: puzzles.json: HTTP 500'), 'the panel says: ' + (await lines(page)).join(' / '));
+    check((await state(page)).puzzle === null, 'a puzzle is there without the puzzle file');
+    await page.locator('#start').click(); // the file fails a second time
+    await page.waitForFunction(() => t.last() === 'BOARD Could not load a puzzle: puzzles.json: HTTP 500');
+    await page.waitForFunction(again);
+    await page.locator('#start').click();
+    await page.waitForFunction(isReady, null, { timeout: 60000 });
+    check(requests === 3, 'requests for the puzzle file: ' + requests);
+    check((await page.locator('#start').textContent()) === 'Start', 'Start says: ' + (await page.locator('#start').textContent()));
+    await page.locator('#start').click();
+    await page.waitForFunction(inPlay, null, { timeout: 20000 });
+    await playOut(page);
+    await page.context().close();
+  },
+  'a lost WebGL context shows a message, and the scene draws again when the context returns': async () => {
+    const { page } = await open('medium');
+    await page.evaluate(() => {
+      window.lose = window.apg.stage.renderer.getContext().getExtension('WEBGL_lose_context');
+      window.lose.loseContext();
+    });
+    await page.waitForFunction(() => t.last() === 'BOARD The 3D view stopped. Reload the page if it stays black.', null, { timeout: 20000 });
+    const lost = await page.evaluate(() => t.paint());
+    check(lost.lit < 0.05, `the canvas of a lost context is ${Math.round(lost.lit * 100)}% lit`);
+    await page.evaluate(() => window.lose.restoreContext());
+    await page.waitForFunction(() => t.last() === 'BOARD The 3D view is back.', null, { timeout: 20000 });
+    let p;
+    for (let n = 0; n < 30 && !(p?.lit > 0.5); n++) {
+      await page.waitForTimeout(500);
+      p = await page.evaluate(() => t.paint());
     }
+    check(p.colours > 30 && p.lit > 0.5, `after the context returned: ${p.colours} colours, ${Math.round(p.lit * 100)}% lit`);
+    await playOut(page);
+    await page.context().close();
   },
 };
 
