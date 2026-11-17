@@ -929,7 +929,6 @@ function begin() {
   renderScoreboard();
   $('start').disabled = false;
   label('Start');
-  stage.touch();
   if (params.has('skip')) {
     camName = { top: 'top', low: 'low' }[params.get('cam')] ?? 'angle';
     phase = 'play';
