@@ -27,9 +27,6 @@ COPY --from=builder /app/dist ./dist
 
 EXPOSE 3000
 
-ENV HOST=0.0.0.0
-ENV PORT=3000
-
 # Start production server
 CMD ["bun", "serve.js", "0.0.0.0", "3000", "dist"]
 

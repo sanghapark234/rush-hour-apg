@@ -28,6 +28,9 @@ bun run serve                # http://127.0.0.1:8000/
 bun serve.js 0.0.0.0 8000    # reachable from other machines
 ```
 
+With Docker, from the folder above `diorama/`: `docker compose up --build` builds the game and
+serves it at `http://localhost:3000/` (`Dockerfile`, `docker-compose.yml`).
+
 Open the printed address in a desktop browser. The built game needs no network access.
 Any static server can serve `dist/`, but `serve.js` compresses the text files and lets the
 browser reuse its cached copies (see Load time).
@@ -220,6 +223,17 @@ request to Twitch.
   or `Twitch: off`. An error, such as a channel that does not answer, appears in the chat panel.
 - Messages that arrive before **Start** are dropped.
 
+### Scores
+
+Each move gets a badge in its chat line, such as `+1 · opt 19 → 18`. The score is from -1 to 1:
+the moves that each cell of the move saved on the shortest solution. `opt` is the length of the
+shortest solution before and after the move.
+
+A scoreboard at the left lists the players with their total score. It appears when two or more
+Twitch viewers moved a vehicle; `?scoreboard` in the address shows it at once. A player at -15 or
+lower gets the `TROLL` tag until the score is higher again. A command typed on the page gets a
+badge and no row. The scores last until the page reloads.
+
 ### Replies in Twitch chat
 
 The game replies in Twitch chat only after a login to Twitch. It replies to a win, and to a
@@ -259,7 +273,7 @@ The choices for play through Twitch chat, with the decisions taken so far, are i
 | `src/engine.js`            | Puzzle rules, levels, colours, and expansion of a bank entry into a puzzle.                 |
 | `src/solver.js`            | Exact breadth-first solver over all reachable positions.                                    |
 | `src/puzzles.json`         | The generated puzzle bank.                                                                  |
-| `src/worker.js`            | Solves the dealt puzzle off the main thread and answers hints.                              |
+| `src/worker.js`            | Solves the dealt puzzle off the main thread, answers hints and scores moves.                |
 | `src/vehicles.js`          | Vehicles modelled in code: lofted bodies, panel lines, glass, mirrors, wheels, roof labels. |
 | `src/scene.js`             | Room, workbench, props, board, lights and post-processing.                                  |
 | `src/main.js`              | Game flow, camera moves, animation, HUD wiring.                                             |

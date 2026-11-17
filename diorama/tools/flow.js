@@ -668,7 +668,11 @@ const tests = {
     await page.waitForFunction(() => window.apg.state().moves === 1);
     const after = await state(page);
     check(after.demo === null, 'a viewer started the solution');
-    check((await lines(page)).includes('Bob ' + move), 'the chat panel does not show the viewer: ' + (await lines(page)).slice(-3).join(' / '));
+    // The line of a move ends with its score badge, which comes a moment later.
+    check(
+      (await lines(page)).some((l) => l.startsWith('Bob ' + move)),
+      'the chat panel does not show the viewer: ' + (await lines(page)).slice(-3).join(' / '),
+    );
     check(!(await lines(page)).some((l) => l.startsWith('Alice ')), 'a message without ! or for the streamers reached the game');
     await page.waitForFunction(
       ([i, at]) => Math.abs(t.cars()[i].cur - at) < 0.02,
@@ -677,6 +681,66 @@ const tests = {
     );
     check(irc.got.includes('PONG :tmi.twitch.tv'), 'no answer to PING');
     check(!irc.replies().length, 'a reader without a login wrote in chat: ' + irc.replies().join(' / '));
+  },
+  'scores: a move gets a badge, a named player a row, and the scoreboard appears with the second Twitch viewer, clear of the lot': async () => {
+    const twitch = {};
+    const { page } = await openAt('?skip&level=medium&channel=room&cooldown=0', { before: async (page) => (twitch.irc = await fakeTwitch(page)) });
+    await connected(page);
+    const board = () => page.evaluate(() => window.apg.scoreboard());
+    const badge = (start) =>
+      page.waitForFunction(
+        (s) =>
+          t
+            .lines()
+            .find((l) => l.startsWith(s) && l.includes(' · opt '))
+            ?.slice(s.length),
+        start,
+        { timeout: 10000 },
+      );
+    const shift = () => page.evaluate(() => window.apg.stage.camera.view?.offsetX ?? 0);
+    const play = async (say) => {
+      const s = await state(page),
+        move = player(s.puzzle)(s.pos);
+      await say(move);
+      await page.waitForFunction((n) => window.apg.state().moves === n, s.moves + 1);
+      return { move, left: s.puzzle.moves - s.moves };
+    };
+    // A command typed on the page: a badge, and no row.
+    const typed = await play(async (move) => {
+      await page.fill('#command', move);
+      await page.press('#command', 'Enter');
+    });
+    const first = await (await badge('viewer1 ' + typed.move)).jsonValue();
+    check(first === ` +1 · opt ${typed.left} → ${typed.left - 1}`, 'the badge of the best move is' + first);
+    check((await board()).players.length === 0, 'a command typed on the page got a row in the scoreboard');
+    // One Twitch viewer: a row, and the scoreboard stays hidden.
+    const wide = await shift();
+    const bob = await play((move) => twitch.irc.say('Bob', '!' + move));
+    await badge('Bob ' + bob.move);
+    let b = await board();
+    check(
+      b.players.length === 1 && b.players[0].name === 'Bob' && b.players[0].score === 1 && b.players[0].twitch,
+      'the row of Bob: ' + JSON.stringify(b.players),
+    );
+    check(!b.visible && (await page.locator('#scoreboard').isHidden()), 'the scoreboard shows with one Twitch viewer');
+    // The second viewer undoes the move of Bob: a score of -1, and the scoreboard appears.
+    const back = bob.move.replace(/left|right|up|down/, (d) => ({ left: 'right', right: 'left', up: 'down', down: 'up' })[d]);
+    twitch.irc.say('Carol', '!' + back);
+    const worse = await (await badge('Carol ' + back)).jsonValue();
+    check(worse.startsWith(' -1 · opt '), 'the badge of the move back is' + worse);
+    b = await board();
+    check(b.visible && (await page.locator('#scoreboard').isVisible()), 'the scoreboard does not show with two Twitch viewers');
+    check(b.players.map((p) => p.name + ' ' + p.score).join() === 'Bob 1,Carol -1', 'the rows: ' + JSON.stringify(b.players));
+    const rows = await page.locator('#scoreboard-list .sb-item').allTextContents();
+    check(rows.length === 2 && rows[0].includes('Bob') && rows[0].includes('+1') && rows[1].includes('Carol'), 'the rows on the page: ' + rows.join(' / '));
+    check(
+      !(await page.locator('#scoreboard .sb-troll-tag').count()) && (await page.locator('#scoreboard-troll-alert').isHidden()),
+      'a troll tag shows at a score of -1',
+    );
+    // The camera moves the lot towards the panel by half of the scoreboard's width.
+    const width = await page.evaluate(() => document.getElementById('scoreboard').offsetWidth);
+    check(Math.abs(wide - (await shift()) - width / 2) <= 1, `the lot moved by ${wide - (await shift())} px for a scoreboard of ${width} px`);
+    await page.context().close();
   },
   'Twitch: with a login the game answers a blocked move in chat and names the viewer who drove out': async () => {
     const twitch = {};

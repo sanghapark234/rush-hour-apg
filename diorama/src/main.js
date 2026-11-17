@@ -107,126 +107,70 @@ function log(name, msg, kind = 'user') {
   chat.scrollTop = chat.scrollHeight;
   return l;
 }
-/* state-effect badge: move evaluation score (-1 to 1) & optimal remaining moves before → after */
-function annotate(line, before, after, score, isTroll = false) {
-  if (line == null || before == null || after == null) return;
-  const s = document.createElement('span');
-  const kind = score > 0 ? 'good' : score < 0 ? 'bad' : 'same';
-  s.className = 'effect ' + kind + (isTroll ? ' troll' : '');
-  const scoreStr = score > 0 ? `+${score}` : `${score}`;
-  s.textContent = `${isTroll ? '⚠️ ' : ''}${scoreStr} · opt ${before} → ${after}`;
-  s.title = `Move evaluation: score ${scoreStr} (optimal remaining: ${before} → ${after})`;
+// The badge of a move in its chat line: the score (-1 to 1) and the shortest solution before and after.
+function annotate(line, { before, after, score }, troll) {
+  const s = document.createElement('span'),
+    text = (score > 0 ? '+' : '') + score;
+  s.className = 'effect ' + (score > 0 ? 'good' : score < 0 ? 'bad' : 'same') + (troll ? ' troll' : '');
+  s.textContent = `${troll ? '⚠️ ' : ''}${text} · opt ${before} → ${after}`;
+  s.title = `Move evaluation: score ${text} (optimal remaining: ${before} → ${after})`;
   line.append(' ', s);
   chat.scrollTop = chat.scrollHeight;
 }
 
-// ---------- player scoring & scoreboard ----------
-const players = new Map(); // name -> { name, score, moves, good, bad, neutral, isTroll, isTwitch }
-let twitchConnected = false;
-const twitchPlayers = new Set();
-
-function updateScoreboardVisibility() {
-  const sb = $('scoreboard');
-  if (!sb) return;
-  // Only show when connected to Twitch and different people (>= 2) are playing in chat,
-  // or when explicitly previewed via ?scoreboard URL parameter.
-  const shouldShow = (twitchConnected && twitchPlayers.size >= 2) || params.has('scoreboard');
-  sb.hidden = !shouldShow;
-  sb.classList.toggle('active', shouldShow);
-}
-
-function recordPlayerMove(name, score, before, after, isTwitch) {
-  if (!name) return;
-  let p = players.get(name);
-  if (!p) {
-    p = {
-      name,
-      score: 0,
-      moves: 0,
-      good: 0,
-      bad: 0,
-      neutral: 0,
-      isTroll: false,
-      isTwitch: Boolean(isTwitch),
-    };
-    players.set(name, p);
-  }
+// ---------- player scores and the scoreboard ----------
+// The scores are the only state here: the scoreboard, its visibility and the troll tag follow from
+// them each time. A player is a name that a chat source gave. A command typed on this page has no
+// name (each one is a new "viewer"), so it gets a badge and no row. The scores last until the page reloads.
+const players = new Map(); // name -> { name, score, moves, good, bad, twitch }
+const TROLL_AT = -15;
+const isTroll = (p) => p.score <= TROLL_AT;
+function addScore(name, value, twitch) {
+  const p = players.get(name) ?? { name, score: 0, moves: 0, good: 0, bad: 0, twitch: false };
+  players.set(name, p);
   p.moves++;
-  p.score = Math.round((p.score + score) * 100) / 100;
-  if (score > 0) p.good++;
-  else if (score < 0) p.bad++;
-  else p.neutral++;
-
-  if (p.score <= -15) {
-    p.isTroll = true;
-  }
-
-  if (isTwitch) {
-    twitchPlayers.add(name);
-  }
-  updateScoreboardVisibility();
+  p.score = Math.round((p.score + value) * 100) / 100;
+  if (value > 0) p.good++;
+  else if (value < 0) p.bad++;
+  p.twitch ||= twitch;
   renderScoreboard();
   return p;
 }
-
 function renderScoreboard() {
-  const list = $('scoreboard-list');
-  const countEl = $('scoreboard-count');
-  const alertEl = $('scoreboard-troll-alert');
-  if (!list || !countEl || !alertEl) return;
-
   const all = [...players.values()].sort((a, b) => b.score - a.score || b.moves - a.moves);
-  countEl.textContent = `${all.length} ${all.length === 1 ? 'player' : 'players'}`;
-
-  const hasTroll = all.some((p) => p.isTroll);
-  alertEl.hidden = !hasTroll;
-
-  list.replaceChildren(
+  // The scoreboard shows when two or more Twitch viewers played, or with ?scoreboard in the address.
+  $('scoreboard').hidden = !(params.has('scoreboard') || all.filter((p) => p.twitch).length >= 2);
+  stage.touch(); // the camera keeps the lot clear of the scoreboard, and its size may be new
+  $('scoreboard-count').textContent = `${all.length} ${all.length === 1 ? 'player' : 'players'}`;
+  $('scoreboard-troll-alert').hidden = !all.some(isTroll);
+  const el = (cls, text) => {
+    const e = document.createElement('div');
+    e.className = cls;
+    e.textContent = text;
+    return e;
+  };
+  if (!all.length) return $('scoreboard-list').replaceChildren(el('sb-empty', 'Waiting for players to make moves…'));
+  $('scoreboard-list').replaceChildren(
     ...all.map((p, idx) => {
-      const item = document.createElement('div');
-      item.className = 'sb-item' + (p.isTroll ? ' troll' : '');
-
-      const rank = document.createElement('div');
-      const rankClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
-      rank.className = 'sb-rank ' + rankClass;
-      rank.textContent = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
-
-      const userCol = document.createElement('div');
-      userCol.className = 'sb-user-col';
-      const name = document.createElement('div');
-      name.className = 'sb-name';
-      name.textContent = p.name;
-      if (p.isTroll) {
+      const item = el('sb-item' + (isTroll(p) ? ' troll' : ''), ''),
+        user = el('sb-user-col', ''),
+        name = el('sb-name', p.name),
+        total = el('sb-score-col', '');
+      item.setAttribute('role', 'listitem');
+      if (isTroll(p)) {
         const tag = document.createElement('span');
         tag.className = 'sb-troll-tag';
         tag.textContent = 'TROLL';
-        tag.style.marginLeft = '6px';
         name.append(tag);
       }
-      const stats = document.createElement('div');
-      stats.className = 'sb-stats';
-      stats.textContent = `${p.moves}m · ${p.good}✓ ${p.bad}✗`;
-      userCol.append(name, stats);
-
-      const scoreCol = document.createElement('div');
-      scoreCol.className = 'sb-score-col';
-      const score = document.createElement('div');
-      const sKind = p.score > 0 ? 'good' : p.score < 0 ? 'bad' : 'same';
-      score.className = 'sb-score ' + sKind;
-      score.textContent = (p.score > 0 ? '+' : '') + p.score.toFixed(p.score % 1 === 0 ? 0 : 1);
-      scoreCol.append(score);
-
-      item.append(rank, userCol, scoreCol);
+      user.append(name, el('sb-stats', `${p.moves}m · ${p.good}✓ ${p.bad}✗`));
+      total.append(
+        el('sb-score ' + (p.score > 0 ? 'good' : p.score < 0 ? 'bad' : 'same'), (p.score > 0 ? '+' : '') + p.score.toFixed(p.score % 1 === 0 ? 0 : 1)),
+      );
+      item.append(el('sb-rank ' + (['gold', 'silver', 'bronze'][idx] ?? ''), ['🥇', '🥈', '🥉'][idx] ?? `#${idx + 1}`), user, total);
       return item;
     }),
   );
-
-  if (!all.length) {
-    const empty = document.createElement('div');
-    empty.className = 'sb-empty';
-    empty.textContent = 'Waiting for players to make moves…';
-    list.append(empty);
-  }
 }
 
 // `heard` collects the game's answers to one command, for the reply in Twitch chat.
@@ -335,8 +279,9 @@ function stepCamera(dt, time) {
   const w = innerWidth,
     h = innerHeight,
     narrow = w < 860;
-  const sx = narrow ? 0 : Math.round((look.shift * $('panel').offsetWidth) / 2),
-    sy = narrow ? Math.round((look.shift * $('panel').offsetHeight) / 2) : 0;
+  // The scoreboard is at the other side (left, or top on narrow screens). Hidden, its size is 0.
+  const sx = narrow ? 0 : Math.round((look.shift * ($('panel').offsetWidth - $('scoreboard').offsetWidth)) / 2),
+    sy = narrow ? Math.round((look.shift * ($('panel').offsetHeight - $('scoreboard').offsetHeight)) / 2) : 0;
   camera.setViewOffset(w, h, sx, sy, w, h);
   return moving;
 }
@@ -516,18 +461,17 @@ function legend() {
 async function command(raw, name, isTwitch = false) {
   raw = raw.slice(0, 400).trim().toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
   if (!raw || busy || phase === 'welcome' || phase === 'fly') return;
-  const playerName = name || 'viewer' + ++viewer;
-  const line = log(playerName, raw);
-
-  function evaluate(beforePos, afterPos, wonNow, doneSteps) {
-    ask({ type: 'eval', before: beforePos, after: afterPos, won: wonNow, done: doneSteps })
-      .then((res) => {
-        if (!res || res.before == null || res.after == null) return;
-        const player = recordPlayerMove(playerName, res.score, res.before, res.after, isTwitch);
-        annotate(line, res.before, res.after, res.score, player?.isTroll);
-      })
-      .catch(() => {});
-  }
+  const line = log(name || 'viewer' + ++viewer, raw);
+  // The solver's table is in the worker, so the score of a move comes after the move. The worker
+  // answers in the order of the requests, and a later puzzle is loaded after this request.
+  const evaluate = (before, after, won, done) =>
+    ask({ type: 'eval', before, after, won, done }).then(
+      (res) => {
+        if (res.before === null || res.after === null) return; // the puzzle has no table
+        annotate(line, res, name ? isTroll(addScore(name, res.score, isTwitch)) : false);
+      },
+      () => {}, // a solver that stopped gives no score; the page said so when it stopped
+    );
 
   const [a, b, c, ...extra] = raw.split(' ');
   if (a === 'cam' && c === undefined) {
@@ -859,17 +803,7 @@ window.apg = {
   command: (user, text) => command(String(text), String(user)),
   state: () => structuredClone({ puzzle, pos, moves, won, level, demo }),
   stage,
-  scoreboard: () => ({
-    players: Array.from(players.values()),
-    visible: !$('scoreboard').hidden,
-    twitchConnected,
-  }),
-  showScoreboard: (force) => {
-    const sb = $('scoreboard');
-    if (!sb) return;
-    sb.hidden = !force;
-    sb.classList.toggle('active', Boolean(force));
-  },
+  scoreboard: () => structuredClone({ players: [...players.values()], visible: !$('scoreboard').hidden }),
 };
 
 // Twitch chat (twitch.js) joins the channel that the address names: ?channel=name. The module
@@ -892,15 +826,6 @@ const twitch = () =>
         sys,
         note: (text) => ($('source').textContent = text),
         button: $('login'),
-        onState(kind) {
-          if (kind === 'connected') {
-            twitchConnected = true;
-            updateScoreboardVisibility();
-          } else if (kind === 'closed' || kind === 'error') {
-            twitchConnected = false;
-            updateScoreboardVisibility();
-          }
-        },
         // Every command that the bridge passes on answers before command() returns: only a hint waits.
         play(user, text) {
           heard = [];
@@ -979,7 +904,7 @@ function begin() {
   failed = false;
   document.body.classList.add('ready');
   twitch();
-  updateScoreboardVisibility();
+  renderScoreboard();
   $('start').disabled = false;
   label('Start');
   stage.touch();

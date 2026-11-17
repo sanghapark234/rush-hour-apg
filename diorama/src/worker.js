@@ -20,16 +20,14 @@ self.onmessage = ({ data }) => {
         current = data.puzzle;
       } else table = current && analyze(current, current.start);
     } else if (data.type === 'eval') {
-      const dBefore = table ? table.dist(data.before) : -1;
-      const dAfter = data.won ? -1 : table ? table.dist(data.after) : -1;
-      const before = dBefore < 0 ? null : dBefore + 1;
-      const after = data.won ? 0 : dAfter < 0 ? null : dAfter + 1;
-      let score = 0;
-      if (before != null && after != null) {
-        const delta = before - after;
-        const steps = data.done || 1;
-        score = Math.max(-1, Math.min(1, Math.round((delta / steps) * 100) / 100));
-      }
+      // Moves to go, or null without a table. The score is the moves that each cell of the move saved.
+      const left = (pos) => {
+        const d = table ? table.dist(pos) : -1;
+        return d < 0 ? null : d + 1;
+      };
+      const before = left(data.before),
+        after = data.won ? 0 : left(data.after);
+      const score = before === null || after === null ? 0 : Math.max(-1, Math.min(1, Math.round(((before - after) / (data.done || 1)) * 100) / 100));
       result = { before, after, score };
     } else {
       const left = table ? table.dist(data.pos) : -1;
