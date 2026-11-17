@@ -229,10 +229,12 @@ Each move gets a badge in its chat line, such as `+1 · opt 19 → 18`. The scor
 the moves that each cell of the move saved on the shortest solution. `opt` is the length of the
 shortest solution before and after the move.
 
-A scoreboard at the left lists the players with their total score. It appears when two or more
+A scoreboard at the left lists the players with their total score, and below it the score in the
+puzzle on the lot (`+3 now`), which starts at 0 with each new puzzle. The total gives the order of
+the rows and the `TROLL` tag. The scoreboard appears when two or more
 named players moved a vehicle; `?scoreboard` in the address shows it at once. A player at -15 or
 lower gets the `TROLL` tag until the score is higher again. A command typed on the page gets a
-badge and no row. The scores last until the page reloads.
+badge and no row. The totals last until the page reloads.
 
 ### Replies in Twitch chat
 

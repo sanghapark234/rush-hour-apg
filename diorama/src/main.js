@@ -121,15 +121,19 @@ function annotate(line, { before, after, score }, troll) {
 // ---------- player scores and the scoreboard ----------
 // The scores are the only state here: the scoreboard, its visibility and the troll tag follow from
 // them each time. A player is a name that a chat source gave. A command typed on this page has no
-// name (each one is a new "viewer"), so it gets a badge and no row. The scores last until the page reloads.
-const players = new Map(); // name -> { name, score, moves, good, bad }
+// name (each one is a new "viewer"), so it gets a badge and no row. A player has two scores: `score` lasts until the page reloads (the
+// order and the troll tag follow it), and `now` is the score in the puzzle on the lot.
+const players = new Map(); // name -> { name, score, now, moves, good, bad }
+const sum = (a, b) => Math.round((a + b) * 100) / 100;
+const signed = (v) => (v > 0 ? '+' : '') + v.toFixed(v % 1 === 0 ? 0 : 1);
 const TROLL_AT = -15;
 const isTroll = (p) => p.score <= TROLL_AT;
 function addScore(name, value) {
-  const p = players.get(name) ?? { name, score: 0, moves: 0, good: 0, bad: 0 };
+  const p = players.get(name) ?? { name, score: 0, now: 0, moves: 0, good: 0, bad: 0 };
   players.set(name, p);
   p.moves++;
-  p.score = Math.round((p.score + value) * 100) / 100;
+  p.score = sum(p.score, value);
+  p.now = sum(p.now, value);
   if (value > 0) p.good++;
   else if (value < 0) p.bad++;
   renderScoreboard();
@@ -163,9 +167,7 @@ function renderScoreboard() {
         name.append(tag);
       }
       user.append(name, el('sb-stats', `${p.moves}m · ${p.good}✓ ${p.bad}✗`));
-      total.append(
-        el('sb-score ' + (p.score > 0 ? 'good' : p.score < 0 ? 'bad' : 'same'), (p.score > 0 ? '+' : '') + p.score.toFixed(p.score % 1 === 0 ? 0 : 1)),
-      );
+      total.append(el('sb-score ' + (p.score > 0 ? 'good' : p.score < 0 ? 'bad' : 'same'), signed(p.score)), el('sb-now', signed(p.now) + ' now'));
       item.append(el('sb-rank ' + (['gold', 'silver', 'bronze'][idx] ?? ''), ['🥇', '🥈', '🥉'][idx] ?? `#${idx + 1}`), user, total);
       return item;
     }),
@@ -719,6 +721,8 @@ async function newPuzzle() {
     const made = { ...expand(entry, { flip: Math.random() < 0.5 }), auto: want === 'auto' };
     if (!(await ask({ type: 'load', puzzle: made }))) throw new Error('the puzzle has no solution');
     puzzle = made;
+    for (const p of players.values()) p.now = 0; // the score in the puzzle starts again; the total stays
+    renderScoreboard();
   } finally {
     busy = false;
   }
