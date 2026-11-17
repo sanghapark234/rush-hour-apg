@@ -122,24 +122,23 @@ function annotate(line, { before, after, score }, troll) {
 // The scores are the only state here: the scoreboard, its visibility and the troll tag follow from
 // them each time. A player is a name that a chat source gave. A command typed on this page has no
 // name (each one is a new "viewer"), so it gets a badge and no row. The scores last until the page reloads.
-const players = new Map(); // name -> { name, score, moves, good, bad, twitch }
+const players = new Map(); // name -> { name, score, moves, good, bad }
 const TROLL_AT = -15;
 const isTroll = (p) => p.score <= TROLL_AT;
-function addScore(name, value, twitch) {
-  const p = players.get(name) ?? { name, score: 0, moves: 0, good: 0, bad: 0, twitch: false };
+function addScore(name, value) {
+  const p = players.get(name) ?? { name, score: 0, moves: 0, good: 0, bad: 0 };
   players.set(name, p);
   p.moves++;
   p.score = Math.round((p.score + value) * 100) / 100;
   if (value > 0) p.good++;
   else if (value < 0) p.bad++;
-  p.twitch ||= twitch;
   renderScoreboard();
   return p;
 }
 function renderScoreboard() {
   const all = [...players.values()].sort((a, b) => b.score - a.score || b.moves - a.moves);
-  // The scoreboard shows when two or more Twitch viewers played, or with ?scoreboard in the address.
-  $('scoreboard').hidden = !(params.has('scoreboard') || all.filter((p) => p.twitch).length >= 2);
+  // The scoreboard shows when two or more named players scored, or with ?scoreboard in the address.
+  $('scoreboard').hidden = !(params.has('scoreboard') || all.length >= 2);
   stage.touch(); // the camera keeps the lot clear of the scoreboard, and its size may be new
   $('scoreboard-count').textContent = `${all.length} ${all.length === 1 ? 'player' : 'players'}`;
   $('scoreboard-troll-alert').hidden = !all.some(isTroll);
@@ -240,6 +239,7 @@ function flyTo(name, dur, done) {
 const mix = (x, y, k) => x + (y - x) * k;
 const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2);
 // Each step function returns true while it changes the picture.
+let inset = 0; // px that the scoreboard takes from the view, eased towards its size
 function stepCamera(dt, time) {
   let moving = true;
   if (tween) {
@@ -280,8 +280,14 @@ function stepCamera(dt, time) {
     h = innerHeight,
     narrow = w < 860;
   // The scoreboard is at the other side (left, or top on narrow screens). Hidden, its size is 0.
-  const sx = narrow ? 0 : Math.round((look.shift * ($('panel').offsetWidth - $('scoreboard').offsetWidth)) / 2),
-    sy = narrow ? Math.round((look.shift * ($('panel').offsetHeight - $('scoreboard').offsetHeight)) / 2) : 0;
+  // The lot eases to its new place when that size changes (at once with reduced motion).
+  const board = $('scoreboard'),
+    size = narrow ? board.offsetHeight : board.offsetWidth,
+    gap = size - inset;
+  inset = calm || Math.abs(gap) < 0.5 ? size : inset + gap * Math.min(1, dt * 8);
+  if (inset !== size) moving = true;
+  const sx = narrow ? 0 : Math.round((look.shift * ($('panel').offsetWidth - inset)) / 2),
+    sy = narrow ? Math.round((look.shift * ($('panel').offsetHeight - inset)) / 2) : 0;
   camera.setViewOffset(w, h, sx, sy, w, h);
   return moving;
 }
@@ -458,7 +464,7 @@ function legend() {
     }),
   );
 }
-async function command(raw, name, isTwitch = false) {
+async function command(raw, name) {
   raw = raw.slice(0, 400).trim().toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
   if (!raw || busy || phase === 'welcome' || phase === 'fly') return;
   const line = log(name || 'viewer' + ++viewer, raw);
@@ -468,9 +474,15 @@ async function command(raw, name, isTwitch = false) {
     ask({ type: 'eval', before, after, won, done }).then(
       (res) => {
         if (res.before === null || res.after === null) return; // the puzzle has no table
-        annotate(line, res, name ? isTroll(addScore(name, res.score, isTwitch)) : false);
+        annotate(line, res, name ? isTroll(addScore(name, res.score)) : false);
       },
-      () => {}, // a solver that stopped gives no score; the page said so when it stopped
+      () => {
+        // A solver that stopped or failed gives no score: the line says so.
+        const s = document.createElement('span');
+        s.className = 'effect same';
+        s.textContent = 'no score';
+        line.append(' ', s);
+      },
     );
 
   const [a, b, c, ...extra] = raw.split(' ');
@@ -829,7 +841,7 @@ const twitch = () =>
         // Every command that the bridge passes on answers before command() returns: only a hint waits.
         play(user, text) {
           heard = [];
-          command(text, user, true);
+          command(text, user);
           const lines = heard;
           heard = null;
           return { lines, won, moves };

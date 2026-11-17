@@ -682,7 +682,7 @@ const tests = {
     check(irc.got.includes('PONG :tmi.twitch.tv'), 'no answer to PING');
     check(!irc.replies().length, 'a reader without a login wrote in chat: ' + irc.replies().join(' / '));
   },
-  'scores: a move gets a badge, a named player a row, and the scoreboard appears with the second Twitch viewer, clear of the lot': async () => {
+  'scores: a move gets a badge, a named player a row, and the scoreboard appears with the second player, clear of the lot': async () => {
     const twitch = {};
     const { page } = await openAt('?skip&level=medium&channel=room&cooldown=0', { before: async (page) => (twitch.irc = await fakeTwitch(page)) });
     await connected(page);
@@ -718,18 +718,15 @@ const tests = {
     const bob = await play((move) => twitch.irc.say('Bob', '!' + move));
     await badge('Bob ' + bob.move);
     let b = await board();
-    check(
-      b.players.length === 1 && b.players[0].name === 'Bob' && b.players[0].score === 1 && b.players[0].twitch,
-      'the row of Bob: ' + JSON.stringify(b.players),
-    );
-    check(!b.visible && (await page.locator('#scoreboard').isHidden()), 'the scoreboard shows with one Twitch viewer');
+    check(b.players.length === 1 && b.players[0].name === 'Bob' && b.players[0].score === 1, 'the row of Bob: ' + JSON.stringify(b.players));
+    check(!b.visible && (await page.locator('#scoreboard').isHidden()), 'the scoreboard shows with one player');
     // The second viewer undoes the move of Bob: a score of -1, and the scoreboard appears.
     const back = bob.move.replace(/left|right|up|down/, (d) => ({ left: 'right', right: 'left', up: 'down', down: 'up' })[d]);
     twitch.irc.say('Carol', '!' + back);
     const worse = await (await badge('Carol ' + back)).jsonValue();
     check(worse.startsWith(' -1 · opt '), 'the badge of the move back is' + worse);
     b = await board();
-    check(b.visible && (await page.locator('#scoreboard').isVisible()), 'the scoreboard does not show with two Twitch viewers');
+    check(b.visible && (await page.locator('#scoreboard').isVisible()), 'the scoreboard does not show with two players');
     check(b.players.map((p) => p.name + ' ' + p.score).join() === 'Bob 1,Carol -1', 'the rows: ' + JSON.stringify(b.players));
     const rows = await page.locator('#scoreboard-list .sb-item').allTextContents();
     check(rows.length === 2 && rows[0].includes('Bob') && rows[0].includes('+1') && rows[1].includes('Carol'), 'the rows on the page: ' + rows.join(' / '));
@@ -737,9 +734,55 @@ const tests = {
       !(await page.locator('#scoreboard .sb-troll-tag').count()) && (await page.locator('#scoreboard-troll-alert').isHidden()),
       'a troll tag shows at a score of -1',
     );
-    // The camera moves the lot towards the panel by half of the scoreboard's width.
+    // The camera eases the lot towards the panel by half of the scoreboard's width.
     const width = await page.evaluate(() => document.getElementById('scoreboard').offsetWidth);
-    check(Math.abs(wide - (await shift()) - width / 2) <= 1, `the lot moved by ${wide - (await shift())} px for a scoreboard of ${width} px`);
+    await page
+      .waitForFunction(([from, w]) => Math.abs(from - window.apg.stage.camera.view.offsetX - w / 2) <= 1, [wide, width], { timeout: 5000 })
+      .catch(async () => check(false, `the lot moved by ${wide - (await shift())} px for a scoreboard of ${width} px`));
+    await page.context().close();
+  },
+  'scores: ?scoreboard shows the scoreboard at once, and the troll tag is there at -15 and goes when the score rises': async () => {
+    const twitch = {};
+    const { page } = await openAt('?skip&level=medium&channel=room&cooldown=0&scoreboard', {
+      before: async (page) => (twitch.irc = await fakeTwitch(page)),
+    });
+    await connected(page);
+    check(await page.locator('#scoreboard').isVisible(), '?scoreboard does not show the scoreboard');
+    check((await page.locator('#scoreboard-list .sb-empty').count()) === 1, 'no line for an empty scoreboard');
+    const say = async (who, move) => {
+      const n = (await state(page)).moves;
+      twitch.irc.say(who, '!' + move);
+      await page.waitForFunction((m) => window.apg.state().moves === m, n + 1);
+    };
+    const best = async () => {
+      const s = await state(page);
+      return player(s.puzzle)(s.pos);
+    };
+    const row = (who) => page.locator('#scoreboard-list .sb-item', { hasText: who });
+    const score = (who, value) =>
+      page.waitForFunction(([w, v]) => window.apg.scoreboard().players.find((p) => p.name === w)?.score === v, [who, value], { timeout: 10000 });
+    // Bob plays the best move and Carol takes it back, 15 times.
+    const move = await best(),
+      back = move.replace(/left|right|up|down/, (d) => ({ left: 'right', right: 'left', up: 'down', down: 'up' })[d]);
+    for (let i = 0; i < 14; i++) {
+      await say('Bob', move);
+      await say('Carol', back);
+    }
+    await score('Carol', -14);
+    check(!(await row('Carol').locator('.sb-troll-tag').count()), 'a troll tag shows at -14');
+    await say('Bob', move);
+    await say('Carol', back);
+    await score('Carol', -15);
+    check((await row('Carol').locator('.sb-troll-tag').count()) === 1, 'no troll tag at -15');
+    check(!(await row('Bob').locator('.sb-troll-tag').count()), 'Bob has a troll tag');
+    check(await page.locator('#scoreboard-troll-alert').isVisible(), 'no troll alert at -15');
+    const warned = await page.evaluate(() => t.lines().findLast((l) => l.startsWith('Carol ')));
+    check(warned.includes('⚠️'), 'the badge of the move at -15 has no warning: ' + warned);
+    // A good move of Carol: the tag and the alert go.
+    await say('Carol', await best());
+    await score('Carol', -14);
+    check(!(await row('Carol').locator('.sb-troll-tag').count()), 'the troll tag stays at -14');
+    check(await page.locator('#scoreboard-troll-alert').isHidden(), 'the troll alert stays at -14');
     await page.context().close();
   },
   'Twitch: with a login the game answers a blocked move in chat and names the viewer who drove out': async () => {

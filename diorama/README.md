@@ -230,7 +230,7 @@ the moves that each cell of the move saved on the shortest solution. `opt` is th
 shortest solution before and after the move.
 
 A scoreboard at the left lists the players with their total score. It appears when two or more
-Twitch viewers moved a vehicle; `?scoreboard` in the address shows it at once. A player at -15 or
+named players moved a vehicle; `?scoreboard` in the address shows it at once. A player at -15 or
 lower gets the `TROLL` tag until the score is higher again. A command typed on the page gets a
 badge and no row. The scores last until the page reloads.
 
