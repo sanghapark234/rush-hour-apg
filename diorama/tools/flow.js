@@ -1070,6 +1070,25 @@ const tests = {
     check((await page.screenshot()).length > 100000, 'the welcome view at rest is nearly empty');
     await page.context().close();
   },
+  'the camera sway of the welcome view is drawn about 30 times in a second, not in each frame': async () => {
+    // A small window: the software renderer here draws it fast.
+    const { page } = await openAt('', { viewport: { width: 480, height: 300 }, motion: 'no-preference', wait: isReady });
+    await page.waitForTimeout(4000); // a file of the scene that came late was drawn by now
+    // A clock of the test in place of the real one: a frame takes 16 ms of game time, however long the draw takes.
+    await page.clock.install();
+    await page.clock.runFor(12000); // the vehicles came down and rest
+    await countDraws(page);
+    await page.evaluate(() => {
+      window.frames = 0;
+      const tick = () => (window.frames++, requestAnimationFrame(tick));
+      requestAnimationFrame(tick);
+    });
+    await page.clock.runFor(2000);
+    const [draws, frames] = await page.evaluate(() => [window.draws, window.frames]);
+    check(frames >= 100, 'the clock of the test gave ' + frames + ' frames in 2 seconds');
+    check(draws >= 50 && draws <= 70, draws + ' draws in 2 seconds and ' + frames + ' frames');
+    await page.context().close();
+  },
 };
 
 const only = process.argv[2],

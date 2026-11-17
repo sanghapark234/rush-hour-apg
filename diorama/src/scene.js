@@ -92,9 +92,10 @@ export function createStage(canvas) {
 
   // The scene is drawn only when something changed: a draw costs the GPU about as much when
   // nothing moves. touch() asks for the next two frames; the second one shows the state at rest.
+  // touch(1) asks for one frame: for a motion that the caller draws at its own rate.
   let pending = 2;
-  const touch = () => {
-    pending = 2;
+  const touch = (draws = 2) => {
+    pending = Math.max(pending, draws);
   };
   function render(dt) {
     if (!pending) return;

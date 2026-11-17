@@ -238,7 +238,8 @@ function flyTo(name, dur, done) {
 }
 const mix = (x, y, k) => x + (y - x) * k;
 const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2);
-// Each step function returns true while it changes the picture.
+// Each step function returns true while it changes the picture. The camera gives 'sway' while
+// only its slow sway does.
 let inset = 0; // px that the scoreboard takes from the view, eased towards its size
 function stepCamera(dt, time) {
   let moving = true;
@@ -266,7 +267,7 @@ function stepCamera(dt, time) {
     moving = controls.update(); // true while a drag, a zoom or their damping moves the camera
     focus.copy(controls.target);
   } else {
-    moving = !calm;
+    moving = calm ? false : 'sway';
     // Slow handheld sway while the room is on show.
     const q = pose(phase === 'won' ? 'won' : 'welcome'),
       s = calm ? 0 : 1;
@@ -872,7 +873,7 @@ $('stage').addEventListener('webglcontextrestored', () => {
   stage.touch();
   sys('The 3D view is back.');
 });
-document.addEventListener('visibilitychange', stage.touch); // a browser can drop the picture of a hidden page
+document.addEventListener('visibilitychange', () => stage.touch()); // a browser can drop the picture of a hidden page
 
 function resize() {
   stage.resize(innerWidth, innerHeight);
@@ -883,18 +884,27 @@ applyPose(pose('welcome'));
 camera.lookAt(focus);
 
 const timer = new THREE.Timer();
-function frame() {
+let swayAt = 0; // the frame time of the last draw of the camera sway, in ms
+// `now` is the time of the frame, which the browser ties to the screen: it has no jitter.
+function frame(now) {
   requestAnimationFrame(frame);
   timer.update();
   const dt = Math.min(timer.getDelta(), 0.05),
     time = timer.getElapsed();
   const rolling = puzzle ? stepCars(dt, time) : false,
     falling = stepConfetti(dt);
-  if (stepCamera(dt, time) || rolling || falling) stage.touch();
+  const moving = stepCamera(dt, time);
+  if (moving === true || rolling || falling) stage.touch();
+  // The sway is slow: 30 draws in a second show it, at half the GPU time of a draw in each frame.
+  // The limit is 29 ms, not 33: two frames of a 60 Hz screen and four of a 120 Hz screen pass it with room.
+  else if (moving === 'sway' && now - swayAt >= 29) {
+    swayAt = now;
+    stage.touch(1);
+  }
   camera.updateProjectionMatrix();
   stage.render(dt); // nothing is drawn when nothing changed
 }
-frame();
+frame(performance.now());
 
 let loaded = 0,
   failed = false,
