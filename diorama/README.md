@@ -56,6 +56,24 @@ so the whole run takes some minutes.
 The flow tests need the Chromium of Playwright. Install it once with
 `bunx playwright install chromium`.
 
+### Publish with Docker and a tunnel
+
+The repository root has a `docker-compose.yml` that builds the game and serves it, plus a
+`cloudflared` tunnel that gives the game a public `https` address — the address OBS opens, and
+the address Twitch sends its login back to:
+
+```sh
+docker compose up --build -d   # build and start web + tunnel
+docker compose logs tunnel     # the https://<name>.trycloudflare.com address
+```
+
+Open the game at the printed tunnel address. A quick tunnel needs no Cloudflare account, but it
+picks a new address every time it restarts: put the new address in the Twitch app's OAuth
+Redirect URLs when it changes (the game's **Twitch Setup** page copies the full text to paste).
+Anyone who knows the address can open the tunnel, so keep the URL private until you mean to
+share the stream. For a permanent address, the compose file carries the commented recipe for a
+named Cloudflare tunnel, which keeps one address forever.
+
 ## Play
 
 - `blue right`, `red left`, `green up`, `yellow down`: slide a vehicle one cell.
@@ -244,17 +262,19 @@ seconds. The game sends at most 15 replies in 30 seconds, because Twitch allows 
 20 messages in 30 seconds
 ([Twitch developer documentation](https://dev.twitch.tv/docs/chat/), read 15 November 2026).
 
-The steps for the presenter, once for each laptop:
+The steps for the presenter, once for each laptop — or open the **Twitch Setup** page
+(`twitch.html`, the button beside **Start** and in the tool row), which walks through the same
+steps and builds the address of the game:
 
 1. Log in to Twitch in the browser with the account that sends the replies.
 2. In the [Twitch developer console](https://dev.twitch.tv/console/apps), register an
-   application. Set the OAuth redirect URL to the address of the game without options, for
-   example `http://localhost:4680/`. Open the game at that same address: the examples of Twitch use
-   `http` with `localhost`, and this project did not test another host.
+   application. Register every address the login can return to: the setup page, and the game
+   at the host root and at `index.html`. The setup page copies that list ready to paste, and it
+   names a tunnel address when the game runs behind one (see Publish with Docker).
 3. Copy the client ID of the application. It is not a secret.
-4. Open `http://localhost:4680/?channel=name&client=<client ID>` and select **Log in to
-   Twitch** in the panel. Twitch asks for permission to read and write chat, then returns to the
-   game.
+4. Open the game at `?channel=name&client=<client ID>` — the setup page builds the address — and
+   select **Log in to Twitch** in the panel. Twitch asks for permission to read and write chat,
+   then returns to the game.
 
 The login token stays in the storage of that browser. It is never in the repository, and the
 game never sends it to the game server. To log out, clear the site data of the game in the

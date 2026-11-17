@@ -827,6 +827,11 @@ window.apg = {
   scoreboard: () => structuredClone({ players: [...players.values()], visible: !$('scoreboard').hidden }),
 };
 
+$('source').title = 'Click to open Twitch setup';
+$('source').addEventListener('click', () => {
+  location.href = 'twitch.html' + (params.has('channel') ? '?channel=' + encodeURIComponent(params.get('channel')) : '');
+});
+
 // Twitch chat (twitch.js) joins the channel that the address names: ?channel=name. The module
 // loads only then, or when the browser comes back from the Twitch login. The chat starts after
 // the first puzzle, which clears the chat panel.

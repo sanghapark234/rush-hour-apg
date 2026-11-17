@@ -209,6 +209,35 @@
         font-size: 13px;
         text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
       }
+      .twitch-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #9146ff;
+        color: #fff;
+        font: 800 18px/1 var(--display);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-radius: 12px;
+        padding: 15px 24px 13px;
+        box-shadow:
+          0 10px 30px rgba(0, 0, 0, 0.4),
+          inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+        transition:
+          transform 0.12s ease,
+          background 0.12s ease;
+      }
+      .twitch-btn:hover {
+        background: #7c2ff0;
+        transform: translateY(-1px);
+      }
+      .twitch-btn:active {
+        transform: translateY(2px) scale(0.98);
+      }
+      .twitch-btn svg {
+        flex-shrink: 0;
+      }
 
       /* ---- side panel: a model-kit instruction card ---- */
       #panel {
@@ -253,6 +282,11 @@
         letter-spacing: 0.16em;
         text-transform: uppercase;
         color: var(--ink-2);
+        cursor: pointer;
+      }
+      .head span:hover {
+        color: #5a3fa0;
+        text-decoration: underline;
       }
       .stats {
         display: grid;
@@ -425,7 +459,8 @@
         align-items: center;
       }
       .tools button,
-      .tools select {
+      .tools select,
+      .tools a.tool-btn {
         background: transparent;
         color: var(--ink);
         border: 1.5px solid var(--rule);
@@ -433,9 +468,13 @@
         font-weight: 600;
         font-size: 13px;
         padding: 6px 10px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
       }
       .tools button:hover,
-      .tools select:hover {
+      .tools select:hover,
+      .tools a.tool-btn:hover {
         border-color: var(--ink);
       }
       .tools button:disabled {
@@ -818,6 +857,14 @@
       </fieldset>
       <div class="go">
         <button id="start" type="button" disabled>Setting up…</button>
+        <a href="twitch.html" class="twitch-btn" title="Set up Twitch channel integration">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"
+            />
+          </svg>
+          Twitch Setup
+        </a>
         <small>Sound on. Drag to look around once the game starts.</small>
       </div>
     </main>
@@ -866,6 +913,7 @@
         <button id="solve" type="button" title="Give up: the game plays the shortest solution from here">Show solution</button>
         <button id="reset" type="button">Reset</button>
         <button id="new" type="button">New puzzle</button>
+        <a href="twitch.html" class="tool-btn" title="Open Twitch setup and channel configuration">Twitch Setup</a>
         <button id="login" type="button" hidden title="Lets the game reply in Twitch chat">Log in to Twitch</button>
         <select id="level" aria-label="Difficulty">
           <option value="easy">Easy</option>

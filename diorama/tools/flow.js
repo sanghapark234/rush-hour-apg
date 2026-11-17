@@ -668,6 +668,7 @@ const tests = {
     await page.waitForFunction(() => window.apg.state().moves === 1);
     const after = await state(page);
     check(after.demo === null, 'a viewer started the solution');
+    // The scoreboard joins a score to the viewer's line: "Bob red left +1 · opt 19 → 18".
     // The line of a move ends with its score badge, which comes a moment later.
     check(
       (await lines(page)).some((l) => l.startsWith('Bob ' + move)),

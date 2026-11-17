@@ -8,3 +8,31 @@ services:
       - "3000:3000"
     restart: unless-stopped
 
+  # A public https address for the game, so OBS can open it and Twitch can send its login back.
+  # A quick tunnel needs no Cloudflare account. `docker compose logs tunnel` prints the address,
+  # https://<name>.trycloudflare.com; the game's Twitch Setup page copies it into the OAuth
+  # Redirect URL text. The address changes every time the tunnel restarts, so put the new one in
+  # the Twitch app when it does. Anyone who knows the address can open the game, so do not share
+  # the URL before you mean to.
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://web:3000
+    depends_on:
+      - web
+    restart: unless-stopped
+
+  # A permanent address instead: create a tunnel in the Cloudflare dashboard
+  # (Zero Trust → Networks → Tunnels → Create a tunnel → Cloudflare connector), point its public
+  # hostname at http://web:3000:3000, put the token in .env as CLOUDFLARE_TUNNEL_TOKEN=…,
+  # and replace the tunnel service above with this one. The address never changes, so the Twitch
+  # app's OAuth Redirect URL never has to change either.
+  #
+  # tunnel-named:
+  #   image: cloudflare/cloudflared:latest
+  #   command: tunnel run
+  #   environment:
+  #     TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+  #   depends_on:
+  #     - web
+  #   restart: unless-stopped
+

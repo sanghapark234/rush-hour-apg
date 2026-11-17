@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tiny Gridlock — Twitch TV Streamer Setup</title>
+    <style>
+      :root {
+        --paper: #f4eddc;
+        --paper-2: #e9dfc8;
+        --ink: #26221d;
+        --ink-2: #6a6257;
+        --rule: #cfc3a8;
+        --red: #c8202b;
+        --ok: #1f7a43;
+        --bad: #b3261e;
+        --purple: #9146ff;
+        --purple-hover: #772ce8;
+        --purple-bg: #f3ecff;
+        --display: 'Avenir Next Condensed', 'DIN Condensed', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+        --text: 'Avenir Next', 'Helvetica Neue', system-ui, sans-serif;
+        --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 24px 16px 48px;
+        background: #14110e;
+        color: var(--ink);
+        font: 15px/1.5 var(--text);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        width: 100%;
+        max-width: 760px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 4px 0 12px;
+        border-bottom: 2px solid rgba(244, 237, 220, 0.2);
+      }
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .kicker {
+        font: 600 12px/1 var(--text);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #fbf6ea;
+        opacity: 0.75;
+      }
+      h1 {
+        font: 800 clamp(32px, 5vw, 44px)/0.9 var(--display);
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: #fbf6ea;
+        margin: 4px 0 0;
+      }
+      .back-link {
+        font: 600 13px/1 var(--text);
+        color: #fbf6ea;
+        text-decoration: none;
+        background: rgba(244, 237, 220, 0.12);
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: background 0.15s;
+      }
+      .back-link:hover {
+        background: rgba(244, 237, 220, 0.22);
+      }
+      .card {
+        background: var(--paper);
+        border-radius: 14px;
+        box-shadow:
+          0 24px 60px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+      .card-head {
+        padding: 16px 20px 12px;
+        border-bottom: 2px solid var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .card-title {
+        font: 800 22px/1 var(--display);
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-badge {
+        font: 700 10px/1 var(--text);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: var(--paper-2);
+        border: 1px solid var(--rule);
+        color: var(--ink-2);
+      }
+      .card-badge.twitch {
+        background: var(--purple-bg);
+        border-color: rgba(145, 70, 255, 0.4);
+        color: var(--purple);
+      }
+      .card-body {
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .desc {
+        margin: 0;
+        font-size: 13.5px;
+        color: var(--ink-2);
+        line-height: 1.5;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 600px) {
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+      }
+      label {
+        font: 700 12px/1 var(--text);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .input-wrap {
+        display: flex;
+        align-items: center;
+        background: #fffaf0;
+        border: 1.5px solid var(--ink);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .input-prefix {
+        font: 700 15px var(--mono);
+        color: var(--ink-2);
+        padding: 0 10px 0 12px;
+        user-select: none;
+      }
+      input,
+      select {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        padding: 10px 12px;
+        font: 500 14.5px var(--mono);
+        color: var(--ink);
+        outline: none;
+      }
+      .input-wrap input {
+        padding-left: 2px;
+      }
+      select {
+        border: 1.5px solid var(--ink);
+        border-radius: 8px;
+        background: #fffaf0;
+        cursor: pointer;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+      }
+      .input-wrap:focus-within {
+        outline: 2px solid var(--purple);
+        border-color: var(--purple);
+      }
+      select:focus {
+        outline: 2px solid var(--purple);
+      }
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      button {
+        font: 700 13px/1 var(--text);
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1.5px solid var(--ink);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition:
+          transform 0.1s,
+          background 0.15s,
+          border-color 0.15s;
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      .btn-primary {
+        background: var(--purple);
+        border-color: var(--purple);
+        color: #fff;
+        font-size: 15px;
+        padding: 13px 22px;
+        letter-spacing: 0.03em;
+      }
+      .btn-primary:hover {
+        background: var(--purple-hover);
+        border-color: var(--purple-hover);
+      }
+      .btn-secondary {
+        background: #fffaf0;
+        color: var(--ink);
+      }
+      .btn-secondary:hover {
+        background: #fff;
+      }
+      .btn-danger {
+        background: transparent;
+        border-color: var(--bad);
+        color: var(--bad);
+      }
+      .btn-danger:hover {
+        background: #fdf2f2;
+      }
+      .check-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font: 600 13px/1.3 var(--text);
+        text-transform: none;
+      }
+      .check-label input[type='checkbox'] {
+        width: 17px;
+        height: 17px;
+        margin: 0;
+        cursor: pointer;
+      }
+      .status-box {
+        background: var(--paper-2);
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 13px;
+      }
+      .status-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+      }
+      .status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--ink-2);
+      }
+      .status-dot.online {
+        background: var(--ok);
+        box-shadow: 0 0 8px var(--ok);
+      }
+      .status-dot.error {
+        background: var(--bad);
+        box-shadow: 0 0 8px var(--bad);
+      }
+      .terminal {
+        background: #14110e;
+        color: #adffd5;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font: 12.5px/1.4 var(--mono);
+        max-height: 140px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .terminal-line {
+        word-break: break-all;
+      }
+      .terminal-line.dim {
+        color: #7a756c;
+      }
+      .terminal-line.cmd {
+        color: #ffd866;
+        font-weight: 700;
+      }
+      .terminal-line.err {
+        color: #ff8c8c;
+      }
+      .obs-box {
+        background: #14110e;
+        color: #fbf6ea;
+        padding: 14px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .obs-title {
+        font: 700 11px/1 var(--text);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #aaa59a;
+      }
+      .obs-url {
+        font: 13px var(--mono);
+        color: #ffd866;
+        word-break: break-all;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 8px 10px;
+        border-radius: 6px;
+      }
+      .cheatsheet {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 8px;
+      }
+      .cheat-pill {
+        background: #fffaf0;
+        border: 1px solid var(--rule);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font: 12px var(--mono);
+        display: flex;
+        justify-content: space-between;
+      }
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--ink);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font: 600 13px var(--text);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          opacity 0.25s,
+          transform 0.25s;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <span class="kicker">Audience Participation Game · 1:43 Scale</span>
+          <h1>Twitch TV Setup</h1>
+        </div>
+        <a href="index.html" class="back-link">← Back to Game</a>
+      </header>
+
+      <!-- Step 1: Channel Connection -->
+      <section class="card">
+        <div class="card-head">
+          <h2 class="card-title">1. Your Twitch Channel</h2>
+          <span class="card-badge twitch">Free & Instant</span>
+        </div>
+        <div class="card-body">
+          <p class="desc">
+            To let viewers play directly in chat, just enter your Twitch channel name. Reading chat connects to Twitch IRC anonymously without needing any
+            password!
+          </p>
+          <div class="field">
+            <label for="channel">Channel Name</label>
+            <div class="input-wrap">
+              <span class="input-prefix">#</span>
+              <input id="channel" placeholder="e.g. your_channel_name" spellcheck="false" autocomplete="off" autocapitalize="off" />
+            </div>
+          </div>
+          <div class="btn-row">
+            <button id="btn-test" type="button" class="btn-secondary">⚡ Test Live Chat Connection</button>
+            <button id="btn-disconnect" type="button" class="btn-danger" hidden>Disconnect Test</button>
+          </div>
+          <div id="test-console" class="status-box" hidden>
+            <div class="status-header">
+              <span id="test-dot" class="status-dot"></span>
+              <span id="test-status">Testing connection…</span>
+            </div>
+            <div id="test-log" class="terminal">
+              <span class="terminal-line dim">Waiting for connection…</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: Authorize -->
+      <section class="card">
+        <div class="card-head">
+          <h2 class="card-title">2. Authorize with Twitch</h2>
+          <span class="card-badge">One-time setup</span>
+        </div>
+        <div class="card-body">
+          <!-- shown after OAuth callback -->
+          <div id="oauth-success-box" class="status-box" hidden style="border-color: var(--ok); background: #eafaf1">
+            <div class="status-header">
+              <span class="status-dot online"></span>
+              <span id="oauth-success-msg" style="color: var(--ok)">Token received and saved!</span>
+            </div>
+            <p class="desc" style="margin: 0">Your Twitch token is stored in this browser. The game can now reply in chat as you.</p>
+          </div>
+
+          <p class="desc" style="margin: 0">
+            To let the game <strong>reply in your chat</strong> (e.g. <em>&ldquo;@viewer drove RED out in 12 moves&rdquo;</em>), you need to authorize it with
+            your Twitch account. It&rsquo;s a one-time 4-step process &mdash; no server or coding needed.
+          </p>
+
+          <ol class="desc" style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; line-height: 1.6">
+            <li>
+              Open
+              <a href="https://dev.twitch.tv/console/apps/create" target="_blank" rel="noopener" style="color: var(--purple); font-weight: 700"
+                >dev.twitch.tv/console/apps/create</a
+              >
+              and log in as <strong>@1hasank1</strong>.
+            </li>
+            <li>
+              Fill in the registration form:
+              <ul style="margin: 6px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px">
+                <li><strong>Name:</strong> anything (e.g. <em>Tiny Gridlock</em>)</li>
+                <li>
+                  <strong>OAuth Redirect URL:</strong> copy-paste this exactly (all three lines — this page, and the game under both of its addresses). Twitch
+                  checks the address it returns to word for word, and the game opens as <code>…/</code>, <code>…/index.html</code> or
+                  <code>…/twitch.html</code> depending on where you start.
+                  <div style="margin-top: 5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+                    <code
+                      id="redirect-hint"
+                      style="
+                        background: var(--paper-2);
+                        border: 1px solid var(--rule);
+                        padding: 5px 10px;
+                        border-radius: 6px;
+                        font-size: 12.5px;
+                        word-break: break-all;
+                        flex: 1;
+                        min-width: 0;
+                        white-space: pre-wrap;
+                      "
+                    ></code>
+                    <button
+                      id="btn-copy-redirect"
+                      type="button"
+                      class="btn-secondary"
+                      style="font-size: 12px; padding: 6px 10px; white-space: nowrap; flex-shrink: 0"
+                    >
+                      &#128203; Copy
+                    </button>
+                  </div>
+                </li>
+                <li><strong>Category:</strong> Game Integration</li>
+              </ul>
+            </li>
+            <li>Click <strong>Create</strong>, then copy the <strong>Client ID</strong> that appears and paste it in the field below.</li>
+            <li>
+              Click <strong>Authorize with Twitch</strong> below &mdash; log in and approve &mdash; you&rsquo;ll be sent back here with your token saved
+              automatically!
+            </li>
+          </ol>
+
+          <div class="field">
+            <label for="client"
+              >Twitch App Client ID
+              <span style="font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-2)">(from step 3 above)</span></label
+            >
+            <div class="input-wrap">
+              <input id="client" placeholder="Paste Client ID here (e.g. hof5gwx0su6owfnys0…)" spellcheck="false" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button id="btn-oauth-login" type="button" class="btn-primary" style="font-size: 14px; padding: 12px 22px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="flex-shrink: 0">
+                <path
+                  d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"
+                />
+              </svg>
+              Authorize with Twitch
+            </button>
+            <span class="desc" style="font-size: 12px">Opens Twitch login &#8594; approve &#8594; token saved here automatically.</span>
+          </div>
+
+          <details>
+            <summary
+              style="
+                cursor: pointer;
+                font: 700 11.5px/1.4 var(--text);
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                color: var(--ink-2);
+                list-style: none;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                user-select: none;
+                padding: 4px 0;
+              "
+            >
+              <span>&#9658;</span> Already have a token? Paste it manually
+            </summary>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px">
+              <div class="field">
+                <label for="token">Raw OAuth Token</label>
+                <input
+                  id="token"
+                  type="password"
+                  placeholder="Paste token here (without the oauth: prefix)"
+                  spellcheck="false"
+                  autocomplete="off"
+                  style="border: 1.5px solid var(--ink); border-radius: 8px; background: #fffaf0; padding: 10px 12px"
+                />
+              </div>
+              <div class="btn-row">
+                <button id="btn-validate-token" type="button" class="btn-secondary">&#10004; Check &amp; Save Token</button>
+                <button id="btn-clear-token" type="button" class="btn-danger">Clear Stored Token</button>
+                <span id="token-status" class="desc" style="font-weight: 600"></span>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Step 3: Stream Settings -->
+      <section class="card">
+        <div class="card-head">
+          <h2 class="card-title">3. Stream & Game Settings</h2>
+          <span class="card-badge">Customise</span>
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="level">Starting Difficulty</label>
+              <select id="level">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+                <option value="expert">Expert</option>
+                <option value="master">Master</option>
+                <option value="auto">Auto (Adapts to chat skill)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cam">Camera View</label>
+              <select id="cam">
+                <option value="angle" selected>Angle (Default 3D)</option>
+                <option value="top">Top-Down (Grid view)</option>
+                <option value="low">Low (Cinematic horizon)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="cooldown">Player Command Cooldown (seconds)</label>
+              <input
+                id="cooldown"
+                type="number"
+                min="0"
+                max="60"
+                value="3"
+                style="border: 1.5px solid var(--ink); border-radius: 8px; background: #fffaf0; padding: 10px 12px"
+              />
+            </div>
+            <div class="field" style="justify-content: flex-end; padding-bottom: 8px">
+              <label class="check-label">
+                <input id="skip" type="checkbox" checked />
+                <span>Skip Welcome Screen (Jump straight into play)</span>
+              </label>
+              <label class="check-label" style="margin-top: 6px">
+                <input id="scoreboard" type="checkbox" checked />
+                <span>Show Live Co-op Scoreboard & Troll Detection</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4: Launch & OBS -->
+      <section class="card">
+        <div class="card-head">
+          <h2 class="card-title">4. Launch & Test</h2>
+          <span class="card-badge">Ready</span>
+        </div>
+        <div class="card-body">
+          <div class="btn-row">
+            <button id="btn-launch" type="button" class="btn-primary">🚀 Launch Game on Twitch</button>
+            <button id="btn-copy-url" type="button" class="btn-secondary">📋 Copy OBS Browser Source URL</button>
+          </div>
+
+          <div class="obs-box">
+            <span class="obs-title">Generated Game URL</span>
+            <div id="generated-url" class="obs-url"></div>
+          </div>
+
+          <p id="host-note" class="desc" hidden style="border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; background: var(--paper-2)">
+            🌐 You are opening this page from <strong>localhost</strong>, so the URL above only works on this computer — OBS and Twitch cannot open it. Run the
+            game with <code>docker compose up</code>: its <em>tunnel</em> service prints a public <code>https://…trycloudflare.com</code> address (<code
+              >docker compose logs tunnel</code
+            >). Open the game at that address instead — this page and the OAuth Redirect URL above then name it automatically. The tunnel gets a new address
+            each time it restarts, so add the new one to your Twitch app when it changes.
+          </p>
+
+          <div class="field">
+            <label>Common Chat Commands For Your Viewers</label>
+            <div class="cheatsheet">
+              <div class="cheat-pill"><span>!blue right</span><span>Slide 1 cell</span></div>
+              <div class="cheat-pill"><span>!blue right 3</span><span>Slide 3 cells</span></div>
+              <div class="cheat-pill"><span>!red right</span><span>Move red car</span></div>
+              <div class="cheat-pill"><span>!green down</span><span>Vertical car</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="toast" class="toast">URL copied to clipboard!</div>
+
+    <script type="module">
+      const $ = (id) => document.getElementById(id);
+      const TOKEN_KEY = 'tg-twitch-token';
+      const CHANNEL_KEY = 'tg-twitch-channel';
+      const CLIENT_KEY = 'tg-twitch-client';
+      const STATE_KEY = 'tg-twitch-state';
+
+      // ---- OAuth callback: check for access_token in hash ----
+      (function handleOAuthCallback() {
+        const hash = new URLSearchParams(location.hash.slice(1));
+        const token = hash.get('access_token');
+        if (!token) return;
+
+        // Clean the hash from the URL immediately (don't expose token in history)
+        history.replaceState(null, '', location.pathname + location.search);
+
+        // Only a reply to the login this page started counts: Twitch sends back the `state` we sent.
+        const state = sessionStorage.getItem(STATE_KEY);
+        sessionStorage.removeItem(STATE_KEY);
+        if (!state || hash.get('state') !== state) {
+          showToast('This Twitch login answer is not from a login this page started — ignored.');
+          return;
+        }
+
+        localStorage.setItem(TOKEN_KEY, token);
+
+        // Validate & show success box
+        fetch('https://id.twitch.tv/oauth2/validate', {
+          headers: { Authorization: 'OAuth ' + token },
+        })
+          .then((r) => r.json())
+          .then((info) => {
+            const box = $('oauth-success-box');
+            const msg = $('oauth-success-msg');
+            if (box && msg) {
+              msg.textContent = `✅ Authorized as @${info.login || 'you'}! Token saved.`;
+              box.hidden = false;
+              box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            showToast(`Authorized as @${info.login || 'you'}!`);
+            if ($('token')) $('token').value = token;
+            if ($('token-status'))
+              $('token-status').textContent =
+                `✅ Token valid for @${info.login} (${info.scopes?.includes('chat:edit') ? 'chat:edit ready' : 'chat:read only'}).`;
+          })
+          .catch(() => {
+            const box = $('oauth-success-box');
+            if (box) box.hidden = false;
+            showToast('Token saved (could not verify — check your connection).');
+          });
+      })();
+
+      // ---- Load saved values ----
+      const savedChannel = localStorage.getItem(CHANNEL_KEY) || new URLSearchParams(location.search).get('channel') || '1hasank1';
+      const savedClient = localStorage.getItem(CLIENT_KEY) || new URLSearchParams(location.search).get('client') || '';
+      const savedToken = localStorage.getItem(TOKEN_KEY) || '';
+
+      $('channel').value = savedChannel;
+      $('client').value = savedClient;
+      if (savedToken && $('token')) {
+        $('token').value = savedToken;
+        if ($('token-status')) $('token-status').textContent = 'Stored token loaded.';
+      }
+
+      // ---- Set the redirect hint URL ----
+      // Twitch checks the returned address word for word, so every address the game can be opened
+      // under must be registered: this page, the game at the host root, and the game's index.html.
+      const root = location.pathname.replace(/[^/]*$/, ''); // folder of this page, "/" at the root
+      const redirectUri = [location.origin + location.pathname, location.origin + root, location.origin + root + 'index.html'].join(', ');
+      if ($('redirect-hint')) $('redirect-hint').textContent = redirectUri;
+
+      // ---- Copy redirect URI button ----
+      const btnCopyRedirect = $('btn-copy-redirect');
+      if (btnCopyRedirect) {
+        btnCopyRedirect.addEventListener('click', () => {
+          navigator.clipboard.writeText(redirectUri).then(
+            () => showToast('Redirect URL copied!'),
+            () => showToast('Copy failed — please select and copy manually.'),
+          );
+        });
+      }
+
+      // ---- Build game URL ----
+      function buildGameUrl() {
+        const channel = $('channel').value.trim().toLowerCase().replace(/^#/, '');
+        const client = $('client').value.trim();
+        const level = $('level').value;
+        const cam = $('cam').value;
+        const cooldown = $('cooldown').value.trim();
+        const skip = $('skip').checked;
+        const scoreboard = $('scoreboard').checked;
+
+        const p = new URLSearchParams();
+        if (channel) p.set('channel', channel);
+        if (client) p.set('client', client);
+        if (level && level !== 'easy') p.set('level', level);
+        if (cam && cam !== 'angle') p.set('cam', cam);
+        if (cooldown && cooldown !== '3') p.set('cooldown', cooldown);
+        if (skip) p.set('skip', '1');
+        if (scoreboard) p.set('scoreboard', '1');
+
+        const qs = p.toString();
+        const origin = location.origin + location.pathname.replace(/\/twitch\.html$/, '/index.html');
+        return origin + (qs ? '?' + qs : '');
+      }
+
+      function updateUrl() {
+        $('generated-url').textContent = buildGameUrl();
+      }
+
+      for (const el of [$('channel'), $('client'), $('level'), $('cam'), $('cooldown'), $('skip'), $('scoreboard')]) {
+        el.addEventListener('input', updateUrl);
+        el.addEventListener('change', updateUrl);
+      }
+      updateUrl();
+
+      // An address on localhost only opens on this computer: point to the Docker tunnel when streaming.
+      if ($('host-note')) $('host-note').hidden = !/^(localhost|127\.|\[::1\])/i.test(location.hostname);
+
+      // ---- Launch Button ----
+      $('btn-launch').addEventListener('click', () => {
+        const channel = $('channel').value.trim().toLowerCase().replace(/^#/, '');
+        if (!channel) {
+          showToast('Please enter your Twitch channel name first!');
+          $('channel').focus();
+          return;
+        }
+        localStorage.setItem(CHANNEL_KEY, channel);
+        if ($('client').value.trim()) localStorage.setItem(CLIENT_KEY, $('client').value.trim());
+        location.href = buildGameUrl();
+      });
+
+      // ---- Copy URL Button ----
+      $('btn-copy-url').addEventListener('click', () => {
+        const url = buildGameUrl();
+        navigator.clipboard.writeText(url).then(
+          () => showToast('Copied OBS URL to clipboard!'),
+          () => showToast('Failed to copy. Please select and copy manually.'),
+        );
+      });
+
+      // ---- Token Validation & Storage ----
+      if ($('btn-validate-token')) {
+        $('btn-validate-token').addEventListener('click', async () => {
+          let raw = $('token').value.trim();
+          if (!raw) return showToast('Please enter a token.');
+          const clean = raw.replace(/^oauth:/i, '');
+          $('token-status').textContent = 'Validating token with Twitch API…';
+
+          try {
+            const res = await fetch('https://id.twitch.tv/oauth2/validate', {
+              headers: { Authorization: 'OAuth ' + clean },
+            });
+            if (res.status === 401) {
+              $('token-status').textContent = '❌ Invalid or expired token (401).';
+              return;
+            }
+            if (!res.ok) {
+              $('token-status').textContent = `❌ Twitch API returned HTTP ${res.status}.`;
+              return;
+            }
+            const info = await res.json();
+            localStorage.setItem(TOKEN_KEY, clean);
+            const hasChatEdit = info.scopes?.includes('chat:edit');
+            $('token-status').textContent = `✅ Token valid for @${info.login} (${hasChatEdit ? 'chat:edit ready' : 'chat:read only'})! Saved.`;
+            showToast(`Verified as @${info.login}!`);
+          } catch (err) {
+            localStorage.setItem(TOKEN_KEY, clean);
+            $('token-status').textContent = `Saved token to browser storage (API check had error: ${err.message}).`;
+            showToast('Saved token to browser.');
+          }
+        });
+      }
+
+      if ($('btn-clear-token')) {
+        $('btn-clear-token').addEventListener('click', () => {
+          localStorage.removeItem(TOKEN_KEY);
+          if ($('token')) $('token').value = '';
+          if ($('token-status')) $('token-status').textContent = 'Token cleared from browser.';
+          showToast('Cleared token.');
+        });
+      }
+
+      // ---- OAuth Login Button — Implicit Grant Flow ----
+      // Redirect URI MUST be registered in Twitch console as exactly this page's URL
+      $('btn-oauth-login').addEventListener('click', () => {
+        const client = $('client').value.trim();
+        if (!client || !/^[a-z0-9]{10,50}$/i.test(client)) {
+          showToast('Please enter a valid Twitch Client ID first (step 3 above).');
+          $('client').focus();
+          return;
+        }
+        localStorage.setItem(CLIENT_KEY, client);
+        const channel = $('channel').value.trim().toLowerCase().replace(/^#/, '');
+        if (channel) localStorage.setItem(CHANNEL_KEY, channel);
+
+        const state = crypto.randomUUID();
+        sessionStorage.setItem(STATE_KEY, state);
+
+        // Redirect URI = this same page (twitch.html), so the hash token lands back here
+        const redirect = location.origin + location.pathname; // e.g. http://localhost:3000/twitch.html
+        location.assign(
+          'https://id.twitch.tv/oauth2/authorize?' +
+            new URLSearchParams({
+              response_type: 'token',
+              client_id: client,
+              redirect_uri: redirect,
+              scope: 'chat:read chat:edit',
+              state,
+            }),
+        );
+      });
+
+      // ---- Live IRC Connection Tester ----
+      let ws = null;
+      const logContainer = $('test-log');
+
+      function addLog(text, cls = '') {
+        const line = document.createElement('span');
+        line.className = 'terminal-line ' + cls;
+        line.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+        logContainer.append(line);
+        logContainer.scrollTop = logContainer.scrollHeight;
+      }
+
+      $('btn-test').addEventListener('click', () => {
+        const channel = $('channel').value.trim().toLowerCase().replace(/^#/, '');
+        if (!channel) {
+          showToast('Please enter your channel name first!');
+          $('channel').focus();
+          return;
+        }
+        $('test-console').hidden = false;
+        $('btn-test').hidden = true;
+        $('btn-disconnect').hidden = false;
+        logContainer.replaceChildren();
+
+        $('test-dot').className = 'status-dot';
+        $('test-status').textContent = `Connecting to Twitch IRC for #${channel}…`;
+        addLog(`Opening WebSocket to wss://irc-ws.chat.twitch.tv:443`, 'dim');
+
+        try {
+          ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+        } catch (e) {
+          $('test-dot').className = 'status-dot error';
+          $('test-status').textContent = 'WebSocket creation failed.';
+          addLog(e.message, 'err');
+          return;
+        }
+
+        ws.onopen = () => {
+          addLog('Connected to Twitch WebSocket. Requesting capabilities…', 'dim');
+          ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+          const nick = 'justinfan' + Math.floor(10000 + Math.random() * 80000);
+          ws.send(`NICK ${nick}`);
+          ws.send(`JOIN #${channel}`);
+          addLog(`Joined #${channel} as anonymous reader (${nick})`, 'dim');
+        };
+
+        ws.onmessage = (event) => {
+          for (const line of event.data.split('\r\n')) {
+            if (!line) continue;
+            if (line.startsWith('PING')) {
+              ws.send('PONG :tmi.twitch.tv');
+              addLog('PING received -> PONG sent (heartbeat OK)', 'dim');
+              continue;
+            }
+            if (line.includes('JOIN') || line.includes('ROOMSTATE')) {
+              $('test-dot').className = 'status-dot online';
+              $('test-status').textContent = `🟢 Connected to #${channel}! Send messages in chat to test.`;
+              addLog(`Successfully joined room #${channel}!`, 'dim');
+              continue;
+            }
+            if (line.includes('NOTICE')) {
+              addLog(`Notice: ${line}`, 'dim');
+              continue;
+            }
+            if (line.includes('PRIVMSG')) {
+              const match = line.match(/:([^!]+)!.*PRIVMSG\s+#[^\s]+\s+:(.*)$/);
+              if (match) {
+                const user = match[1];
+                const msg = match[2];
+                const isCmd = msg.startsWith('!');
+                addLog(`${user}: ${msg}`, isCmd ? 'cmd' : '');
+              } else {
+                addLog(line);
+              }
+            }
+          }
+        };
+
+        ws.onerror = () => {
+          $('test-dot').className = 'status-dot error';
+          $('test-status').textContent = 'Connection error.';
+          addLog('WebSocket error encountered.', 'err');
+        };
+
+        ws.onclose = () => {
+          $('test-dot').className = 'status-dot';
+          $('test-status').textContent = 'Disconnected from Twitch IRC.';
+          addLog('Connection closed.', 'dim');
+          $('btn-test').hidden = false;
+          $('btn-disconnect').hidden = true;
+        };
+      });
+
+      $('btn-disconnect').addEventListener('click', () => {
+        if (ws) {
+          ws.close();
+          ws = null;
+        }
+      });
+
+      function showToast(msg) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2600);
+      }
+    </script>
+  </body>
+</html>

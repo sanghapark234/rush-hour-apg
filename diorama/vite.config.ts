@@ -6,7 +6,7 @@ export default defineConfig({
     target: 'esnext',
     chunkSizeWarningLimit: 1200, // three.js is one 1 MB file (344 kB compressed)
     rolldownOptions: {
-      input: ['index.html', 'garage.html'],
+      input: ['index.html', 'garage.html', 'twitch.html'],
       output: { comments: { legal: true } }, // keep the licence notices of the libraries
     },
   },
