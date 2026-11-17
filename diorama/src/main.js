@@ -122,10 +122,11 @@ function annotate(line, { before, after, score }, troll) {
 // The scores are the only state here: the scoreboard, its visibility and the troll tag follow from
 // them each time. A player is a name that a chat source gave. A command typed on this page has no
 // name (each one is a new "viewer"), so it gets a badge and no row. A player has two scores: `score` lasts until the page reloads (the
-// order and the troll tag follow it), and `now` is the score in the puzzle on the lot.
+// order and the troll tag follow it), and `now` is the score in this attempt at the puzzle on the lot (Reset and a new puzzle start it at 0).
 const players = new Map(); // name -> { name, score, now, moves, good, bad }
 const sum = (a, b) => Math.round((a + b) * 100) / 100;
-const signed = (v) => (v > 0 ? '+' : '') + v.toFixed(v % 1 === 0 ? 0 : 1);
+// One decimal on the page. Math.round gives -0 for a small negative value, and String(-0) is '0'.
+const signed = (v, r = Math.round(v * 10) / 10) => (r > 0 ? '+' : '') + String(r);
 const TROLL_AT = -15;
 const isTroll = (p) => p.score <= TROLL_AT;
 function addScore(name, value) {
@@ -687,6 +688,11 @@ function reset(dropIn = false) {
   lastMove = null;
   demo = null;
   shown = 0;
+  if (dropIn) {
+    // A new attempt, not the replay of the solution: the score of the attempt starts again; the total stays.
+    for (const p of players.values()) p.now = 0;
+    renderScoreboard();
+  }
   backToPlay();
   buildCars(dropIn);
   render();
@@ -721,8 +727,6 @@ async function newPuzzle() {
     const made = { ...expand(entry, { flip: Math.random() < 0.5 }), auto: want === 'auto' };
     if (!(await ask({ type: 'load', puzzle: made }))) throw new Error('the puzzle has no solution');
     puzzle = made;
-    for (const p of players.values()) p.now = 0; // the score in the puzzle starts again; the total stays
-    renderScoreboard();
   } finally {
     busy = false;
   }
@@ -930,7 +934,6 @@ function begin() {
   failed = false;
   document.body.classList.add('ready');
   twitch();
-  renderScoreboard();
   $('start').disabled = false;
   label('Start');
   if (params.has('skip')) {

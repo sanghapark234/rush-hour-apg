@@ -746,7 +746,16 @@ const tests = {
         rows: (await page.locator('#scoreboard-list .sb-now').allTextContents()).join(),
       });
       let s = await both();
-      check(s.data === 'Bob 1 1,Carol -1 -1' && s.rows === '+1 now,-1 now', 'the two scores before a new puzzle: ' + JSON.stringify(s));
+      check(s.data === 'Bob 1 1,Carol -1 -1' && s.rows === '+1 now,-1 now', 'the two scores before Reset: ' + JSON.stringify(s));
+      // Reset starts the score of the attempt again, and the next move counts in both.
+      await page.locator('#reset').click();
+      await page.waitForFunction(() => window.apg.state().moves === 0);
+      s = await both();
+      check(s.data === 'Bob 1 0,Carol -1 0' && s.rows === '0 now,0 now', 'the two scores after Reset: ' + JSON.stringify(s));
+      await play((move) => twitch.irc.say('Bob', '!' + move));
+      await page.waitForFunction(() => window.apg.scoreboard().players[0].score === 2);
+      s = await both();
+      check(s.data === 'Bob 2 1,Carol -1 0' && s.rows === '+1 now,0 now', 'the two scores after a move: ' + JSON.stringify(s));
       const old = (await state(page)).puzzle;
       await page.locator('#new').click();
       await page.waitForFunction(
@@ -754,7 +763,7 @@ const tests = {
         JSON.stringify(old.meta) + old.start,
       );
       s = await both();
-      check(s.data === 'Bob 1 0,Carol -1 0' && s.rows === '0 now,0 now', 'the two scores after a new puzzle: ' + JSON.stringify(s));
+      check(s.data === 'Bob 2 0,Carol -1 0' && s.rows === '0 now,0 now', 'the two scores after a new puzzle: ' + JSON.stringify(s));
       await page.context().close();
     },
   'scores: ?scoreboard shows the scoreboard at once, and the troll tag is there at -15 and goes when the score rises': async () => {
