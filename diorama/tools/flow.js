@@ -123,6 +123,34 @@ function check(ok, what) {
 const state = (page) => page.evaluate(() => window.apg.state());
 const send = (page, text, user = 'tester') => page.evaluate(([u, x]) => window.apg.command(u, x), [user, text]);
 const lines = (page) => page.evaluate(() => t.lines());
+// Counts the draws of the game itself in window.draws: paint() draws a frame of its own.
+const countDraws = (page) =>
+  page.evaluate(() => {
+    const composer = window.apg.stage.composer,
+      render = composer.render.bind(composer);
+    window.draws = 0;
+    composer.render = (dt) => (window.draws++, render(dt));
+  });
+// Waits until the game drew nothing for 20 frames of the page, and gives the number of draws so far.
+const atRest = (page) =>
+  page.evaluate(async () => {
+    const end = Date.now() + 90000;
+    for (let quiet = 0, at = window.draws; quiet < 20;) {
+      await new Promise(requestAnimationFrame);
+      if (window.draws === at) quiet++;
+      else [quiet, at] = [0, window.draws];
+      if (Date.now() > end) throw new Error('the game still draws when nothing moves');
+    }
+    return window.draws;
+  });
+// True when the game drew again after `draws` draws.
+const drewAfter = (page, draws) =>
+  page
+    .waitForFunction((n) => window.draws > n, draws, { timeout: 20000 })
+    .then(
+      () => true,
+      () => false,
+    );
 const dirOf = (m, d) => (m.axis === 'h' ? (d > 0 ? 'right' : 'left') : d > 0 ? 'down' : 'up');
 // Every one-cell-or-more move of a position: [vehicle, direction, cells done, position after, exit].
 function movesOf(z, pos, count = 1) {
@@ -785,24 +813,8 @@ const tests = {
   },
   'a lot at rest is not drawn again, and a move, a hint, a view change and a new window size draw it': async () => {
     const { page } = await open('medium');
-    await page.evaluate(() => {
-      const composer = window.apg.stage.composer,
-        render = composer.render.bind(composer);
-      window.draws = 0;
-      composer.render = (dt) => (window.draws++, render(dt));
-    });
-    // Waits until the game drew nothing for 20 frames of the page, and gives the number of draws so far.
-    const rest = () =>
-      page.evaluate(async () => {
-        const end = Date.now() + 90000;
-        for (let quiet = 0, at = window.draws; quiet < 20;) {
-          await new Promise(requestAnimationFrame);
-          if (window.draws === at) quiet++;
-          else [quiet, at] = [0, window.draws];
-          if (Date.now() > end) throw new Error('the game still draws when nothing moves');
-        }
-        return window.draws;
-      });
+    await countDraws(page);
+    const rest = () => atRest(page);
     const shot = () => page.screenshot({ clip: { x: 0, y: 0, width: 900, height: 800 } });
     let draws = await rest();
     // What the browser shows is the last frame: the lot, and the same picture each time.
@@ -880,12 +892,7 @@ const tests = {
     const lost = await page.evaluate(() => t.paint());
     check(lost.lit < 0.05, `the canvas of a lost context is ${Math.round(lost.lit * 100)}% lit`);
     // The game itself must draw the lot again: paint() below draws a frame of its own.
-    await page.evaluate(() => {
-      const composer = window.apg.stage.composer,
-        render = composer.render.bind(composer);
-      window.draws = 0;
-      composer.render = (dt) => (window.draws++, render(dt));
-    });
+    await countDraws(page);
     await page.waitForTimeout(4000); // a file of the scene that came late was drawn by now
     const before = await page.evaluate(() => (window.lose.restoreContext(), window.draws));
     await page.waitForFunction(() => t.last() === 'BOARD The 3D view is back.', null, { timeout: 20000 });
@@ -898,6 +905,62 @@ const tests = {
     }
     check(p.colours > 30 && p.lit > 0.5, `after the context returned: ${p.colours} colours, ${Math.round(p.lit * 100)}% lit`);
     await playOut(page);
+    await page.context().close();
+  },
+  'a lost WebGL context on the welcome view: the Start button says so, and says Start again when the context returns': async () => {
+    const { page } = await openAt('', { wait: isReady });
+    const says = (text) => page.waitForFunction((x) => document.getElementById('start').textContent === x, text, { timeout: 20000 });
+    await page.evaluate(() => {
+      window.lose = window.apg.stage.renderer.getContext().getExtension('WEBGL_lose_context');
+      window.lose.loseContext();
+    });
+    await says('3D view lost');
+    check(await page.locator('#panel').isHidden(), 'the welcome view shows the chat panel');
+    check(await page.evaluate(() => t.inside('#start')), 'the Start button with the message does not fit the window');
+    await page.evaluate(() => window.lose.restoreContext());
+    await says('Start');
+    await page.locator('#start').click();
+    await page.waitForFunction(inPlay, null, { timeout: 20000 });
+    await playOut(page);
+    await page.context().close();
+  },
+  'the welcome view at rest is drawn by the game itself: after the last scene file, and when the game opens': async () => {
+    // Three files wait for the test: a model with no draw of its own, the puzzles, and the sharp
+    // backdrop, which loads after the scene and draws too.
+    const held = {};
+    const hold = (page, name, url) => page.route(url, (route) => new Promise((go) => (held[name] = go)).then(() => route.continue()));
+    const { page } = await openAt('', {
+      before: async (page) => {
+        await hold(page, 'model', '**/pliers.glb');
+        await hold(page, 'puzzles', '**/puzzles*.json');
+        await hold(page, 'backdrop', '**/artist_workshop_6k.webp');
+      },
+      wait: () => !!window.apg?.stage,
+    });
+    await countDraws(page);
+    // Every other file of the scene is there: some of them draw when they arrive.
+    await page.evaluate(
+      () =>
+        new Promise((done) => {
+          const tasks = window.apg.stage.tasks;
+          let left = tasks.length;
+          for (const task of tasks) task.then(() => --left === 1 && done());
+        }),
+    );
+    let draws = await atRest(page);
+    held.model();
+    await page.waitForFunction(() => window.apg.stage.ready.then(() => true), null, { timeout: 120000 });
+    check(await drewAfter(page, draws), 'the game did not draw the scene after its last file');
+    draws = await atRest(page);
+    check(!(await page.evaluate(isReady)), 'the game opened without a puzzle');
+    held.puzzles();
+    await page.waitForFunction(isReady, null, { timeout: 60000 });
+    check(await drewAfter(page, draws), 'the game did not draw the lot when it opened');
+    draws = await atRest(page);
+    held.backdrop();
+    check(await drewAfter(page, draws), 'the game did not draw the sharp backdrop');
+    await atRest(page);
+    check((await page.screenshot()).length > 100000, 'the welcome view at rest is nearly empty');
     await page.context().close();
   },
 };

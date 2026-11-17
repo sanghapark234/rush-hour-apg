@@ -811,11 +811,11 @@ $('form').addEventListener('submit', (e) => {
 $('start').addEventListener('click', () => {
   if (!failed) return start();
   $('start').disabled = true;
-  $('start').textContent = 'Loading…';
+  label('Loading…');
   fresh().then(() => {
     if (!failed) return;
     $('start').disabled = !!workerDown; // a solver that stopped needs a reload
-    $('start').textContent = workerDown ? 'Could not load' : 'Try again';
+    label(workerDown ? 'Could not load' : 'Try again');
   });
 });
 $('hint').addEventListener('click', () => command('hint'));
@@ -915,15 +915,23 @@ const twitch = () =>
 
 // A GPU reset takes the WebGL context away, and the canvas goes black. When the browser gives
 // the context back, three.js builds the scene again by itself.
-// The welcome view hides the chat, so a new puzzle repeats the line while the context is away.
+// The welcome view hides the chat, so a new puzzle repeats the line while the context is away,
+// and the Start button shows a short message in place of its own text.
 const VIEW_DOWN = 'The 3D view stopped. Reload the page if it stays black.';
-let viewDown = false;
+let viewDown = false,
+  startText = $('start').textContent;
+function label(text = startText) {
+  startText = text;
+  $('start').textContent = viewDown ? '3D view lost' : text;
+}
 $('stage').addEventListener('webglcontextlost', () => {
   viewDown = true;
+  label();
   sys(VIEW_DOWN, 'error');
 });
 $('stage').addEventListener('webglcontextrestored', () => {
   viewDown = false;
+  label();
   stage.touch();
   sys('The 3D view is back.');
 });
@@ -959,7 +967,7 @@ for (const task of stage.tasks)
     () => {
       if (failed) return;
       const percent = Math.round((++loaded / stage.tasks.length) * 100) + '%';
-      $('start').textContent = 'Loading ' + percent;
+      label('Loading ' + percent);
       $('start').style.setProperty('--loaded', percent); // the button fills up
     },
     () => {},
@@ -973,7 +981,7 @@ function begin() {
   twitch();
   updateScoreboardVisibility();
   $('start').disabled = false;
-  $('start').textContent = 'Start';
+  label('Start');
   stage.touch();
   if (params.has('skip')) {
     camName = { top: 'top', low: 'low' }[params.get('cam')] ?? 'angle';
@@ -992,7 +1000,7 @@ function begin() {
 }
 Promise.all([stage.ready, newPuzzle()]).then(begin, (err) => {
   failed = true;
-  $('start').textContent = 'Could not load';
+  label('Could not load');
   $('start').style.setProperty('--loaded', '0%');
   sys('Loading failed: ' + err.message, 'error');
   // Only a puzzle is missing: Start asks for one again. A scene or a solver that failed needs a reload.
@@ -1000,7 +1008,7 @@ Promise.all([stage.ready, newPuzzle()]).then(begin, (err) => {
     stage.ready.then(
       () => {
         if (!failed || workerDown) return;
-        $('start').textContent = 'Try again';
+        label('Try again');
         $('start').disabled = false;
       },
       () => {},
