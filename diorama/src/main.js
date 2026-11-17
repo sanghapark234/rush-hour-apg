@@ -105,7 +105,130 @@ function log(name, msg, kind = 'user') {
   chat.append(l);
   while (chat.children.length > 120) chat.firstChild.remove();
   chat.scrollTop = chat.scrollHeight;
+  return l;
 }
+/* state-effect badge: move evaluation score (-1 to 1) & optimal remaining moves before → after */
+function annotate(line, before, after, score, isTroll = false) {
+  if (line == null || before == null || after == null) return;
+  const s = document.createElement('span');
+  const kind = score > 0 ? 'good' : score < 0 ? 'bad' : 'same';
+  s.className = 'effect ' + kind + (isTroll ? ' troll' : '');
+  const scoreStr = score > 0 ? `+${score}` : `${score}`;
+  s.textContent = `${isTroll ? '⚠️ ' : ''}${scoreStr} · opt ${before} → ${after}`;
+  s.title = `Move evaluation: score ${scoreStr} (optimal remaining: ${before} → ${after})`;
+  line.append(' ', s);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// ---------- player scoring & scoreboard ----------
+const players = new Map(); // name -> { name, score, moves, good, bad, neutral, isTroll, isTwitch }
+let twitchConnected = false;
+const twitchPlayers = new Set();
+
+function updateScoreboardVisibility() {
+  const sb = $('scoreboard');
+  if (!sb) return;
+  // Only show when connected to Twitch and different people (>= 2) are playing in chat,
+  // or when explicitly previewed via ?scoreboard URL parameter.
+  const shouldShow = (twitchConnected && twitchPlayers.size >= 2) || params.has('scoreboard');
+  sb.hidden = !shouldShow;
+  sb.classList.toggle('active', shouldShow);
+}
+
+function recordPlayerMove(name, score, before, after, isTwitch) {
+  if (!name) return;
+  let p = players.get(name);
+  if (!p) {
+    p = {
+      name,
+      score: 0,
+      moves: 0,
+      good: 0,
+      bad: 0,
+      neutral: 0,
+      isTroll: false,
+      isTwitch: Boolean(isTwitch),
+    };
+    players.set(name, p);
+  }
+  p.moves++;
+  p.score = Math.round((p.score + score) * 100) / 100;
+  if (score > 0) p.good++;
+  else if (score < 0) p.bad++;
+  else p.neutral++;
+
+  if (p.score <= -15) {
+    p.isTroll = true;
+  }
+
+  if (isTwitch) {
+    twitchPlayers.add(name);
+  }
+  updateScoreboardVisibility();
+  renderScoreboard();
+  return p;
+}
+
+function renderScoreboard() {
+  const list = $('scoreboard-list');
+  const countEl = $('scoreboard-count');
+  const alertEl = $('scoreboard-troll-alert');
+  if (!list || !countEl || !alertEl) return;
+
+  const all = [...players.values()].sort((a, b) => b.score - a.score || b.moves - a.moves);
+  countEl.textContent = `${all.length} ${all.length === 1 ? 'player' : 'players'}`;
+
+  const hasTroll = all.some((p) => p.isTroll);
+  alertEl.hidden = !hasTroll;
+
+  list.replaceChildren(
+    ...all.map((p, idx) => {
+      const item = document.createElement('div');
+      item.className = 'sb-item' + (p.isTroll ? ' troll' : '');
+
+      const rank = document.createElement('div');
+      const rankClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
+      rank.className = 'sb-rank ' + rankClass;
+      rank.textContent = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+
+      const userCol = document.createElement('div');
+      userCol.className = 'sb-user-col';
+      const name = document.createElement('div');
+      name.className = 'sb-name';
+      name.textContent = p.name;
+      if (p.isTroll) {
+        const tag = document.createElement('span');
+        tag.className = 'sb-troll-tag';
+        tag.textContent = 'TROLL';
+        tag.style.marginLeft = '6px';
+        name.append(tag);
+      }
+      const stats = document.createElement('div');
+      stats.className = 'sb-stats';
+      stats.textContent = `${p.moves}m · ${p.good}✓ ${p.bad}✗`;
+      userCol.append(name, stats);
+
+      const scoreCol = document.createElement('div');
+      scoreCol.className = 'sb-score-col';
+      const score = document.createElement('div');
+      const sKind = p.score > 0 ? 'good' : p.score < 0 ? 'bad' : 'same';
+      score.className = 'sb-score ' + sKind;
+      score.textContent = (p.score > 0 ? '+' : '') + p.score.toFixed(p.score % 1 === 0 ? 0 : 1);
+      scoreCol.append(score);
+
+      item.append(rank, userCol, scoreCol);
+      return item;
+    }),
+  );
+
+  if (!all.length) {
+    const empty = document.createElement('div');
+    empty.className = 'sb-empty';
+    empty.textContent = 'Waiting for players to make moves…';
+    list.append(empty);
+  }
+}
+
 // `heard` collects the game's answers to one command, for the reply in Twitch chat.
 let heard = null;
 const sys = (msg, kind = 'system') => {
@@ -390,10 +513,22 @@ function legend() {
     }),
   );
 }
-async function command(raw, name) {
+async function command(raw, name, isTwitch = false) {
   raw = raw.slice(0, 400).trim().toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
   if (!raw || busy || phase === 'welcome' || phase === 'fly') return;
-  log(name || 'viewer' + ++viewer, raw);
+  const playerName = name || 'viewer' + ++viewer;
+  const line = log(playerName, raw);
+
+  function evaluate(beforePos, afterPos, wonNow, doneSteps) {
+    ask({ type: 'eval', before: beforePos, after: afterPos, won: wonNow, done: doneSteps })
+      .then((res) => {
+        if (!res || res.before == null || res.after == null) return;
+        const player = recordPlayerMove(playerName, res.score, res.before, res.after, isTwitch);
+        annotate(line, res.before, res.after, res.score, player?.isTroll);
+      })
+      .catch(() => {});
+  }
+
   const [a, b, c, ...extra] = raw.split(' ');
   if (a === 'cam' && c === undefined) {
     const name2 = { top: 'top', angle: 'angle', low: 'low', reset: 'angle' }[b];
@@ -431,10 +566,12 @@ async function command(raw, name) {
     u = cars[i].userData,
     horiz = b == 'left' || b == 'right';
   if (horiz !== (m.axis == 'h')) return sys(`${a} cannot move ${b}.`, 'error');
+  const beforePos = pos.slice();
   const d = b == 'right' || b == 'down' ? 1 : -1,
     { done, exit } = slide(puzzle, pos, i, d, count);
   if (exit) {
     moves += done;
+    evaluate(beforePos, pos.slice(), true, done);
     return win();
   }
   if (!done) {
@@ -456,8 +593,10 @@ async function command(raw, name) {
     pos[0] += rest;
     moves += rest;
     sys('The way is open. RED drives out.');
+    evaluate(beforePos, pos.slice(), true, done);
     return win(LEAVE);
   }
+  evaluate(beforePos, pos.slice(), false, done);
   render();
 }
 // The red car starts its last drive after `delay` ms, so the vehicle that just left its way is clear.
@@ -716,7 +855,22 @@ for (const o of document.querySelectorAll('input[name=level]')) o.checked = o.va
 $('level').value = level;
 // Hook for a chat source or a test: apg.command('alice', 'blue right').
 // apg.state() gives a copy of the puzzle and the position, for a bot or a test.
-window.apg = { command: (user, text) => command(String(text), String(user)), state: () => structuredClone({ puzzle, pos, moves, won, level, demo }), stage };
+window.apg = {
+  command: (user, text) => command(String(text), String(user)),
+  state: () => structuredClone({ puzzle, pos, moves, won, level, demo }),
+  stage,
+  scoreboard: () => ({
+    players: Array.from(players.values()),
+    visible: !$('scoreboard').hidden,
+    twitchConnected,
+  }),
+  showScoreboard: (force) => {
+    const sb = $('scoreboard');
+    if (!sb) return;
+    sb.hidden = !force;
+    sb.classList.toggle('active', Boolean(force));
+  },
+};
 
 // Twitch chat (twitch.js) joins the channel that the address names: ?channel=name. The module
 // loads only then, or when the browser comes back from the Twitch login. The chat starts after
@@ -738,10 +892,19 @@ const twitch = () =>
         sys,
         note: (text) => ($('source').textContent = text),
         button: $('login'),
+        onState(kind) {
+          if (kind === 'connected') {
+            twitchConnected = true;
+            updateScoreboardVisibility();
+          } else if (kind === 'closed' || kind === 'error') {
+            twitchConnected = false;
+            updateScoreboardVisibility();
+          }
+        },
         // Every command that the bridge passes on answers before command() returns: only a hint waits.
         play(user, text) {
           heard = [];
-          command(text, user);
+          command(text, user, true);
           const lines = heard;
           heard = null;
           return { lines, won, moves };
@@ -808,6 +971,7 @@ function begin() {
   failed = false;
   document.body.classList.add('ready');
   twitch();
+  updateScoreboardVisibility();
   $('start').disabled = false;
   $('start').textContent = 'Start';
   stage.touch();

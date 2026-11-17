@@ -37,3 +37,23 @@ test('a request that fails answers with an error, and the next request works', (
   expect(typeof bad.error).toBe('string');
   expect(send({ id: 8, type: 'hint', pos: good.start, last: null }).result.left).toBe(good.moves);
 });
+
+test('eval gives score 1 for optimal move and score -1 for reverse/worse move', () => {
+  const { result: hint } = send({ id: 9, type: 'hint', pos: good.start, last: null });
+  const optPos = good.start.slice();
+  optPos[hint.move[0]] += hint.move[1];
+
+  const evalGood = send({ id: 10, type: 'eval', before: good.start, after: optPos, won: false, done: 1 });
+  expect(evalGood.result.score).toBe(1);
+  expect(evalGood.result.before).toBe(good.moves);
+  expect(evalGood.result.after).toBe(good.moves - 1);
+
+  const evalBad = send({ id: 11, type: 'eval', before: optPos, after: good.start, won: false, done: 1 });
+  expect(evalBad.result.score).toBe(-1);
+  expect(evalBad.result.before).toBe(good.moves - 1);
+  expect(evalBad.result.after).toBe(good.moves);
+
+  const evalWin = send({ id: 12, type: 'eval', before: good.start, after: optPos, won: true, done: 1 });
+  expect(evalWin.result.score).toBe(1);
+  expect(evalWin.result.after).toBe(0);
+});

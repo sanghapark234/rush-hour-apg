@@ -204,7 +204,7 @@ async function checkToken(token, sys) {
 }
 
 // params: the URLSearchParams of the address. note(text) sets the short state in the panel head.
-export async function start({ params, sys, note, play, button }) {
+export async function start({ params, sys, note, play, button, onState: stateCb }) {
   const channel = params.get('channel').trim().toLowerCase().replace(/^#/, '');
   if (!/^[a-z0-9_]{1,25}$/.test(channel)) {
     note('Twitch: off');
@@ -245,6 +245,7 @@ export async function start({ params, sys, note, play, button }) {
     play,
     cooldown: seconds >= 0 && seconds <= 60 ? seconds * 1000 : 3000,
     onState(kind, text) {
+      stateCb?.(kind, text);
       if (kind === 'connecting') note('Twitch: connecting');
       else if (kind === 'connected') {
         note('Twitch: #' + channel);

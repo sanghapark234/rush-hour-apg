@@ -343,6 +343,53 @@
       .line.error {
         color: var(--bad);
       }
+      /* state-effect badge shown next to a chat command */
+      .effect {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 6px;
+        padding: 1px 7px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: var(--mono);
+        white-space: nowrap;
+        background: #fffaf0;
+        border: 1px solid var(--rule);
+        vertical-align: middle;
+        line-height: 1.4;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        animation: effectPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      @keyframes effectPop {
+        from {
+          opacity: 0;
+          transform: scale(0.85);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .effect.good {
+        color: var(--ok);
+        background: #edfcf2;
+        border-color: rgba(31, 122, 67, 0.3);
+      }
+      .effect.bad {
+        color: var(--bad);
+        background: #fdf2f2;
+        border-color: rgba(179, 38, 30, 0.3);
+      }
+      .effect.same {
+        color: var(--ink-2);
+        background: var(--paper-2);
+        border-color: var(--rule);
+      }
+      .effect.troll {
+        border-color: var(--bad);
+        box-shadow: 0 0 8px rgba(179, 38, 30, 0.35);
+      }
       form {
         display: flex;
         gap: 8px;
@@ -421,6 +468,241 @@
         color: var(--ink);
       }
 
+      /* ---- live scoreboard ---- */
+      #scoreboard {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        width: 310px;
+        max-height: calc(100vh - 32px);
+        display: flex;
+        flex-direction: column;
+        background: var(--paper);
+        border-radius: 14px;
+        box-shadow:
+          0 24px 60px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        z-index: 20;
+        transition:
+          transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+          opacity 0.5s ease;
+      }
+      body[data-phase='welcome'] #scoreboard,
+      body:not([data-phase]) #scoreboard {
+        transform: translateX(calc(-100% - 32px));
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #scoreboard.active {
+        transform: translateX(0);
+        opacity: 1;
+        visibility: visible;
+      }
+      .sb-header {
+        padding: 14px 16px 10px;
+        border-bottom: 2px solid var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--paper);
+      }
+      .sb-title-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .sb-live-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font: 700 10px/1 var(--text);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ok);
+      }
+      .sb-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--ok);
+        box-shadow: 0 0 8px var(--ok);
+        animation: pulseDot 1.8s infinite ease-in-out;
+      }
+      @keyframes pulseDot {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.85);
+        }
+      }
+      .sb-title {
+        margin: 0;
+        font: 800 24px/1 var(--display);
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .sb-count {
+        font: 600 11.5px/1 var(--mono);
+        color: var(--ink-2);
+        background: var(--paper-2);
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--rule);
+      }
+      .sb-subhead {
+        display: flex;
+        justify-content: space-between;
+        padding: 7px 16px;
+        border-bottom: 1px solid var(--rule);
+        font: 700 9.5px/1 var(--text);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        background: var(--paper-2);
+      }
+      .sb-list {
+        flex: 1;
+        overflow-y: auto;
+        max-height: 48vh;
+        padding: 6px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        scrollbar-width: thin;
+      }
+      .sb-item {
+        display: grid;
+        grid-template-columns: 28px 1fr auto;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: #fffaf0;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition:
+          transform 0.25s ease,
+          background 0.2s,
+          border-color 0.2s;
+      }
+      .sb-item:hover {
+        background: #fff;
+        border-color: rgba(0, 0, 0, 0.2);
+        transform: translateX(2px);
+      }
+      .sb-rank {
+        font: 800 15px/1 var(--display);
+        color: var(--ink-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sb-rank.gold {
+        color: #c98800;
+        font-size: 17px;
+      }
+      .sb-rank.silver {
+        color: #7a8288;
+        font-size: 16px;
+      }
+      .sb-rank.bronze {
+        color: #a76632;
+        font-size: 15px;
+      }
+      .sb-user-col {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .sb-name {
+        font: 700 13.5px/1.2 var(--text);
+        color: var(--ink);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .sb-stats {
+        font: 500 10.5px/1 var(--mono);
+        color: var(--ink-2);
+        display: flex;
+        gap: 6px;
+      }
+      .sb-score-col {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+      }
+      .sb-score {
+        font: 800 14px/1 var(--mono);
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-variant-numeric: tabular-nums;
+      }
+      .sb-score.good {
+        color: var(--ok);
+        background: #eafaf1;
+        border: 1px solid rgba(31, 122, 67, 0.2);
+      }
+      .sb-score.bad {
+        color: var(--bad);
+        background: #fdf2f2;
+        border: 1px solid rgba(179, 38, 30, 0.2);
+      }
+      .sb-score.same {
+        color: var(--ink-2);
+        background: var(--paper-2);
+        border: 1px solid var(--rule);
+      }
+      .sb-item.troll {
+        background: #fdf0f0;
+        border: 1.5px solid var(--bad);
+        animation: trollPulse 2.5s infinite ease-in-out;
+      }
+      @keyframes trollPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 rgba(179, 38, 30, 0);
+        }
+        50% {
+          box-shadow: 0 0 12px rgba(179, 38, 30, 0.35);
+        }
+      }
+      .sb-troll-tag {
+        font: 800 9px/1 var(--text);
+        letter-spacing: 0.08em;
+        color: #fff;
+        background: var(--bad);
+        padding: 2px 5px;
+        border-radius: 4px;
+        display: inline-block;
+        text-transform: uppercase;
+      }
+      .sb-alert {
+        padding: 8px 12px;
+        background: #fdf0f0;
+        border-top: 1px solid rgba(179, 38, 30, 0.25);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font: 600 11.5px/1.3 var(--text);
+        color: var(--bad);
+      }
+      .sb-empty {
+        padding: 20px 14px;
+        text-align: center;
+        color: var(--ink-2);
+        font: 500 12.5px/1.4 var(--text);
+      }
+
       /* ---- win card ---- */
       #win {
         position: fixed;
@@ -476,6 +758,17 @@
         body:not([data-phase]) #panel {
           transform: translateY(calc(100% + 16px));
         }
+        #scoreboard {
+          top: 8px;
+          left: 8px;
+          right: 8px;
+          width: auto;
+          max-height: 38vh;
+        }
+        body[data-phase='welcome'] #scoreboard,
+        body:not([data-phase]) #scoreboard {
+          transform: translateY(calc(-100% - 16px));
+        }
         .stats .n {
           font-size: 32px;
         }
@@ -525,6 +818,27 @@
         <small>Sound on. Drag to look around once the game starts.</small>
       </div>
     </main>
+
+    <aside id="scoreboard" hidden aria-label="Player scoreboard">
+      <div class="sb-header">
+        <div class="sb-title-wrap">
+          <span class="sb-live-badge"><span class="sb-dot"></span>LIVE CO-OP</span>
+          <h3 class="sb-title">SCOREBOARD</h3>
+        </div>
+        <div class="sb-meta">
+          <span id="scoreboard-count" class="sb-count">0 players</span>
+        </div>
+      </div>
+      <div class="sb-subhead">
+        <span>RANK & PLAYER</span>
+        <span>SCORE / MOVES</span>
+      </div>
+      <div id="scoreboard-list" class="sb-list" role="list"></div>
+      <div id="scoreboard-troll-alert" class="sb-alert" hidden>
+        <span class="sb-alert-icon">⚠️</span>
+        <span class="sb-alert-text">Trolling detected! Review negative scores.</span>
+      </div>
+    </aside>
 
     <aside id="panel" aria-label="Game panel">
       <div class="head"><strong>Tiny Gridlock</strong><span id="source">Chat plays</span></div>
